@@ -1,0 +1,4 @@
+"0","print(f'| RMSE train: {rmse_train:.4f} '"
+"0","      f'| RMSE test: {rmse_test:.4f} ')"
+"1","| RMSE train: 3.9589 | RMSE test: 4.0970 
+"

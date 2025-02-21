@@ -1,0 +1,19 @@
+"0","plt.scatter(y_train, y_train_pred)"
+"1","<matplotlib.collections.PathCollection object at 0x000001C1EC741E50>
+"
+"0","plt.plot([0, 200], [0, 200], c='red')"
+"1","[<matplotlib.lines.Line2D object at 0x000001C1ECB07110>]
+"
+"0","plt.xlim(0, 200); plt.ylim(0, 200)"
+"1","(0.0, 200.0)
+(0.0, 200.0)
+"
+"0","plt.xlabel('y actual'); plt.ylabel('y predicted')"
+"1","Text(0.5, 3.8890413930255123, 'y actual')
+Text(369.5100415726475, 0.5, 'y predicted')
+"
+"0","plt.title('Comparison of y actual vs y predicted on Train Data')"
+"1","Text(0.5, 1.0, 'Comparison of y actual vs y predicted on Train Data')
+"
+"0","plt.show()"
+"0",""

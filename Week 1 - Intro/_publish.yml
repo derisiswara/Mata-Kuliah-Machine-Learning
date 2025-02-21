@@ -1,0 +1,4 @@
+- source: index.qmd
+  quarto-pub:
+    - id: 7f32d633-1e46-46ab-8f9e-1e1027ed2cea
+      url: https://derikayz.quarto.pub/ml_w1

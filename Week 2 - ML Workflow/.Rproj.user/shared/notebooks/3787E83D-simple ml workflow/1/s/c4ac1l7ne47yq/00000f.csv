@@ -1,0 +1,7 @@
+"0","def split_num_cat(data, num_cols, cat_cols):"
+"0","    data_num = data[num_cols]"
+"0","    data_cat = data[cat_cols]"
+"0","    print('Data num shape:', data_num.shape)"
+"0","    print('Data cat shape:', data_cat.shape)"
+"0","    return data_num, data_cat"
+"0",""

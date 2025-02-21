@@ -1,0 +1,5 @@
+"0","# Fit the scaler"
+"0","scaler = fit_scaler(X_train_concat_fe) "
+"0","# Transform the scaler"
+"0","X_train_clean = transform_scaler(X_train_concat_fe, scaler)"
+"0",""

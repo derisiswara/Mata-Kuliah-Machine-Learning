@@ -1,0 +1,6 @@
+"0","print('Original shape:', X_train_cat_imputed.shape)"
+"1","Original shape: (155851, 1)
+"
+"0","print('Encoded shape :', X_train_cat_encoded.shape)"
+"1","Encoded shape : (155851, 5)
+"

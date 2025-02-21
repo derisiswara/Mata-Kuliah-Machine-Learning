@@ -1,0 +1,24 @@
+"0","fig, ax = plt.subplots(nrows=3, ncols=2, figsize=(12, 8))"
+"0","axes = ax.flatten()"
+"0",""
+"0","for i, col in enumerate(X_train_num.columns):"
+"0","    sns.kdeplot(X_train_num[col], ax=axes[i])"
+"0","    axes[i].set_title(f'Distribution of {col}')"
+"0","    "
+"0","plt.tight_layout()"
+"1","<Axes: xlabel='pickup_longitude', ylabel='Density'>
+Text(0.5, 1.0, 'Distribution of pickup_longitude')
+"
+"1","<Axes: xlabel='pickup_latitude', ylabel='Density'>
+Text(0.5, 1.0, 'Distribution of pickup_latitude')
+"
+"1","<Axes: xlabel='dropoff_longitude', ylabel='Density'>
+Text(0.5, 1.0, 'Distribution of dropoff_longitude')
+<Axes: xlabel='dropoff_latitude', ylabel='Density'>
+Text(0.5, 1.0, 'Distribution of dropoff_latitude')
+"
+"1","<Axes: xlabel='passenger_count', ylabel='Density'>
+Text(0.5, 1.0, 'Distribution of passenger_count')
+"
+"0","plt.show()"
+"0",""

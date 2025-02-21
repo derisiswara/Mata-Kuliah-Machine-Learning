@@ -1,0 +1,13 @@
+"0","train_data = pd.concat((X_train, y_train), axis=1)"
+"0","train_data.head()"
+"1","         pickup_time  pickup_longitude  ...  passenger_count  fare_amount
+order_id                                ...                              
+51655713       16-22        -73.979392  ...              2.0         16.5
+37525839       16-22        -73.986575  ...              5.0          3.7
+55058970       16-22        -73.972533  ...              1.0         18.9
+15663447       10-16        -73.979967  ...              6.0          4.1
+13325650       16-22        -73.976192  ...              1.0  "
+"1","        5.0
+
+[5 rows x 7 columns]
+"

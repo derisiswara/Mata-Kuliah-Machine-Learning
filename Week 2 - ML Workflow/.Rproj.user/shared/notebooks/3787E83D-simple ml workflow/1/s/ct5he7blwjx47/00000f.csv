@@ -1,0 +1,26 @@
+"0","X_valid_clean = preprocess_data(data=X_valid, "
+"0","                                num_cols=num_cols, "
+"0","                                cat_cols=cat_cols, "
+"0","                                num_imputer=num_imputer, "
+"0","                                cat_imputer=cat_imputer, "
+"0","                                cat_encoder=cat_encoder, "
+"0","                                scaler=scaler)"
+"1","Data num shape: (19481, 5)
+Data cat shape: (19481, 1)
+"
+"0","X_test_clean = preprocess_data(data=X_test, "
+"0","                               num_cols=num_cols, "
+"0","                               cat_cols=cat_cols, "
+"0","                               num_imputer=num_imputer, "
+"0","                               cat_imputer=cat_imputer, "
+"0","                               cat_encoder=cat_encoder, "
+"0","                               scaler=scaler)"
+"1","Data num shape: (19482, 5)
+Data cat shape: (19482, 1)
+"
+"0","print('Cleaned X_valid data shape :', X_valid_clean.shape)"
+"1","Cleaned X_valid data shape : (19481, 7)
+"
+"0","print('Cleaned X_test data shape :', X_test_clean.shape)"
+"1","Cleaned X_test data shape : (19482, 7)
+"

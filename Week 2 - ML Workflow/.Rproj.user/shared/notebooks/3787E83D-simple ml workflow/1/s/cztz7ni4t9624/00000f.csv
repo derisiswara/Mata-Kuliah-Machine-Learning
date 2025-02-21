@@ -1,0 +1,8 @@
+"0","X_train_num.isna().sum(0)"
+"1","pickup_longitude       0
+pickup_latitude        0
+dropoff_longitude      0
+dropoff_latitude       0
+passenger_count      945
+dtype: int64
+"

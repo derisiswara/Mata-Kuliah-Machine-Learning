@@ -1,0 +1,9 @@
+"0","print(len(X_train)/len(X))  # should be 0.8"
+"1","0.7999989733797366
+"
+"0","print(len(X_valid)/len(X))  # should be 0.1"
+"1","0.09999794675947314
+"
+"0","print(len(X_test)/len(X))   # should be 0.1"
+"1","0.1000030798607903
+"

@@ -1,0 +1,5 @@
+"0","def map_distance(data):"
+"0","    data['distance'] = np.sqrt((data['pickup_longitude'] - data['dropoff_longitude'])**2 + (data['pickup_latitude'] - data['dropoff_latitude'])**2)"
+"0","    data = data.drop(columns=['pickup_longitude','pickup_latitude','dropoff_longitude','dropoff_latitude'])"
+"0","    return data"
+"0",""

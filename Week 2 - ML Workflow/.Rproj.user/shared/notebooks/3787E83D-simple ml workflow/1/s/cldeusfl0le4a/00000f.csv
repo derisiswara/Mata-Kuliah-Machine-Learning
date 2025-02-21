@@ -1,0 +1,6 @@
+"0","num_cols = ['pickup_longitude','pickup_latitude','dropoff_longitude','dropoff_latitude' ,'passenger_count']"
+"0","cat_cols = ['pickup_time']"
+"0","X_train_num, X_train_cat = split_num_cat(X_train, num_cols, cat_cols) # WRITE YOUR CODE HERE"
+"1","Data num shape: (155851, 5)
+Data cat shape: (155851, 1)
+"

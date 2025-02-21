@@ -1,0 +1,7 @@
+"0","sns.boxplot(data=train_data[train_data['fare_amount'] < 50],"
+"0","            x='pickup_time',"
+"0","            y='fare_amount')"
+"1","<Axes: xlabel='pickup_time', ylabel='fare_amount'>
+"
+"0","plt.show()"
+"0",""

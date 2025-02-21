@@ -1,0 +1,7 @@
+"0","def split_input_output(data, target_col):"
+"0","    X = data.drop(columns=target_col)"
+"0","    y = data[target_col]"
+"0","    print('X shape:', X.shape)"
+"0","    print('y shape:', y.shape)"
+"0","    return X, y"
+"0",""

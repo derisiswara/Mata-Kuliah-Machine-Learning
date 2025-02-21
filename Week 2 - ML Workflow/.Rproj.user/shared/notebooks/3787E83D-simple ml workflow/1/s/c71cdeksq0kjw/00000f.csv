@@ -1,0 +1,7 @@
+"0","# Read the Uber data (JUST RUN THE CODE)"
+"0","data = read_data(fname='uber_edit.csv')"
+"1","Data shape raw               : (194814, 8)
+Number of duplicate order id : 0
+Data shape after dropping    : (194814, 7)
+Data shape final             : (194814, 7)
+"

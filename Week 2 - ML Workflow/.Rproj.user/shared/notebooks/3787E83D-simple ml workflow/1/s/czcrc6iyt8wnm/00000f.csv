@@ -1,0 +1,11 @@
+"0","X_train_cat_encoded.head()"
+"1","          pickup_time_04-10  ...  pickup_time_UNKNOWN
+order_id                     ...                     
+51655713                0.0  ...                  0.0
+37525839                0.0  ...                  0.0
+55058970                0.0  ...                  0.0
+15663447                0.0  ...                  0.0
+13325650                0.0  ...                  0.0
+
+[5 rows x 5 columns]
+"

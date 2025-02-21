@@ -1,0 +1,25 @@
+"0","X_train_clean = preprocess_data(data=X_train, "
+"0","                                num_cols=num_cols, "
+"0","                                cat_cols=cat_cols, "
+"0","                                num_imputer=num_imputer, "
+"0","                                cat_imputer=cat_imputer, "
+"0","                                cat_encoder=cat_encoder, "
+"0","                                scaler=scaler)"
+"1","Data num shape: (155851, 5)
+Data cat shape: (155851, 1)
+"
+"0","print('Numerical data shape  :', X_train_num_imputed.shape)"
+"1","Numerical data shape  : (155851, 5)
+"
+"0","print('Categorical data shape:', X_train_cat_encoded.shape)"
+"1","Categorical data shape: (155851, 5)
+"
+"0","print('Concat data shape     :', X_train_concat.shape)"
+"1","Concat data shape     : (155851, 11)
+"
+"0","print('Original data shape:', X_train_concat.shape)"
+"1","Original data shape: (155851, 11)
+"
+"0","print('Mapped data shape  :', X_train_concat_fe.shape)"
+"1","Mapped data shape  : (155851, 7)
+"

@@ -1,0 +1,5 @@
+"0","X, y = split_input_output(data=data,"
+"0","                          target_col='fare_amount')"
+"1","X shape: (194814, 6)
+y shape: (194814,)
+"

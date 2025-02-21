@@ -1,0 +1,9 @@
+"0","100 * (X_train.isna().sum(0) / len(X_train))"
+"1","pickup_time          0.000000
+pickup_longitude     0.000000
+pickup_latitude      0.000000
+dropoff_longitude    0.000000
+dropoff_latitude     0.000000
+passenger_count      0.606348
+dtype: float64
+"

@@ -1,0 +1,7 @@
+"0","X_train_concat_fe = map_distance(X_train_concat)"
+"0","print('Original data shape:', X_train_concat.shape)"
+"1","Original data shape: (155851, 11)
+"
+"0","print('Mapped data shape  :', X_train_concat_fe.shape)"
+"1","Mapped data shape  : (155851, 7)
+"

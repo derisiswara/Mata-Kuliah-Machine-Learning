@@ -1,0 +1,6 @@
+"0","# Train the model (JUST RUN THE CODE)"
+"0","train_model(reg_1, X_train_clean, y_train)"
+"0","train_model(reg_2, X_train_clean, y_train)"
+"0","train_model(reg_3, X_train_clean, y_train)"
+"0","train_model(reg_4, X_train_clean, y_train)"
+"0",""

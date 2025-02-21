@@ -1,0 +1,376 @@
+---
+title: "Week1"
+format: html
+jupyter: python3
+---
+
+## Vektor
+
+### Tinjauan Singkat
+
+-   Sebuah **vektor** adalah daftar bilangan yang berurut (terurut).\
+-   Ukuran (size atau dimensi) dari sebuah vektor adalah jumlah elemen yang ada di dalamnya.\
+-   Elemen vektor dapat diakses menggunakan indeks tertentu, misalnya $x_2$ merujuk pada elemen ke-2 dari vektor $\mathbf{x}$.
+
+Contoh vektor:
+
+$$
+\mathbf{x} = [10, 32, 2, -21, 5.5]
+$$
+
+-   Ukuran vektor ini adalah 5.\
+-   Jika kita ingin mengakses elemen ke-2, maka \$ x_2 = 32 \$.
+
+### Operasi Vektor
+
+1.  **Penjumlahan/Pengurangan Vektor**\
+    Operasi ini dilakukan secara *element-wise*, artinya elemen pertama dengan elemen pertama, elemen kedua dengan elemen kedua, dan seterusnya. Misalnya:
+
+    $$
+    \mathbf{x} + \mathbf{y} 
+    = \begin{bmatrix} 1 \\ 2 \\ 3 \\ 4 \end{bmatrix}
+    + \begin{bmatrix} 4 \\ 5 \\ 6 \\ 7 \end{bmatrix}
+    = \begin{bmatrix} 5 \\ 7 \\ 9 \\ 11 \end{bmatrix}
+    $$
+
+2.  **Perkalian Vektor dengan Skalar**\
+    Jika $\alpha$ adalah sebuah bilangan (skalar), dan $\mathbf{x}$ adalah sebuah vektor, maka:
+
+    $$
+    \alpha \mathbf{x} 
+    = 0.5 \begin{bmatrix}1 \\ 2 \\ 3 \end{bmatrix}
+    = \begin{bmatrix}0.5 \\ 1.0 \\ 1.5 \end{bmatrix}
+    $$
+
+### Vektor dengan NumPy
+
+| Sintaks | Deskripsi | Contoh Penggunaan |
+|:--:|:---|:---|
+| `np.array()` | Membuat sebuah vektor (array) | `np.array([1, 2, 3])` |
+| `np.shape()` | Menampilkan ukuran/bentuk (shape) dari sebuah array | `np.shape(a)` |
+| `a[i]` | Mengakses elemen ke-`i` vektor `a` | `a[i]` |
+| `x + y` | Menjumlahkan dua vektor dengan panjang yang sama | `x + y` |
+| `a * x` | Mengalikan skalar `a` dengan vektor `x` | `a * x` |
+
+### **Latihan**
+
+1.  Buat vektor $\mathbf{x} = [1, 2, 3, 4]$ dengan NumPy.\
+
+```{python}
+import numpy as np
+x = np.array([1, 2, 3, 4])
+print(x)
+```
+
+```{python}
+type(x)
+```
+
+2.  Cari ukuran (size) dari vektor $\mathbf{x}$.\
+
+```{python}
+print(x.shape)
+```
+
+```{python}
+print(len(x))
+```
+
+3.  Dapatkan elemen $x_3$ dari $\mathbf{x}$.\
+
+```{python}
+print(x[2])
+```
+
+Ingat, dalam Python (termasuk ketika menggunakan NumPy), indeks array (list, tuple, dan struktur data sejenis) dimulai dari 0. Sehingga:
+
+-   Elemen pertama ada pada indeks 0
+-   Elemen kedua ada pada indeks 1
+-   Dan seterusnya.
+
+4.  Dapatkan potongan vektor $\mathbf{x}_{1:3}$ (Gunakan *slicing* seperti array).\
+
+```{python}
+print(x[0:3])
+```
+
+```{python}
+print(x[:3])
+```
+
+```{python}
+print(x[0:-1])
+```
+
+5.  Jumlahkan vektor $\mathbf{x}$ dan $\mathbf{y}$ (menggunakan NumPy).\
+    $$
+    \mathbf{x} = [1, 2, 3, 4]  \quad;\quad 
+    \mathbf{y} = [5, 6, 7, 8]
+    $$
+
+```{python}
+y = np.array([5, 6, 7, 8])
+```
+
+```{python}
+print(x + y)
+```
+
+6.  Jumlahkan vektor $\mathbf{x}$ dan $\mathbf{y}$ (secara manual).\
+    \$\$ \mathbf{x} = \[1, 2, 3, 4\] \quad;\quad
+
+    \mathbf{y} = \[5, 6, 7, 8\] \$\$
+
+```{python}
+lists = []
+for i in range(len(x)):
+    lists.append(x[i] + y[i])
+print(lists)
+```
+
+7.  Jumlahkan vektor $\mathbf{v}$ dan $\mathbf{x}$.\
+    $$
+    \mathbf{v} = [1, 2] \quad;\quad
+    \mathbf{x} = [1, 2, 3, 4]
+    $$
+
+```{python}
+v = np.array([1, 2])
+print(v + x)
+# Tidak bisa menjumlahkan vektor dengan ukuran yang berbeda
+```
+
+8.  Kalikan vektor $\mathbf{x}$ dengan skalar $\alpha$ (menggunakan NumPy).\
+    $$
+    \mathbf{x} = [1, 2, 3, 4] \quad;\quad
+    \alpha = 0.5
+    $$
+
+```{python}
+alpha = 0.5
+print(alpha * x)
+```
+
+9.  Kalikan vektor $\mathbf{x}$ dengan skalar $\alpha$ (secara manual).\
+    $$
+    \mathbf{x} = [1, 2, 3, 4] \quad;\quad
+    \alpha = 0.5
+    $$
+
+```{python}
+lists = []
+for i in range(len(x)):
+    lists.append(alpha * x[i])
+print(lists)
+```
+
+10. Temukan **rata-rata (mean)** dari vektor $\mathbf{x}$ (secara manual).\
+    $$
+    \mathbf{x} = [1, 2, 3, 4, 5]
+    $$
+
+```{python}
+x = np.array([1, 2, 3, 4, 5])
+```
+
+```{python}
+mean = sum(x) / len(x)
+print(mean)
+```
+
+```{python}
+print(np.mean(x))
+```
+
+11. Temukan **simpangan baku (standard deviation)** dari vektor $\mathbf{x}$ (secara manual).
+
+    **Catatan**
+
+    -   Rumus simpangan baku: $$
+        \text{std}(x) = \sqrt{\frac{1}{n-1} \sum_{i=1}^{n} (x_i - \mu)^2}
+        $$
+    -   $\mu$ adalah mean dari data, dan $n$ adalah panjang data.
+
+```{python}
+# Std
+n = len(x)
+mu = np.mean(x)
+var = 1/(n-1) * ((x[0] - mu)**2 + (x[1] - mu)**2 + (x[2] - mu)**2 + (x[3] - mu)**2 + (x[4] - mu)**2)
+std = np.sqrt(var) 
+std
+```
+
+```{python}
+std = np.sqrt(sum((i - mu)**2 for i in x) / (n-1))
+std
+```
+
+```{python}
+var
+```
+
+```{python}
+np.std(x, ddof=1) # For sample standard deviation
+np.var(x, ddof=1) # For sample variance
+```
+
+12. **Standarisasi** vektor $\mathbf{x}$.\
+    $$
+    \mathbf{x} = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    $$
+
+**Catatan**
+
+-   Standarisasi adalah proses umum dalam *feature engineering* pada pemodelan *machine learning*.\
+
+    -   Rumus standarisasi:
+
+    $$
+      x^{\text{std}}_i = \frac{x_i - \mu}{\sigma}
+      $$
+
+di mana $\mu$ dan $\sigma$ masing-masing adalah rata-rata dan simpangan baku dari data.\
+
+-   Gunakan `np.mean(...)` dan `np.std(...)` untuk menemukan $\mu$ dan $\sigma$.
+
+```{python}
+x = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+x_std = (x - np.mean(x)) / np.std(x, ddof=1)
+x_std
+```
+
+```{python}
+from sklearn.preprocessing import StandardScaler
+StandardScaler().transform(x.reshape(-1, 1))
+```
+
+------------------------------------------------------------------------
+
+## **Norm dan Jarak**
+
+### **Tinjauan Singkat Norm Vektor**
+
+-   **Norm vektor** mengembalikan magnitudo (panjang) dari sebuah vektor.
+
+-   Misalkan:
+
+    $$
+    \mathbf{x} = [-3, 4]
+    $$
+
+    Maka norm $\mathbf{x}$ (Euclidean norm) adalah:
+
+    $$
+    \|\mathbf{x}\|_2 = 5
+    $$
+
+-   Notasi $\|\ . \|\_2$ menandakan *Euclidean norm* atau *L2 norm*.\
+
+-   Ada banyak jenis norm, namun dua yang paling populer adalah:
+
+    1.  **Euclidean Norm (L2)**\
+    2.  **Manhattan Norm (L1)**
+
+<p align="center">
+
+<img src="https://taketake2.com/ne1615_en.png" alt="Contour L1 and L2 Norm" width="300"/>
+
+</p>
+
+### **Tinjauan Singkat Jarak (Distance)**
+
+-   **Jarak** mengukur perbedaan atau ketidaksamaan antara dua titik (vektor).\
+-   Beberapa properti jarak:
+    1.  \$ d(A, B) = d(B, A) \$\
+    2.  \$ d(A, A) = 0 \$\
+    3.  \$ d(A, B) = 0 \$ jika dan hanya jika \$ A = B \$\
+    4.  \$ d(A, B) \leq d(A, C) + d(B, C) \$ (*triangular inequality*)\
+-   Ada banyak metrik jarak tergantung kebutuhan dan konteks.
+
+<p align="center">
+
+<img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*vAtQZbROuTdp36aQQ8cqBA.png" alt="Distance Metrics" width="400"/>
+
+</p>
+
+### **Norm dan Jarak dengan NumPy**
+
+| Sintaks | Deskripsi | Contoh Penggunaan |
+|:--:|:---|:---|
+| `np.linalg.norm()` | Menghitung norm (Euclidean atau Manhattan) dari vektor | `np.linalg.norm([1, 2, 3], ord=2)` |
+
+-   Untuk norm lain (misalnya L1), kita bisa gunakan `ord=1` atau menghitungnya sendiri dengan rumus.
+
+------------------------------------------------------------------------
+
+### **Latihan**
+
+1.  Hitung **Euclidean norm** dari vektor $\mathbf{x}$ (secara manual, lalu gunakan NumPy).\
+    $$
+    \mathbf{x} = [1, 2, 3, 4, 5, 6, 7]
+    $$
+
+    **Catatan**\
+    $$
+    \|\mathbf{x}\|_2 = \sqrt{ \sum_{i=1}^{n} x_i^2 }
+    $$
+
+```{python}
+x = np.arange(1, 8)
+print(x)
+```
+
+```{python}
+norm = np.sqrt(sum(x**2 for x in x))
+norm
+```
+
+```{python}
+np.linalg.norm(x)
+```
+
+2.  Hitung **Manhattan norm** dari vektor $\mathbf{x}$ (secara manual, lalu gunakan NumPy).\
+    $$
+    \mathbf{x} = [1, 2, 3, 4, 5, 6, 7]
+    $$
+
+    **Catatan**\
+    $$
+    \|\mathbf{x}\|_1 = \sum_{i=1}^{n} |x_i|
+    $$
+
+```{python}
+norm = sum(abs(x) for x in x)
+norm
+```
+
+```{python}
+np.linalg.norm(x, ord=1)
+```
+
+3.  Diberikan dua vektor $\mathbf{x}$ dan $\mathbf{y}$. Hitung **Manhattan distance** di antara keduanya: $$
+    \mathbf{x} = [3, 0] \quad;\quad
+    \mathbf{y} = [0, 4]
+    $$
+
+```{python}
+x = np.array([3, 0])
+y = np.array([0, 4])
+distance = sum(abs(x - y))
+distance
+```
+
+4.  Diberikan dua vektor $\mathbf{x}$ dan $\mathbf{y}$. Hitung **Euclidean distance** di antara keduanya: $$
+    \mathbf{x} = [3, 0] \quad;\quad
+    \mathbf{y} = [0, 4]
+    $$
+
+```{python}
+distance = np.sqrt(sum((x - y)**2))
+distance
+```
+
+## Referensi
+
+-   https://rpubs.com/pjozefek/659184
+-   Pacman AI - Sekolah Data

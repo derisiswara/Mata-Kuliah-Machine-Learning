@@ -1,0 +1,5 @@
+"0","# Get the numerical imputer"
+"0","num_imputer = num_imputer_fit(X_train_num) "
+"0","# Transform the data"
+"0","X_train_num_imputed = num_imputer_transform(X_train_num, num_imputer) "
+"0",""

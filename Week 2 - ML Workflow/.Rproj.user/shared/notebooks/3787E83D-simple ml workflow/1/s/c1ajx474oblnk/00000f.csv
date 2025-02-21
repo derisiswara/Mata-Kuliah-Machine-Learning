@@ -1,0 +1,15 @@
+"0","# Split the data"
+"0","# First, split the train & not train"
+"0","X_train, X_not_train, y_train, y_not_train =  split_train_test(X, y, test_size=0.2, seed=123) "
+"1","X train shape: (155851, 6)
+y train shape: (155851,)
+X test shape : (38963, 6)
+y test shape : (38963,)
+"
+"0","# Then, split the valid & test"
+"0","X_valid, X_test, y_valid, y_test = split_train_test(X_not_train, y_not_train, test_size=0.5, seed=123)"
+"1","X train shape: (19481, 6)
+y train shape: (19481,)
+X test shape : (19482, 6)
+y test shape : (19482,)
+"

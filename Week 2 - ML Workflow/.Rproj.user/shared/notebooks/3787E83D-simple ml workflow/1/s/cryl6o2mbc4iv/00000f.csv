@@ -1,0 +1,27 @@
+"0","import time"
+"0",""
+"0","for reg in [reg_1, reg_2, reg_3, reg_4]:"
+"0","    t0 = time.time()"
+"0","    "
+"0","    # Generate the rmse"
+"0","    rmse_train, rmse_valid = evaluate_model(estimator=reg,"
+"0","                                            X_train=X_train_clean,"
+"0","                                            y_train=y_train,"
+"0","                                            X_valid=X_valid_clean,"
+"0","                                            y_valid=y_valid)"
+"0","    "
+"0","    # Logging"
+"0","    elapsed = time.time() - t0"
+"0","    print(f'model : {str(reg):40s} '"
+"0","          f'| RMSE train: {rmse_train:.4f} '"
+"0","          f'| RMSE valid: {rmse_valid:.4f} '"
+"0","          f'| Time elapsed: {elapsed*1000:.2f} ms')"
+"0",""
+"1","model : DummyRegressor()                         | RMSE train: 8.9221 | RMSE valid: 8.8614 | Time elapsed: 2.01 ms
+"
+"1","model : KNeighborsRegressor(n_neighbors=1)       | RMSE train: 1.4510 | RMSE valid: 5.4185 | Time elapsed: 8676.62 ms
+"
+"1","model : KNeighborsRegressor(n_neighbors=100)     | RMSE train: 3.9589 | RMSE valid: 3.9791 | Time elapsed: 12807.92 ms
+"
+"1","model : KNeighborsRegressor(n_neighbors=200)     | RMSE train: 4.1513 | RMSE valid: 4.1420 | Time elapsed: 16534.47 ms
+"

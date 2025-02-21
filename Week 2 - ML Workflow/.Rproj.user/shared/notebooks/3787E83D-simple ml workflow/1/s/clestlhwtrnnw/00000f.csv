@@ -1,0 +1,9 @@
+"0","X_train_cat_imputed.value_counts(normalize=True)"
+"1","pickup_time
+16-22          0.328160
+10-16          0.286376
+22-04          0.221648
+04-10          0.157599
+UNKNOWN        0.006217
+Name: proportion, dtype: float64
+"

@@ -1,0 +1,13 @@
+"0","#| colab: {base_uri: https://localhost:8080/}"
+"0","# Validate"
+"0","X_train_concat.head()"
+"1","          pickup_longitude  ...  pickup_time_UNKNOWN
+order_id                    ...                     
+51655713        -73.979392  ...                  0.0
+37525839        -73.986575  ...                  0.0
+55058970        -73.972533  ...                  0.0
+15663447        -73.979967  ...                  0.0
+13325650        -73.976192  ...                  0.0
+
+[5 rows x 10 columns]
+"

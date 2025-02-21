@@ -1,0 +1,18 @@
+"0","print('Original data shape:', X_train.shape)"
+"1","Original data shape: (155851, 6)
+"
+"0","print('Cleaned data shape :', X_train_clean.shape)"
+"1","Cleaned data shape : (155851, 7)
+"
+"0","X_train_clean.head()"
+"1","          passenger_count  pickup_time_04-10  ...  pickup_time_UNKNOWN  distance
+order_id                                      ...                               
+51655713         0.241233          -0.432531  ...            -0.079097 -0.013978
+37525839         2.545080          -0.432531  ...            -0.079097 -0.035436
+55058970        -0.526715          -0.432531  ...            -0.079097 -0.013275
+15663447         3.313029          -0.432531  ...            -0.079097 -0.035716
+13325650        -0.5"
+"1","26715          -0.432531  ...            -0.079097 -0.034594
+
+[5 rows x 7 columns]
+"

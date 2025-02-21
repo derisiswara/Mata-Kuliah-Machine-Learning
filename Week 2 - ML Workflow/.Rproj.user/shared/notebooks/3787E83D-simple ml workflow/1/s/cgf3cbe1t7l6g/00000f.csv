@@ -1,0 +1,7 @@
+"0","# RMSE "
+"0","rmse_train, rmse_test = evaluate_model(estimator=reg_best,"
+"0","                                            X_train=X_train_clean,"
+"0","                                            y_train=y_train,"
+"0","                                            X_valid=X_test_clean,"
+"0","                                            y_valid=y_test)"
+"0",""

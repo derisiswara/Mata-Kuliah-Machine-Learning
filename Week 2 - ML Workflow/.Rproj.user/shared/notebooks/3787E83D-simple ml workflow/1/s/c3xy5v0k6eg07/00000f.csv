@@ -1,0 +1,10 @@
+"0","X_train_concat = concat_data(X_train_num_imputed, X_train_cat_encoded)"
+"0","print('Numerical data shape  :', X_train_num_imputed.shape)"
+"1","Numerical data shape  : (155851, 5)
+"
+"0","print('Categorical data shape:', X_train_cat_encoded.shape)"
+"1","Categorical data shape: (155851, 5)
+"
+"0","print('Concat data shape     :', X_train_concat.shape)"
+"1","Concat data shape     : (155851, 10)
+"

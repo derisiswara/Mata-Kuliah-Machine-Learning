@@ -1,0 +1,6 @@
+"0","# Perform categorical imputation"
+"0","cat_imputer = cat_imputer_fit(X_train_cat) "
+"0",""
+"0","# Transform"
+"0","X_train_cat_imputed = cat_imputer_transform(X_train_cat, cat_imputer) "
+"0",""

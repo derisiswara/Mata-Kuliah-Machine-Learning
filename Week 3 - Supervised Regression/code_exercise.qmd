@@ -1,0 +1,568 @@
+---
+title: Machine Learning Workflow (Simplified) - Exercise
+jupyter: python3
+format:
+  html:
+    toc: true
+---
+
+## Bank Analysis
+
+## Task  
+- **Classification**  
+
+## Objective
+- Predict whether a bank client will subscribe to a **term deposit**.  
+
+---
+
+## Data Description
+
+Download the dataset from the following link: [Data](https://drive.google.com/file/d/1fqat-RFDfiqVeQYN1fy7aZBABf9O6Y-B/view?usp=sharing)
+
+### Bank Client Data
+- **age**: Age of the client (numeric).  
+- **job**: Type of job (categorical: *admin.*, *unknown*, *unemployed*, *management*, *housemaid*, *entrepreneur*, *student*, *blue-collar*, *self-employed*, *retired*, *technician*, *services*).  
+- **marital**: Marital status (categorical: *married*, *divorced*, *single*; *divorced* includes widowed individuals).  
+- **education**: Level of education (categorical: *unknown*, *secondary*, *primary*, *tertiary*).  
+- **default**: Has credit in default? (binary: *yes*, *no*).  
+- **balance**: Average yearly balance in euros (numeric).  
+- **housing**: Has a housing loan? (binary: *yes*, *no*).  
+- **loan**: Has a personal loan? (binary: *yes*, *no*).  
+
+---
+
+### Communication Data from the Last Campaign
+- **contact**: Type of communication used (categorical: *unknown*, *telephone*, *cellular*).  
+- **day**: Last contact day of the month (numeric).  
+- **month**: Last contact month (categorical: *jan*, *feb*, *mar*, ..., *nov*, *dec*).  
+- **duration**: Last contact duration in seconds (numeric).  
+
+---
+
+### Other Attributes
+- **campaign**: Number of contacts performed during this campaign for this client (numeric, includes last contact).  
+- **pdays**: Number of days passed since the client was last contacted in a previous campaign (numeric, -1 means never contacted before).  
+- **previous**: Number of contacts performed before this campaign for this client (numeric).  
+- **poutcome**: Outcome of the previous marketing campaign (categorical: *unknown*, *other*, *failure*, *success*).  
+
+---
+
+### Target Variable (Desired Output)
+- **y**: Has the client subscribed to a term deposit? (binary: *yes*, *no*).  
+
+## Modeling Workflow
+---
+
+```
+1. Import data to Python
+2. Data Preprocessing
+3. Training a Machine Learning Models
+4. Test Prediction
+```
+
+### Import Data to Python
+
+```{python}
+# Import library pengolahan struktur data
+import pandas as pd
+
+# Import library pengolahan angka
+import numpy as np
+```
+
+```{python}
+# Create a function to read the data
+def read_data(fname):
+    data = pd.read_csv(fname)
+    print('Data shape raw               :', data.shape)
+    print('Number of duplicate          :', data.duplicated().sum())
+    data = data.drop_duplicates()
+    print('Data shape after dropping    :', data.shape)
+    print('Data shape final             :', data.shape)
+    return data
+```
+
+```{python}
+# Read the Uber data
+bank_df = read_data(fname='bank-data.csv')
+```
+
+```{python}
+bank_df.head()
+```
+
+###  Data Preprocessing
+
+* Input-Output Split, Train-Test Split
+* Processing Categorical
+* Imputation, Normalization, Drop Duplicates
+
+```{python}
+def extractInputOutput(data,
+                       output_column_name):
+    """
+    Fungsi untuk memisahkan data input dan output
+    :param data: <pandas dataframe> data seluruh sample
+    :param output_column_name: <string> nama kolom output
+    :return input_data: <pandas dataframe> data input
+    :return output_data: <pandas series> data output
+    """
+    output_data = data[output_column_name]
+    input_data = data.drop(output_column_name,
+                           axis = 1)
+    
+    return input_data, output_data
+
+# (data, output_column_name) adalah argumen
+# Argumen adalah sebuah variable. 
+# Jika fungsi tsb. diberi argumen data = bank_df, 
+# maka semua variabel 'data' di dalam fungsi akan berubah menjadi bank_df
+# axis=0 → Menghapus baris berdasarkan index.
+# axis=1 → Menghapus kolom berdasarkan nama kolom.
+```
+```{python}
+# Jangan sampai salah urutan dalam penempatan return
+X, y = extractInputOutput(data = bank_df,
+                          output_column_name = "y")
+```
+```{python}
+# Selalu cek
+X.head()
+```
+```{python}
+y
+```
+
+**Train-Test Split**
+Kenapa?
+Karena tidak mau overfit data training
+Test data akan menjadi future data
+Kita akan latih model ML di data training, dengan CV (Cross-validation)
+Selanjutnya melakukan evaluasi di data testing
+
+```{python}
+# Import train-test splitting library dari sklearn (scikit learn)
+from sklearn.model_selection import train_test_split
+# Train test split
+X_train, X_test, y_train, y_test = train_test_split(X, y,
+                                                    test_size = 0.25,
+                                                    random_state = 12)
+```
+
+**Data Imputation**
+Proses pengisian data yang kosong (NaN)
+Ada 2 hal yang diperhatikan:
+Numerical Imputation
+Categorical Imputation
+
+```{python}
+X_train.isnull().sum()
+```
+
+Data kategorik:
+
+job
+marital
+education
+default
+housing
+loan
+contact
+month
+poutcome
+
+Sisanya adalah data numerik
+
+```{python}
+X_train.columns
+```
+
+```{python}
+# Buat kolom numerik
+numerical_column = ["age", "balance", "day", "duration", 
+                    "campaign", "pdays", "previous"]
+                    # Seleksi dataframe numerik
+X_train_numerical = X_train[numerical_column]
+```
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+```
+
+```{python}
+fig, ax = plt.subplots(nrows=4, ncols=2, figsize=(12, 8))
+axes = ax.flatten()
+
+for i, col in enumerate(X_train_numerical.columns):
+    sns.kdeplot(X_train_numerical[col], ax=axes[i])
+    axes[i].set_title(f'Distribution of {col}')
+
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
+from sklearn.impute import SimpleImputer
+
+def numericalImputation(data, numerical_column):
+    """
+    Fungsi untuk melakukan imputasi data numerik
+    :param data: <pandas dataframe> sample data input
+    :param numerical_column: <list> list kolom numerik data
+    :return X_train_numerical: <pandas dataframe> data numerik
+    :return imputer_numerical: numerical imputer method
+    """
+    # Filter data numerik
+    numerical_data = data[numerical_column]
+
+    # Buat imputer
+    imputer_numerical = SimpleImputer(missing_values = np.nan,
+                                      strategy = "median")
+    imputer_numerical.fit(numerical_data)
+
+    # Transform
+    imputed_data = imputer_numerical.transform(numerical_data)
+    numerical_data_imputed = pd.DataFrame(imputed_data)
+
+    numerical_data_imputed.columns = numerical_column
+    numerical_data_imputed.index = numerical_data.index
+
+    return numerical_data_imputed, imputer_numerical
+```
+
+```{python}
+X_train_numerical, imputer_numerical = numericalImputation(data = X_train,
+                                                           numerical_column = numerical_column)
+```
+
+
+```{python}
+X_train_numerical.isnull().any()
+```
+
+**Categorical Imputation**
+
+```{python}
+# Ambil daftar nama kolom kategorikal
+# Anda bisa langsung menuliskannya atau mengambil list jika jumlahnya banyak
+
+X_train_column = list(X_train.columns)
+categorical_column = list(set(X_train_column).difference(set(numerical_column)))
+```
+
+
+```{python}
+categorical_column
+```
+
+
+```{python}
+# Periksa lagi missing value
+categorical_data = X_train[categorical_column]
+categorical_data.isnull().sum()
+```
+
+
+```{python}
+def categoricalImputation(data, categorical_column):
+    """
+    Fungsi untuk melakukan imputasi data kategorik
+    :param data: <pandas dataframe> sample data input
+    :param categorical_column: <list> list kolom kategorikal data
+    :return categorical_data: <pandas dataframe> data kategorikal
+    """
+    # seleksi data
+    categorical_data = data[categorical_column]
+
+    # lakukan imputasi
+    categorical_data = categorical_data.fillna(value="KOSONG")
+
+    return categorical_data
+
+X_train_categorical = categoricalImputation(data = X_train,
+                                            categorical_column = categorical_column)
+```
+
+
+```{python}
+X_train_categorical.isnull().sum()
+```
+
+**Preprocessing Categorical Variables**
+Kita tidak bisa memasukkan data categorical, jika tidak diubah menjadi numerical
+Solusi: One Hot Encoding (OHE)
+
+```{python}
+categorical_ohe = pd.get_dummies(X_train_categorical)
+categorical_ohe.head()
+```
+
+```{python}
+def extractCategorical(data, categorical_column):
+    """
+    Fungsi untuk ekstrak data kategorikal dengan One Hot Encoding
+    :param data: <pandas dataframe> data sample
+    :param categorical_column: <list> list kolom kategorik
+    :return categorical_ohe: <pandas dataframe> data sample dengan ohe
+    """
+    data_categorical = categoricalImputation(data = data,
+                                             categorical_column = categorical_column)
+    categorical_ohe = pd.get_dummies(data_categorical)
+
+    return categorical_ohe
+
+X_train_categorical_ohe = extractCategorical(data = X_train,
+                                             categorical_column = categorical_column)
+X_train_categorical_ohe.head()
+```
+
+
+```{python}
+# Simpan kolom OHE untuk diimplementasikan dalam testing data
+# Agar shape-nya konsisten
+ohe_columns = X_train_categorical_ohe.columns
+ohe_columns
+```
+
+**Join data Numerical dan Categorical**
+Data numerik & kategorik harus disatukan kembali
+Penyatuan dengan pd.concat
+
+
+```{python}
+X_train_concat = pd.concat([X_train_numerical,
+                            X_train_categorical_ohe],
+                           axis = 1)
+```
+
+```{python}
+X_train_concat.head()
+```
+
+**Standardizing Variables**
+Menyamakan skala dari variabel input
+fit: imputer agar mengetahui mean dan standar deviasi dari setiap kolom
+transform: isi data dengan value yang sudah dinormalisasi
+output dari transform berupa pandas dataframe
+normalize dikeluarkan karena akan digunakan pada data test
+
+```{python}
+from sklearn.preprocessing import StandardScaler
+
+# Buat fungsi
+def standardizerData(data):
+    """
+    Fungsi untuk melakukan standarisasi data
+    :param data: <pandas dataframe> sampel data
+    :return standardized_data: <pandas dataframe> sampel data standard
+    :return standardizer: method untuk standardisasi data
+    """
+    data_columns = data.columns  # agar nama kolom tidak hilang
+    data_index = data.index  # agar index tidak hilang
+
+    # buat (fit) standardizer
+    standardizer = StandardScaler()
+    standardizer.fit(data)
+
+    # transform data
+    standardized_data_raw = standardizer.transform(data)
+    standardized_data = pd.DataFrame(standardized_data_raw)
+    standardized_data.columns = data_columns
+    standardized_data.index = data_index
+
+    return standardized_data, standardizer
+
+X_train_clean, standardizer = standardizerData(data = X_train_concat)
+X_train_clean.head()
+```
+
+### Training Machine Learning
+
+* Choose Score to optimize and Hyperparameter Space
+* Cross-Validation: Random vs Grid Search CV
+* Kita harus mengalahkan benchmark
+
+**Benchmark / Baseline**
+- Baseline untuk evaluasi nanti
+-Karena ini klasifikasi, bisa kita ambil dari proporsi kelas target yang terbesar
+- Dengan kata lain, menebak hasil output marketing response dengan nilai "no" semua tanpa modeling
+
+
+```{python}
+y_train.value_counts(normalize = True)
+
+# baseline akurasi = 88%
+```
+
+**Import Model**
+
+```{python}
+# Import dari sklearn
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+```
+
+**Fitting Model**
+
+```{python}
+# Model K nearest neighbor
+knn = KNeighborsClassifier()
+knn.fit(X_train_clean, y_train)
+```
+```{python}
+# Model Logistic Regression
+logreg = LogisticRegression(random_state = 123)
+logreg.fit(X_train_clean, y_train)
+```
+```{python}
+# Model Random Forest Classifier
+random_forest = RandomForestClassifier(random_state = 123)
+random_forest.fit(X_train_clean, y_train)
+```
+
+```{python}
+# Model Random Forest Classifier 1
+# Mari kita ubah hyperparameter dari random forest --> n_estimator
+# Maksud & tujuan akan dijelaskan pada kelas Random Forest
+# Tambahkan n_estimator = 500
+
+random_forest_1 = RandomForestClassifier(random_state = 123,
+                                         n_estimators = 500)
+random_forest_1.fit(X_train_clean, y_train)
+```
+**Cek performa model di data training**
+```{python}
+benchmark = y_train.value_counts(normalize=True)[0]
+benchmark
+```
+
+```{python}
+# akurasi knn
+knn.score(X_train_clean, y_train)
+```
+```{python}
+# akurasi logistic regression
+logreg.score(X_train_clean, y_train)
+```
+
+```{python}
+# akurasi random forest
+random_forest.score(X_train_clean, y_train)
+```
+```{python}
+# akurasi random forest 1
+random_forest_1.score(X_train_clean, y_train)
+```
+
+```{python}
+predicted_logreg = pd.DataFrame(logreg.predict(X_train_clean))
+predicted_logreg
+```
+
+```{python}
+import joblib
+
+# Simpan model logreg ke dalam folder yang sama dengan notebook
+# dengan nama logreg.pkl
+joblib.dump(logreg, "logreg.pkl")
+
+#joblib.dump(knn, "knn.pkl")
+joblib.dump(random_forest, "random_forest.pkl")
+joblib.dump(random_forest_1, "random_forest_1.pkl")
+```
+
+### Test Prediction
+```{python}
+def extractTest(data,
+                numerical_column, categorical_column, ohe_column,
+                imputer_numerical, standardizer):
+    """
+    Fungsi untuk mengekstrak & membersihkan test data 
+    :param data: <pandas dataframe> sampel data test
+    :param numerical_column: <list> kolom numerik
+    :param categorical_column: <list> kolom kategorik
+    :param ohe_column: <list> kolom one-hot-encoding dari data kategorik
+    :param imputer_numerical: <sklearn method> imputer data numerik
+    :param standardizer: <sklearn method> standardizer data
+    :return cleaned_data: <pandas dataframe> data final
+    """
+    # Filter data
+    numerical_data = data[numerical_column]
+    categorical_data = data[categorical_column]
+
+    # Proses data numerik
+    numerical_data = pd.DataFrame(imputer_numerical.transform(numerical_data))
+    numerical_data.columns = numerical_column
+    numerical_data.index = data.index
+
+    # Proses data kategorik
+    categorical_data = categorical_data.fillna(value="KOSONG")
+    categorical_data.index = data.index
+    categorical_data = pd.get_dummies(categorical_data)
+    categorical_data.reindex(index = categorical_data.index, 
+                             columns = ohe_column)
+
+    # Gabungkan data
+    concat_data = pd.concat([numerical_data, categorical_data],
+                             axis = 1)
+    cleaned_data = pd.DataFrame(standardizer.transform(concat_data))
+    cleaned_data.columns = concat_data.columns
+
+    return cleaned_data
+
+```
+```{python}
+def testPrediction(X_test, y_test, classifier, compute_score):
+    """
+    Fungsi untuk mendapatkan prediksi dari model
+    :param X_test: <pandas dataframe> input
+    :param y_test: <pandas series> output/target
+    :param classifier: <sklearn method> model klasifikasi
+    :param compute_score: <bool> True: menampilkan score, False: tidak
+    :return test_predict: <list> hasil prediksi data input
+    :return score: <float> akurasi model
+    """
+    if compute_score:
+        score = classifier.score(X_test, y_test)
+        print(f"Accuracy : {score:.4f}")
+
+    test_predict = classifier.predict(X_test)
+
+    return test_predict, score
+```
+
+```{python}
+X_test_clean = extractTest(data = X_test,
+                           numerical_column = numerical_column,
+                           categorical_column = categorical_column,
+                           ohe_column = ohe_columns,
+                           imputer_numerical = imputer_numerical,
+                           standardizer = standardizer)
+```
+
+```{python}
+# Logistic Regression Performance
+logreg_test_predict, score = testPrediction(X_test = X_test_clean,
+                                            y_test = y_test,
+                                            classifier = logreg,
+                                            compute_score = True)
+```
+
+```{python}
+# Random Forest Performance
+rf_test_predict, score = testPrediction(X_test = X_test_clean,
+                                        y_test = y_test,
+                                        classifier = random_forest,
+                                        compute_score = True)
+```
+
+```{python}
+# Random Forest 1 Performance
+rf_1_test_predict, score = testPrediction(X_test = X_test_clean,
+                                          y_test = y_test,
+                                          classifier = random_forest_1,
+                                          compute_score = True)  
+```

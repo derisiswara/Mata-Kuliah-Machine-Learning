@@ -1,0 +1,658 @@
+---
+title: Regresi Linier dan Teknik Seleksi Peubah
+jupyter: python3
+format:
+  html:
+    toc: true
+---
+
+## MTCARS Dataset
+
+The MTCARS dataset is a well-known dataset in the field of statistics and machine learning. It contains data extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).
+
+### Variables/Columns:
+- `mpg`: Miles/(US) gallon
+- `cyl`: Number of cylinders
+- `disp`: Displacement (cu.in.)
+- `hp`: Gross horsepower
+- `drat`: Rear axle ratio
+- `wt`: Weight (1000 lbs)
+- `qsec`: 1/4 mile time
+- `vs`: Engine (0 = V-shaped, 1 = straight)
+- `am`: Transmission (0 = automatic, 1 = manual)
+- `gear`: Number of forward gears
+- `carb`: Number of carburetors
+
+This dataset is often used for regression analysis and various machine learning tasks to predict the fuel efficiency (`mpg`) based on the other variables.
+
+`mpg` adalah ukuran efisiensi bahan bakar dalam mil per galon. Dalam konteks ini, kita akan menggunakan variabel `mpg` sebagai variabel target (y) dan variabel lainnya sebagai variabel prediktor (x).
+
+
+## Modeling Workflow
+---
+
+```
+1. Import data to Python
+2. Data Preprocessing
+3. Training a Machine Learning Models
+4. Test Prediction
+```
+
+### Import Data to Python
+
+```{python}
+# Import library pengolahan struktur data
+import pandas as pd
+
+# Import library pengolahan angka
+import numpy as np
+```
+
+```{python}
+# Create a function to read the data
+def read_data(fname):
+    data = pd.read_csv(fname)
+    print('Data shape raw               :', data.shape)
+    print('Number of duplicate          :', data.duplicated().sum())
+    data = data.drop_duplicates()
+    print('Data shape after dropping    :', data.shape)
+    print('Data shape final             :', data.shape)
+    return data
+```
+
+```{python}
+# Read the Uber data
+data = read_data(fname='mtcars.csv')
+data = data.drop(columns = ["model"])
+data.head
+```
+
+###  Data Preprocessing
+
+```{python}
+# Buat input & output
+def split_input_output(data, target_column):
+    X = data.drop(columns = target_column)
+    y = data[target_column]
+
+    return X, y
+
+X, y = split_input_output(data = data,
+                          target_column = "mpg")
+```
+
+```{python}
+# Split train & test
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X,
+                                                    y,
+                                                    test_size = 0.2,
+                                                    random_state = 123)
+X_train.head()                                               
+```
+
+
+```{python}
+###  Data Preprocessing
+X_train.isnull().sum()
+```
+
+
+### Training a Machine Learning Models - Linear Regression
+
+```{python}
+from sklearn.dummy import DummyRegressor
+
+# Create object
+baseline_model = DummyRegressor(strategy='mean')
+
+# Fit object
+baseline_model.fit(X_train, y_train)
+y_train_pred = baseline_model.predict(X_train)
+y_train_pred
+```
+
+```{python}
+from sklearn.metrics import mean_squared_error
+
+mse_baseline_train = mean_squared_error(y_true = y_train,
+                                        y_pred = y_train_pred)
+print(mse_baseline_train)
+```
+
+```{python}
+# Lakukan cross validation
+from sklearn.model_selection import cross_val_score
+
+scores_baseline = cross_val_score(estimator = baseline_model,
+                                  X = X_train,
+                                  y = y_train,
+                                  cv = 5,
+                                  scoring = 'neg_mean_squared_error')
+
+mse_baseline_cv = -np.mean(scores_baseline)
+mse_baseline_cv
+```
+
+```{python}
+from sklearn.linear_model import LinearRegression
+lr = LinearRegression()
+lr.fit(X_train, y_train)
+```
+
+```{python}
+# Predict y_train
+y_train_pred = lr.predict(X_train)
+
+# Cari MSE di data train
+mse_lr_train = mean_squared_error(y_true = y_train,
+                                  y_pred = y_train_pred)
+print(mse_lr_train)
+```
+
+```{python}
+# Lakukan cross validation
+scores_lr = cross_val_score(estimator = lr,
+                            X = X_train,
+                            y = y_train,
+                            cv = 5,
+                            scoring = "neg_mean_squared_error")
+
+mse_lr_cv = -np.mean(scores_lr)
+mse_lr_cv
+```
+
+```{python}
+model_summary = pd.DataFrame({"Model Name": ['Baseline', 'LinearRegression'],
+                              "Model": [baseline_model, lr],
+                              "MSE Train": [mse_baseline_train, mse_lr_train],
+                              "MSE CV": [mse_baseline_cv, mse_lr_cv]})
+
+model_summary
+```
+
+### Test Prediction
+```{python}
+# Cek test scores
+y_pred_test = lr.predict(X_test)
+
+# Cari MSE data test
+test_score = mean_squared_error(y_true = y_test,
+                                y_pred = y_pred_test)
+test_score
+```
+
+```{python}
+# Ekstrak model parameter
+coef_ = lr.coef_
+intercept_ = lr.intercept_
+lr_params = np.append(coef_, intercept_)
+
+lr_params = pd.DataFrame(lr_params,
+                         index = list(X_train.columns) + ["constant"],
+                         columns = ["coefficient"])
+lr_params
+```
+
+
+```{python}
+def fit_model(estimator, X_train, y_train):
+    """Fungsi untuk fitting model"""
+    # 1. Fitting model
+    estimator.fit(X_train, y_train)
+
+    # 2. Cari evaluasi di data train & valid
+    y_pred_train = estimator.predict(X_train)
+    train_score = mean_squared_error(y_true = y_train,
+                                     y_pred = y_pred_train)
+
+    valid_scores = cross_val_score(estimator = estimator,
+                                   X = X_train,
+                                   y = y_train,
+                                   cv = 5,
+                                   scoring = 'neg_mean_squared_error')
+    cv_score = -np.mean(valid_scores)
+
+    # 3. Ekstrak coefficient
+    coef_ = estimator.coef_
+    intercept_ = estimator.intercept_
+    estimator_params = np.append(coef_, intercept_)
+
+    estimator_params_df = pd.DataFrame(estimator_params,
+                                       index = list(X_train.columns) + ["constant"],
+                                       columns = ["coefficient"])
+
+    return estimator, train_score, cv_score, estimator_params_df
+```
+
+Tanda negatif (-) digunakan karena Scikit-Learn mengembalikan error dalam bentuk negatif untuk menjaga konsistensi dengan metrik lain (di mana nilai lebih tinggi lebih baik). Oleh karena itu, kita harus mengalikannya dengan -1 agar mendapatkan nilai MSE dalam bentuk yang benar (positif).
+
+```{python}
+from sklearn.linear_model import LinearRegression
+lr, train_score, cv_score, lr_params_df = fit_model(estimator = LinearRegression(),
+                                                    X_train = X_train,
+                                                    y_train = y_train)
+
+print(f"train score: {train_score:.3f}, cv score: {cv_score:.3f}")
+```
+
+## Subset Selection
+
+```{python}
+import statsmodels.api as sm
+from itertools import combinations
+```
+
+```{python}
+column_list = list(X_train.columns)
+n_column = len(column_list)
+
+column_list
+```
+
+```{python}
+train_column_list = []
+
+for i in range(n_column):
+    list_of_combination = combinations(column_list, i)
+    for combi in list_of_combination:
+        train_column_list.append(list(combi))
+
+# tambahkan seluruh kolom
+train_column_list.append(column_list)
+```
+
+```{python}
+len(train_column_list)
+```
+
+```{python}
+idx = 95
+train_list_idx = train_column_list[idx]
+train_list_idx
+```
+
+```{python}
+
+train_score = []
+cv_score = []
+
+for idx in range(len(train_column_list)):
+    if idx != 0:
+        # Filter data
+        train_list_idx = train_column_list[idx]
+        X_train_idx = X_train[train_list_idx]
+
+        # Buat model
+        _, train_idx, cv_idx, _ = fit_model(estimator = LinearRegression(),
+                                            X_train = X_train_idx,
+                                            y_train = y_train)
+
+        # Simpan hasil
+        train_score.append(train_idx)
+        cv_score.append(cv_idx)
+```
+
+```{python}
+import matplotlib.pyplot as plt
+# Plot hasil
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(15, 8))
+
+ax.boxplot([train_score, cv_score])
+
+ax.set_xticklabels(["TRAIN", "CV"])
+ax.set_ylabel("MSE")
+plt.show()
+```
+
+```{python}
+# Cari best di data validasi
+best_score = np.min(cv_score)
+best_idx = np.argmin(cv_score)
+
+best_idx, best_score
+```
+
+```{python}
+# Best features
+train_column_list[best_idx + 1]
+```
+
+
+```{python}
+# Find model
+lr_best, train_best_score, \
+        cv_best_score, lr_params_best = fit_model(estimator = LinearRegression(),
+                                                  X_train = X_train[train_column_list[best_idx+1]],
+                                                  y_train = y_train)
+
+print('Train score :', train_best_score)
+print('CV score    :', cv_best_score)
+```
+
+```{python}
+lr_params_best
+```
+
+### Test Prediction
+
+```{python}
+# Cek test scores
+y_pred_test = lr_best.predict(X_test[train_column_list[best_idx+1]])
+
+# Cari MSE data test
+test_score = mean_squared_error(y_true = y_test,
+                                y_pred = y_pred_test)
+test_score
+```
+
+
+## Conclusion 1
+
+```{python}
+best_scores_df = pd.DataFrame({"Model": ["Baseline", "OLS full features", "OLS best features"],
+                               "CV Scores": [mse_baseline_cv, mse_lr_cv, cv_best_score]})
+
+best_scores_df
+```
+
+Sedikit lebih besar dibandingkan dengan model OLS full features. Mana yang lebih baik? Tentu saja, kita harus melihat trade-off antara kompleksitas model dan performa. Jika performa model tidak meningkat secara signifikan, kita mungkin lebih memilih model yang lebih sederhana.
+
+Ingat trade-off antara bias dan varians!
+
+## Shrinkage Methods: Ridge, Lasso, Elastic Net
+
+```{python}
+from sklearn.linear_model import Ridge, Lasso, ElasticNet
+from sklearn.model_selection import GridSearchCV
+```
+
+### Ridge
+
+```{python}
+alphas = [0.5, 1.0, 2.5, 5.0, 7.5, 10.0,
+          12.5, 15.0, 17.5, 30.0, 50.0]
+
+mse_train_list = []
+mse_cv_list = []
+model_list = []
+
+for alpha in alphas:
+    model_i, train_score_i, \
+        cv_score_i, model_param_i = fit_model(estimator = Ridge(alpha=alpha),
+                                              X_train = X_train,
+                                              y_train = y_train)
+
+    mse_train_list.append(train_score_i)
+    mse_cv_list.append(cv_score_i)
+    model_list.append(model_param_i)
+```
+
+```{python}
+# Plot error
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 6))
+
+ax.plot(alphas, mse_train_list, c="r", marker=".", label="Train")
+ax.plot(alphas, mse_cv_list, c="g", marker=".", label="CV")
+
+ax.set_xlabel("alpha")
+ax.set_ylabel("MSE")
+
+plt.grid()
+plt.legend()
+plt.show()
+```
+
+```{python}
+# Best parameter adalah saat MSE di CV paling kecil
+best_idx = np.argmin(mse_cv_list)
+best_alpha = alphas[best_idx]
+best_ridge_cv = mse_cv_list[best_idx]
+
+best_alpha, best_ridge_cv
+```
+
+```{python}
+# Best model
+best_param_ridge = model_list[best_idx]
+best_param_ridge
+```
+
+Cara lebih cepat dengan GridSearchCV
+
+```{python}
+# Buat model & parameter model yang ingin divariasikan
+ridge = Ridge()
+
+param_space = {"alpha": alphas}
+param_space
+```
+
+```{python}
+# Lakukan grid search dengan CV
+cv_ridge = GridSearchCV(estimator = ridge,
+                        param_grid = param_space,
+                        scoring = "neg_mean_squared_error",
+                        cv = 5)
+
+# Fit searching
+cv_ridge.fit(X = X_train,
+             y = y_train)
+```
+
+```{python}
+cv_ridge.best_params_
+```
+
+```{python}
+# Buat objek baru
+best_ridge = Ridge(alpha = cv_ridge.best_params_["alpha"])
+
+# Fit model
+best_ridge.fit(X = X_train,
+               y = y_train)
+```
+
+```{python}
+best_ridge.coef_
+```
+
+
+### Lasso
+
+```{python}
+alphas = [0.05, 0.10, 0.15, 0.20, 0.25, 1.00,
+          1.25, 1.50, 1.75, 3.00, 5.00]
+
+mse_train_list = []
+mse_cv_list = []
+model_list = []
+
+for alpha in alphas:
+    model_i, train_score_i, \
+        cv_score_i, model_param_i = fit_model(estimator = Lasso(alpha=alpha),
+                                              X_train = X_train,
+                                              y_train = y_train)
+
+    mse_train_list.append(train_score_i)
+    mse_cv_list.append(cv_score_i)
+    model_list.append(model_param_i)
+```
+
+
+```{python}
+# Plot error
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 6))
+
+ax.plot(alphas, mse_train_list, c="r", marker=".", label="Train")
+ax.plot(alphas, mse_cv_list, c="g", marker=".", label="CV")
+
+ax.set_xlabel("alpha")
+ax.set_ylabel("MSE")
+
+plt.grid()
+plt.legend()
+plt.show()
+```
+
+
+```{python}
+# Best parameter adalah saat MSE di CV paling kecil
+best_idx = np.argmin(mse_cv_list)
+best_alpha = alphas[best_idx]
+best_lasso_cv = mse_cv_list[best_idx]
+best_alpha, best_lasso_cv
+```
+
+
+```{python}
+# Best model
+best_param_lasso = model_list[best_idx]
+best_param_lasso
+```
+
+Dengan GridSearchCV
+
+
+```{python}
+# Buat model & parameter model yang ingin divariasikan
+lasso = Lasso()
+param_space = {"alpha": alphas}
+
+# Lakukan grid search dengan CV
+cv_lasso = GridSearchCV(estimator = lasso,
+                        param_grid = param_space,
+                        scoring = "neg_mean_squared_error",
+                        cv = 5)
+
+# Fit searching
+cv_lasso.fit(X = X_train,
+             y = y_train)
+```
+
+```{python}
+cv_lasso.best_params_
+```
+
+```{python}
+# Buat objek baru
+best_lasso = Lasso(alpha = cv_lasso.best_params_["alpha"])
+
+# Fit model
+best_lasso.fit(X = X_train,
+               y = y_train)
+```
+
+
+```{python}
+best_lasso.coef_
+```
+
+### Elastic Net
+
+Langsung dengan GridSearchCV
+
+```{python}
+alphas = [0.05, 0.10, 0.15, 0.20, 0.25, 1.00, 1.25, 1.50, 1.75, 3.00, 5.00]
+l1_ratios = [0.1, 0.5, 0.7, 0.9, 1.0]
+```
+
+```{python}
+# Buat model & parameter model yang ingin divariasikan
+elastic = ElasticNet()
+param_space = {"alpha": alphas,
+               "l1_ratio": l1_ratios}
+
+# Lakukan grid search dengan CV
+cv_elastic = GridSearchCV(estimator = elastic,
+                          param_grid = param_space,
+                          scoring = "neg_mean_squared_error",
+                          cv = 5)
+# Fit searching
+cv_elastic.fit(X = X_train,
+               y = y_train)                           
+```
+
+```{python}
+cv_elastic.best_params_
+```
+
+```{python}
+# Buat objek baru
+best_elastic = ElasticNet(alpha = cv_elastic.best_params_["alpha"],
+                          l1_ratio = cv_elastic.best_params_["l1_ratio"])
+best_elastic.fit(X = X_train,
+                 y = y_train)                             
+```
+
+```{python}
+best_elastic.coef_
+```
+
+```{python}
+# Cek scores cv from cv_elastic best
+best_elastic_cv = -cv_elastic.best_score_
+best_elastic_cv
+```
+
+## Conclusion 2
+
+```{python}
+best_params = pd.concat([lr_params_df,
+                         lr_params_best,
+                         best_param_ridge,
+                         best_param_lasso,
+                         pd.DataFrame(best_elastic.coef_, index=X_train.columns, columns=["ElasticNet"])],
+                        axis=1)
+best_params.columns = ["OLS full features", "OLS best features", "Ridge", "Lasso", "ElasticNet"]
+best_params
+```
+
+```{python}
+# Skor MSE
+best_scores_df = pd.DataFrame({"Model": ["Baseline", "OLS full features", "OLS best features", "Ridge", "Lasso", "ElasticNet"],
+                               "MSE": [mse_baseline_cv, mse_lr_cv, cv_best_score, best_ridge_cv, best_lasso_cv, best_elastic_cv]})
+
+best_scores_df
+```
+
+```{python}
+# Cek test scores
+def mse_model(estimator, X_test, y_test):
+    # Predict
+    y_pred = estimator.predict(X_test)
+
+    # Cari mse
+    mse = mean_squared_error(y_test, y_pred)
+
+    return mse
+
+mse_model(estimator = lr_best,
+          X_test = X_test[lr_params_best.index[:-1]],
+          y_test = y_test)
+```
+
+```{python}
+mse_model(estimator = best_elastic,
+          X_test = X_test,
+          y_test = y_test)
+```
+
+```{python}
+# Evaluate all models on the test set
+test_scores = {
+    "Baseline": mse_model(estimator=baseline_model, X_test=X_test, y_test=y_test),
+    "OLS full features": mse_model(estimator=lr, X_test=X_test, y_test=y_test),
+    "OLS best features": mse_model(estimator=lr_best, X_test=X_test[lr_params_best.index[:-1]], y_test=y_test),
+    "Ridge": mse_model(estimator=best_ridge, X_test=X_test, y_test=y_test),
+    "Lasso": mse_model(estimator=best_lasso, X_test=X_test, y_test=y_test),
+    "ElasticNet": mse_model(estimator=best_elastic, X_test=X_test, y_test=y_test)
+}
+
+test_scores_df = pd.DataFrame(list(test_scores.items()), columns=["Model", "Test MSE"])
+test_scores_df
+```
+
+## References
+
+https://scikit-learn.org/stable/modules/linear_model.html#

@@ -1,0 +1,52 @@
+---
+title: Machine Learning Workflow (Simplified) - Exercise
+jupyter: python3
+format:
+  html:
+    toc: true
+---
+
+## Bank Analysis
+
+## Task  
+- **Classification**  
+
+## Objective
+- Predict whether a bank client will subscribe to a **term deposit**.  
+
+---
+
+## Data Description
+
+Download the dataset from the following link: [Data](https://drive.google.com/file/d/1fqat-RFDfiqVeQYN1fy7aZBABf9O6Y-B/view?usp=sharing)
+
+### Bank Client Data
+- **age**: Age of the client (numeric).  
+- **job**: Type of job (categorical: *admin.*, *unknown*, *unemployed*, *management*, *housemaid*, *entrepreneur*, *student*, *blue-collar*, *self-employed*, *retired*, *technician*, *services*).  
+- **marital**: Marital status (categorical: *married*, *divorced*, *single*; *divorced* includes widowed individuals).  
+- **education**: Level of education (categorical: *unknown*, *secondary*, *primary*, *tertiary*).  
+- **default**: Has credit in default? (binary: *yes*, *no*).  
+- **balance**: Average yearly balance in euros (numeric).  
+- **housing**: Has a housing loan? (binary: *yes*, *no*).  
+- **loan**: Has a personal loan? (binary: *yes*, *no*).  
+
+---
+
+### Communication Data from the Last Campaign
+- **contact**: Type of communication used (categorical: *unknown*, *telephone*, *cellular*).  
+- **day**: Last contact day of the month (numeric).  
+- **month**: Last contact month (categorical: *jan*, *feb*, *mar*, ..., *nov*, *dec*).  
+- **duration**: Last contact duration in seconds (numeric).  
+
+---
+
+### Other Attributes
+- **campaign**: Number of contacts performed during this campaign for this client (numeric, includes last contact).  
+- **pdays**: Number of days passed since the client was last contacted in a previous campaign (numeric, -1 means never contacted before).  
+- **previous**: Number of contacts performed before this campaign for this client (numeric).  
+- **poutcome**: Outcome of the previous marketing campaign (categorical: *unknown*, *other*, *failure*, *success*).  
+
+---
+
+### Target Variable (Desired Output)
+- **y**: Has the client subscribed to a term deposit? (binary: *yes*, *no*).  

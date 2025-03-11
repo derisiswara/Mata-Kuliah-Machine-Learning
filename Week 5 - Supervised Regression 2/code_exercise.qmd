@@ -1,0 +1,362 @@
+---
+title: Regresi Tak Linier
+jupyter: python3
+format:
+  html:
+    toc: true
+---
+
+## Wage Data
+
+Dataset ini berisi informasi terkait individu, termasuk gaji, pendidikan, pengalaman kerja, dan karakteristik demografis lainnya. Berikut adalah definisi dari setiap variabel:
+
+| **Kolom**      | **Tipe Data** | **Deskripsi** |
+|---------------|-------------|--------------|
+| `wage`       | Numerik (float) | Gaji individu dalam satuan dolar per minggu |
+| `education`  | Numerik (int) | Jumlah tahun pendidikan formal yang telah ditempuh individu |
+| `experience` | Numerik (int) | Jumlah tahun pengalaman kerja individu |
+| `ethnicity`  | Kategorikal (string) | Kelompok etnis individu |
+| `area_type`  | Kategorikal (string) | Jenis area tempat tinggal individu |
+| `region`     | Kategorikal (string) | Wilayah geografis tempat individu bekerja |
+| `parttime`   | Kategorikal (string) | Status pekerjaan individu, apakah part-time atau full-time |
+
+### Pemodelan
+
+Tujuan: Memprediksi gaji individu berdasarkan variabel-variabel yang ada. Variabel `wage` akan dijadikan variabel target (Y). Sisanya akan dijadikan variabel prediktor (X).
+
+```{python}
+import pandas as pd
+import numpy as np
+
+df1 = pd.read_csv('wagedata.csv')
+df1.head()
+```
+
+### Desktiptif
+
+```{python}
+df1.info()
+```
+
+## Data Preprocessing
+
+### Exploratory Data Analysis (EDA)
+
+!! Latihan !!
+
+Lakukan eksplorasi data terhadap seluruhan variabel yang ada. Silahkan lakukan:
+- Statistik deskriptif untuk variabel numerik
+- Frekuensi untuk variabel kategorikal
+- Visualisasi distribusi data untuk variabel numerik
+- Visualisasi frekuensi untuk variabel kategorikal
+- Visualisasi hubungan antara variabel `wage` dan variabel prediktor lainnya. Misal nya, hubungan antara `wage` dan `experience` dengan scatter plot. Hubungan antara `wage` dan `education` dengan boxplot.
+- Buat scatter plot antara `wage` dan `experience` di mana `wage` diubah menjadi skala logaritmik.
+
+### Split Input Output
+
+```{python}
+def split_input_output(data, target_col):
+    X = data.drop(columns=target_col)
+    y = data[target_col]
+    print('X shape:', X.shape)
+    print('y shape:', y.shape)
+    return X, y
+```
+
+```{python}
+X, y = split_input_output(data=df1,
+                          target_col='wage')
+```
+
+```{python}
+X.head()  
+```
+
+```{python}
+y.head()
+```
+
+### Train Test Split
+
+```{python}
+from sklearn.model_selection import train_test_split
+def split_train_test(X, y, test_size, seed):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=seed)
+    print('X train shape:', X_train.shape)
+    print('y train shape:', y_train.shape)
+    print('X test shape :', X_test.shape)
+    print('y test shape :', y_test.shape)
+    return X_train, X_test, y_train, y_test
+```
+
+```{python}
+X_train, X_test, y_train, y_test =  split_train_test(X, y, test_size=0.1, seed=123) 
+```
+
+```{python}
+X_train.head()
+```
+
+```{python}
+y_train.head()
+```
+
+### Split Numerik Kategorikal
+
+```{python}
+def split_num_cat(data, num_cols, cat_cols):
+    data_num = data[num_cols]
+    data_cat = data[cat_cols]
+    print('Data num shape:', data_num.shape)
+    print('Data cat shape:', data_cat.shape)
+    return data_num, data_cat
+```
+
+```{python}
+num_cols = ['education', 'experience']
+cat_cols = ['ethnicity', 'area_type', 'region', 'parttime']
+
+X_train_num, X_train_cat = split_num_cat(X_train, num_cols, cat_cols) 
+```
+
+### One-Hot Encoding
+
+```{python}
+from sklearn.preprocessing import OneHotEncoder
+def cat_encoder_fit(data):
+    encoder = OneHotEncoder(sparse=False, handle_unknown='ignore')
+    encoder.fit(data)
+    return encoder
+
+def cat_encoder_transform(data, encoder):
+    data_encoded = encoder.transform(data)
+    data_encoded = pd.DataFrame(data_encoded, columns=encoder.get_feature_names_out(data.columns), index=data.index)
+    return data_encoded
+```
+
+```{python}
+cat_encoder = cat_encoder_fit(X_train_cat) 
+X_train_cat_encoded = cat_encoder_transform(X_train_cat, cat_encoder) 
+```
+
+```{python}
+print('Original shape:', X_train_cat.shape)
+print('Encoded shape :', X_train_cat_encoded.shape)
+```
+
+```{python}
+X_train_cat.head()
+```
+
+```{python}
+X_train_cat_encoded.head()
+```
+
+### Gabungkan Data
+
+
+```{python}
+def concat_data(num_data, cat_data):
+    data = pd.concat((num_data, cat_data), axis=1)
+    return data
+```
+
+```{python}
+X_train_concat = concat_data(X_train_num, X_train_cat_encoded)
+print('Numerical data shape  :', X_train_num.shape)
+print('Categorical data shape:', X_train_cat_encoded.shape)
+print('Concat data shape     :', X_train_concat.shape)
+```
+
+### Fungsi Preprocessing
+
+```{python}
+def preprocess_data(data, num_cols, cat_cols, cat_encoder):
+    X_num, X_cat = split_num_cat(data, num_cols, cat_cols)
+    X_cat_encoded = cat_encoder_transform(X_cat, cat_encoder)
+    X_concat = concat_data(X_num, X_cat_encoded)
+    return X_concat
+```
+
+```{python}
+X_train_clean = preprocess_data(X_train, num_cols, cat_cols, cat_encoder)
+X_train_clean.head()
+```
+
+```{python}
+X_train_clean.shape
+```
+
+## Train Model
+
+### Dummy Regression
+
+```{python}
+from sklearn.dummy import DummyRegressor
+reg_1 = DummyRegressor()
+reg_1.fit(X_train_clean, y_train)
+```
+
+### Linear Regression
+```{python}
+from sklearn.linear_model import LinearRegression
+reg_2 = LinearRegression()
+reg_2.fit(X_train_clean, y_train)
+```
+
+### Polynomial Regression
+
+```{python}
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LinearRegression
+
+# Tentukan kolom numerik dan kategorikal
+numeric_features = ["experience"]  # Hanya `experience` yang akan dipolynomialkan
+other_features = ["education"]  # Fitur numerik lainnya tetap sama
+
+# Buat transformer untuk polynomial hanya pada `experience`
+poly_transformer = ColumnTransformer([
+    ("poly_exp", PolynomialFeatures(degree=2, include_bias=False), ["experience"]),
+    ("passthrough", "passthrough", other_features)  # Fitur lain tidak diubah
+])
+
+# Buat pipeline regresi dengan polynomial transformation hanya untuk `experience`
+reg_3 = Pipeline([
+    ("poly_features", poly_transformer),
+    ("regressor", LinearRegression())
+])
+
+# Latih model dengan data
+reg_3.fit(X_train_clean, y_train)
+```
+
+```{python}
+# `experience` dan `education` diubah menjadi polynomial
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.pipeline import make_pipeline
+poly_features = PolynomialFeatures(degree=2, include_bias=False)
+reg_4 = make_pipeline(poly_features, LinearRegression())
+reg_4.fit(X_train_clean, y_train)
+```
+
+### Regresi Piecewise
+
+```{python}
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import FunctionTransformer, OneHotEncoder
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+
+# Definisi fungsi transformasi piecewise untuk `experience`
+def piecewise_transform(X):
+    return np.where(X < 10, X, 10 + (X - 10) * 0.5)
+
+# FunctionTransformer untuk `experience`
+piecewise_transformer = FunctionTransformer(piecewise_transform, validate=True)
+
+# Tentukan fitur
+numeric_features = ["experience"]  # Hanya `experience` yang mendapat transformasi piecewise
+other_numeric_features = ["education"]  # Tetap digunakan tanpa perubahan
+categorical_features = ["region", "parttime"]  # Kategorikal yang perlu encoding
+
+# Gunakan ColumnTransformer untuk menerapkan transformasi
+preprocessor = ColumnTransformer([
+    ("piecewise_exp", piecewise_transformer, ["experience"]),  # Piecewise untuk `experience`
+    ("passthrough", "passthrough", other_numeric_features)
+])
+
+# Buat pipeline regresi
+reg_5 = Pipeline([
+    ("preprocessor", preprocessor),
+    ("regressor", LinearRegression())
+])
+
+# Latih model dengan data
+reg_5.fit(X_train_clean, y_train)
+```
+
+### Regresi Spline
+
+```{python}
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import SplineTransformer
+
+# Tentukan fitur numerik dan kategorikal
+numeric_features = ["experience"]  # Hanya `experience` yang akan menggunakan Spline
+other_numeric_features = ["education"]  # Fitur numerik lain tetap tanpa transformasi
+categorical_features = ["region", "parttime"]  # Fitur kategorikal
+
+# Buat ColumnTransformer untuk menerapkan Spline hanya ke `experience`
+preprocessor = ColumnTransformer([
+    ("spline_exp", SplineTransformer(degree=2, n_knots=4, include_bias=False), ["experience"]),
+    ("pass_numeric", "passthrough", other_numeric_features)
+])
+
+# Buat pipeline regresi dengan spline transformation + prediktor lainnya
+reg_6 = Pipeline([
+    ("preprocessor", preprocessor),
+    ("regressor", LinearRegression())
+])
+
+# Latih model dengan data
+reg_6.fit(X_train_clean, y_train)
+```
+
+### Evaluasi Model
+
+```{python}
+from sklearn.metrics import mean_squared_error
+def evaluate_model(model, X, y):
+    y_pred = model.predict(X)
+    rmse = mean_squared_error(y, y_pred, squared=False)
+    return rmse
+```
+
+```{python}
+rmse_1 = evaluate_model(reg_1, X_train_clean, y_train)
+rmse_2 = evaluate_model(reg_2, X_train_clean, y_train)
+rmse_3 = evaluate_model(reg_3, X_train_clean, y_train)
+rmse_4 = evaluate_model(reg_4, X_train_clean, y_train)
+rmse_5 = evaluate_model(reg_5, X_train_clean, y_train)
+rmse_6 = evaluate_model(reg_6, X_train_clean, y_train)
+
+print('RMSE Dummy Regressor:', rmse_1)
+print('RMSE Linear Regressor:', rmse_2)
+print('RRMSE Polynomial Regressor:', rmse_3)
+print('RMSE Polynomial Regressor 2:', rmse_4)
+print('RMSE Piecewise Regressor:', rmse_5)
+print('RMSE Spline Regressor:', rmse_6)
+```
+
+### Evaluasi Model Data Test
+
+```{python}
+X_test_clean = preprocess_data(X_test, num_cols, cat_cols, cat_encoder)
+X_test_clean.head()
+```
+
+```{python}
+rmse_1_test = evaluate_model(reg_1, X_test_clean, y_test)
+rmse_2_test = evaluate_model(reg_2, X_test_clean, y_test)
+rmse_3_test = evaluate_model(reg_3, X_test_clean, y_test)
+rmse_4_test = evaluate_model(reg_4, X_test_clean, y_test)
+rmse_5_test = evaluate_model(reg_5, X_test_clean, y_test)
+rmse_6_test = evaluate_model(reg_6, X_test_clean, y_test)
+
+print('RMSE Dummy Regressor:', rmse_1_test)
+print('RMSE Linear Regressor:', rmse_2_test)
+print('RRMSE Polynomial Regressor:', rmse_3_test)
+print('MSE Polynomial Regressor 2:', rmse_4_test)
+print('RMSE Piecewise Regressor:', rmse_5_test)
+print('RMSE Spline Regressor:', rmse_6_test)
+```
+
+Manakah model yang paling baik?
+
+Tugas: Buatkan model regresi tak linier lainnya dengan memodifikasi model yang sudah ada. Bandingkan performa model yang baru dengan model yang sudah ada. Apakah model baru lebih baik?

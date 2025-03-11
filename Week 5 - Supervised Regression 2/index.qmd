@@ -1,0 +1,150 @@
+---
+title: "Mata Kuliah: Machine Learning"
+subtitle: "Regresi Tak Linear"
+format:
+  revealjs: 
+    slide-number: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: img/Logo-Horizontal.png
+    css: styles.css
+    footer: '[@2025 - Deri Siswara](https://derisiswara.quarto.pub/ml_w5)'
+---
+
+## Pendahuluan {.smaller}
+
+Regresi tak linear adalah salah satu metode regresi yang memodelkan hubungan antara input dan output dengan menggunakan fungsi-fungsi matematika yang tidak linier.
+
+![](https://study.com/cimages/multimages/16/linear_function_vs_nonlinear_function.png){.absolute top="200"}
+
+## Pendahuluan {.smaller}
+
+Apa fungsi regresi yang paling _fit_ untuk data berikut?  
+
+```{python}
+#| echo: false
+# import wagedata.csv and making scatter plot wage vs experience
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+```
+
+```{python}
+# Atur besar plot
+plt.rcParams['figure.figsize'] = [15, 7]
+df1 = pd.read_csv('wagedata.csv')
+plt.scatter(df1['experience'], np.log(df1['wage']),color='black', s=20)
+plt.xlabel('Pengalaman Kerja (Tahun)')
+plt.ylabel('Dolar per Minggu (Ln)')
+plt.title('Hubungan Upah dan Pengalaman Kerja')
+plt.show()
+```
+
+## Pendahuluan {.smaller}
+
+Hubungan antara upah dan pengalaman kerja dapat dijelaskan dengan fungsi regresi tak linier. Semakin lama pengalaman kerja, upah yang diterima akan meningkat, namun maksimumnya akan tercapai. Setelah mencapai titik maksimum, upah akan tetap konstan atau bahkan menurun seiring bertambahnya pengalaman kerja.
+
+```{python}
+# Atur besar plot
+plt.rcParams['figure.figsize'] = [10, 5]
+# Plot log(wage) terhadap experience
+plt.scatter(df1['experience'], np.log(df1['wage']), label='Data', color='black', s=20)
+plt.xlabel('Pengalaman Kerja (Tahun)')
+plt.ylabel('Dolar per Minggu (Ln)')
+plt.title('Hubungan Upah dan Pengalaman Kerja')
+
+# Garis regresi pertama
+experience_range = np.linspace(df1['experience'].min(), df1['experience'].max(), 100)
+plt.plot(experience_range, 5 + 0.01 * experience_range, color='blue', linestyle='--', label='Garis Regresi: a = 5, b = 0.01')
+
+# Garis regresi kedua dengan fungsi LinearRegression atau OLS
+model = LinearRegression()
+X = df1[['experience']]
+y = np.log(df1['wage'])
+model.fit(X, y)
+y_pred = model.predict(X)
+plt.plot(df1['experience'], y_pred, color='red', label='Garis Regresi: OLS')
+
+# Add quadratic function to the plot
+quadratic_model = LinearRegression()
+X_quad = np.column_stack((df1['experience'], df1['experience']**2))
+quadratic_model.fit(X_quad, np.log(df1['wage']))
+order_id = np.argsort(df1['experience'])
+plt.plot(df1['experience'][order_id], quadratic_model.predict(X_quad)[order_id], color='green', linewidth=2, label='Regresi Tak Linear: Kuadratik')
+
+# Tambahkan label untuk kedua garis
+plt.legend(loc='lower right')
+plt.show()
+```
+
+
+## Startegi Menghadapi Pola Tak Linear {.smaller}
+
+- Transformasi Variabel: Mengubah variabel input atau output dengan fungsi matematika tertentu, dengan harapan data hasil transformasi memiliki pola linier.
+- Melakukan pemodelan per cluster atau segmentasi data.
+- Menggunakan fungsi regresi tak linier. Misalnya, regresi polinomial, regresi piecewise, regresi spline, regresi generalized additive model (GAM),
+- Menggunakan metode _machine learning_ lain seperti _random forest_, _support vector machine_, _neural network_, _deep learning_, dan lain-lain.
+- Pemulusan (_smoothing_) data.
+
+## Transformasi Variabel {.smaller}
+
+![](img/trans.png){.absolute}
+
+## Regresi Polinomial {.smaller}
+
+#### Model:
+
+$$
+Y = \beta_0 + \beta_1 X + \beta_2 X^2 + \ldots + \beta_p X^d + \epsilon
+$$
+
+di mana $d$ adalah derajat polinomial.
+
+Derajat polinomial yang sering digunakan adalah derajat 2 (kuadratik) dan derajat 3 (kubik).
+
+Derajat polinomial yang tinggi dapat menyebabkan _overfitting_. Kurva berbentuk terlalu liar, terutama pada bagian ujung.
+
+![](img/poli.png){.absolute top="400" } 
+
+## Fungsi Tangga (Piecewise) {.smaller}
+
+#### Model:
+
+$$
+Y = \beta_0 + \beta_1 I(X \leq c_1) + \beta_2 I(c_1 < X \leq c_2) + \ldots + \beta_k I(c_{k-1} < X \leq c_k) + \epsilon
+$$
+
+di mana $I$ adalah fungsi indikator.
+
+Fungsi tangga membagi data menjadi beberapa segmen dan memodelkan setiap segmen dengan fungsi linier.
+
+Setiap segmen memiliki _intercept_ dan _slope_ yang berbeda. 
+
+![](img/tangga.png){.absolute top="400" } 
+
+## Regresi Spline {.smaller}
+
+Regresi spline adalah metode regresi yang membagi data menjadi beberapa segmen dan memodelkan setiap segmen dengan fungsi polinomial. Regresi ini adalah generalisasi dari regresi polinomial dan regresi tangga.
+
+Kelebihan regresi spline adalah fleksibilitas dalam menangkap pola data yang kompleks.
+
+![](img/spline.png){.absolute top="300" }
+
+## Pemulusan Data (Smoothing) {.smaller}
+
+Pemulusan data adalah teknik untuk mengurangi fluktuasi atau noise dalam data sehingga pola utama lebih mudah terlihat. Teknik ini sering digunakan dalam analisis deret waktu. **Metode Pemulusan Data**:
+
+- **Moving Average**: Menghitung rata-rata dari sejumlah titik data dalam jendela bergerak.
+- **Exponential Smoothing**: Memberikan bobot yang lebih besar pada titik data yang lebih baru.
+- **LOESS (Locally Estimated Scatterplot Smoothing)**: Menggunakan regresi lokal untuk memuluskan data.
+
+![](https://bpcdn.co/images/2015/03/27153236/EMA-vs-SMA-780x443.png){.absolute top="400" width="400" height="200" left="300"}
+
+# [Code Exercise](http://derisiswara.quarto.pub/week5_ml/) {.smaller}
+
+##  Reference {.smaller}
+
+- James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An Introduction to Statistical Learning: With Applications in R. New York: Springer.
+- Hastie, T., Tibshirani, R., & Friedman, J. (2009). The Elements of Statistical Learning: Data Mining, Inference, and Prediction (2nd ed.). New York: Springer Science and Business Media.

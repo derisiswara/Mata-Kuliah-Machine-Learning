@@ -1,0 +1,422 @@
+---
+title: Week 6 - Code Exercise
+jupyter: python3
+format:
+  html:
+    toc: true
+---
+
+## Modeling Workflow
+---
+
+```
+1. Data Understanding
+2. Data Exploration and Preprocessing
+3. Training a Machine Learning Models
+4. Test Prediction
+```
+
+## Data Understanding
+### Airbnb Prices European Cities (Dataset) 
+
+About [Dataset](https://www.kaggle.com/datasets/cahyaalkahfi/airbnb-european-cities-join/)
+
+This dataset provides Airbnb price information from various cities in Europe, including Amsterdam, Athens, Barcelona, Berlin, Budapest, Lisbon, London, Paris, Rome, and Vienna. This dataset is the result of merging the following datasets: Airbnb Prices in European Cities, which are stored in separate files for each city and period. Therefore, this dataset includes two additional columns: city, indicating the city information, and weekends, indicating whether the stay period occurred during the weekend or not.
+
+Features:
+
+- **realSum**: The total price of the Airbnb listing. (Numeric)
+- **room_type**: The type of room being offered (e.g. private, shared, etc.). (Categorical)
+- **room_shared**: Whether the room is shared or not (Boolean)
+- **room_private**: Whether the room is private or not (Boolean)
+- **person_capacity**: The maximum number of people that can stay in the room (Numeric)
+- **host_is_superhost**: Whether the host is a super host or not (Boolean)
+- **multi**: Whether the listing is for multiple rooms or not (Boolean)
+- **biz**: Whether the listing is for business purposes or not (Boolean)
+- **cleanliness_rating**: The cleanliness rating of the listing (Numeric)
+- **guest_satisfaction_overall**: The overall guest satisfaction rating of the listing (Numeric)
+- **bedrooms**: The number of bedrooms in the listing (Numeric)
+- **dist**: The distance from the city center (Numeric)
+- **metro_dist**: The distance from the nearest metro station (Numeric)
+- **city**: The city where the listing is located (Categoric)
+- **weekends**: Whether the period is on weekends or not (Boolean)
+
+### Modeling Objective
+
+- **Regression**: Predicting the price of the Airbnb listing based on the available features.
+- **Target Variable**: `realSum`
+
+### Import Data
+
+```{python}
+import pandas as pd
+import numpy as np
+
+# Create a function to read the data
+def read_data(fname):
+    data = pd.read_csv(fname)
+    print('Data shape raw               :', data.shape)
+    print('Number of duplicate          :', data.duplicated().sum())
+    data = data.drop_duplicates()
+    print('Data shape after dropping    :', data.shape)
+    print('Data shape final             :', data.shape)
+    return data
+
+# Load the dataset
+df = read_data('airbnb_european-cities.csv')
+df.head()
+```
+
+Tidak terdapat data duplikat pada dataset.
+
+## Data Exploration and Preprocessing
+
+### Target-Predictor Split
+
+```{python}
+def extractInputOutput(data,
+                       output_column_name):
+    """
+    Fungsi untuk memisahkan data input (predictor) dan output (target)
+    :param data: <pandas dataframe> data seluruh sample
+    :param output_column_name: <string> nama kolom output
+    :return input_data: <pandas dataframe> data input
+    :return output_data: <pandas series> data output
+    """
+    output_data = data[output_column_name]
+    input_data = data.drop(output_column_name,
+                           axis = 1)
+    
+    return input_data, output_data
+```
+
+```{python}
+X, y = extractInputOutput(df, 'realSum')
+X.head()
+```
+
+```{python}
+y.head()
+```
+
+### Train-Test Split
+
+```{python}
+# Import train-test splitting library dari sklearn (scikit learn)
+from sklearn.model_selection import train_test_split
+# Train test split
+X_train, X_test, y_train, y_test = train_test_split(X, y,
+                                                    test_size = 0.20,
+                                                    random_state = 123)
+```
+
+```{python}
+X_train.shape, X_test.shape, y_train.shape, y_test.shape
+```
+
+### Data Exploration (EDA)
+
+**Data Description**
+
+```{python}
+y.describe().transpose()
+```
+
+```{python}
+# Buat kolom numerik (float64, int64)
+numerical_column = X_train.select_dtypes(include = ['float64', 'int64']).columns
+# Seleksi dataframe numerik
+X_train_num = X_train[numerical_column]
+X_train_num.describe().transpose()
+```
+
+```{python}
+# Buat kolom kategorik (object, bool)
+categorical_column = X_train.select_dtypes(include = ['object', 'bool']).columns
+# Seleksi dataframe kategorik
+X_train_cat = X_train[categorical_column]
+X_train_cat.describe().transpose()
+```
+
+**Missing Value**
+
+```{python}
+# Cek missing value
+X_train.isnull().sum()
+```
+
+Tidak terdapat missing value pada dataset.
+
+**Distribution of Target Variable**
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize = (10, 6))
+sns.histplot(y_train, kde = True)
+plt.title('Distribution of Target Variable')
+plt.show()
+```
+
+```{python}
+# Boxplot
+
+plt.figure(figsize = (10, 6))
+sns.boxplot(y_train)
+plt.title('Boxplot of Target Variable')
+plt.show()
+```
+Melalui density plot maupun boxplot di atas, terlihat bahwa sebenarnya sebagian besar data memiliki kisaran harga sewa tidak lebih dari 5.000 atau bahkan tidak lebih dari 2.500. Agar lebih memastikan, maka kita akan mengecek nilai kuantil-kuantil pada data misalkan untuk kuantil 90; 95; 99 dan 99,9.
+
+```{python}
+# Mengecek nilai-nilai kuantil 90, 95, 99, 99.9
+print("Kuantil-90  :", y_train.quantile(0.90))
+print("Kuantil-95  :", y_train.quantile(0.95))
+print("Kuantil-99  :", y_train.quantile(0.99))
+print("Kuantil-99.9:", y_train.quantile(0.999))
+```
+
+Nilai-nilai kuantil di atas menunjukkan harga sewa tertinggi pada batas-batas kuantil tersebut. Dari hasil tersebut kita dapatkan informasi bahwa 90% dari seluruh dataset kita memiliki harga sewa tidak lebih dari 501. Lebih lanjut, 95% memiliki harga sewa tidak lebih dari 661,99. Bahkan 99% memiliki harga sewa tidak lebih dari 1.160 dan 99,9% ternyata memiliki harga sewa tidak lebih dari 3.000.
+
+Melihat hasil ini maka harga sewa airbnb dengan nilai yang sangat tinggi mungkin tidak begitu banyak sehingga pada contoh ini akan kita lakukan pemangkasan data dan hanya mengambil 99% data saja (silahkan mencoba mengambil batasan lainnya yang dirasa tepat, misal gunakan 99,9% data). Artinya kita akan membuang 1% data dengan harga yang sangat tinggi, hal ini dilakukan agar model dapat bekerja lebih baik secara umum tanpa terganggu dengan nilai-nilai yang ekstrim namun sebenarnya merupakan kejadian yang sedikit.
+
+
+```{python}
+# Membuang data ekstrim
+# Merge X_train dan y_train
+data = pd.concat([X_train, y_train], axis = 1)
+
+# Membuang 1% data dengan harga tertinggi
+q_99 = data["realSum"].quantile(0.99)
+data = data[data["realSum"] <= q_99]
+```
+
+```{python}
+plt.figure(figsize = (10, 6))
+sns.histplot(data["realSum"], kde = True)
+plt.title('Distribution of Target Variable')
+plt.show()
+```
+
+```{python}
+# Boxplot
+plt.figure(figsize = (10, 6))
+sns.boxplot(data["realSum"])
+plt.title('Boxplot of Target Variable')
+plt.show()
+```
+
+
+Setelah dilakukan pemangkasan 1% data, kini dataset yang kita miliki sudah lebih merata meskipun masih terdapat kecenderungan menjulur ke arah kanan. Namun kondisi ini bisa dikatakan jauh lebih baik dibandingkan sebelumnya.
+
+```{python}
+# Splitting data after trimming
+X_train = data.drop('realSum', axis = 1)
+y_train = data['realSum']
+X_train.shape, y_train.shape
+```
+
+**Correlation Matrix**
+```{python}
+# Menghitung matriks korelasi untuk peubah numerik
+corr_matrix = data.select_dtypes(include=['number']).corr()
+corr_matrix = round(corr_matrix, 3)
+
+# visualisasi matriks korelasi dengan heatmap
+mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
+cmap = sns.diverging_palette(230, 20, as_cmap=True)
+sns.heatmap(corr_matrix, annot=True, mask=mask,
+            annot_kws={"fontsize": 8}, linewidths=0.5, 
+            square=True, cmap=cmap)
+```
+
+Melihat dari matriks korelasi di atas, tidak begitu terlihat fitur-fitur yang memiliki korelasi tinggi dengan realSum. Dua fitur dengan korelasi yang lumayan adalah `person_capicity` dan `bedrooms`. Kedua fitur tersebut cukup wajar memiliki nilai yang lebih tinggi dibandingkan lainnya, dimana memang pada umumnya semakin banyak kapasitas orang yang bisa menginap serta semakin banyak jumlah kamar tidur maka harga sewa cenderung lebih tinggi.
+
+**Prediktor Kategorik Vs Target**
+
+```{python}
+fig, axes = plt.subplots(4, 1, figsize=(8, 8), sharex=False)
+
+sns.boxplot(data=data, x="realSum", y="room_type", linewidth=1,
+            ax=axes[0], orient="horizontal", fliersize=1.5)
+
+sns.boxplot(data=data, x="realSum", y="host_is_superhost", linewidth=1,
+            ax=axes[1], orient="horizontal", fliersize=1.5)
+
+sns.boxplot(data=data, x="realSum", y="weekends", linewidth=1,
+            ax=axes[2], orient="horizontal", fliersize=1.5)
+
+sns.boxplot(data=data, x="city", y="realSum", linewidth=1,
+            ax=axes[3], fliersize=1.5)
+
+fig.tight_layout()
+plt.show()
+```
+
+Jika melihat boxplot di atas, dapat diduga bahwa fitur `room_type` dan `city` memiliki sebaran yang berbeda untuk setiap kategorinya. Misalkan pada fitur `room_type`, kategori "Entire home/apt" cenderung memiliki harga yang lebih tinggi. Selanjutnya diikuti oleh kategori "Private room" dengan harga yang lebih rendah serta kategori "Shared room" cenderung memiliki harga yang paling rendah.
+
+Adapun untuk fitur `city`, terlihat bahwa kota Amsterdam memiliki kecenderungan harga yang lebih tinggi, kemudian diikuti oleh Paris dan London. Untuk kota-kota lainnya harga sewa umumnya lebih rendah dari ketiga kota tersebut.
+
+Sementara itu, fitur `host_is_superhost` maupun `weekends` tampaknya tidak begitu memiliki perbedaan pada setiap kategorinya.
+
+### Categorical Encoding
+
+Terdapat fitur kategorik yang perlu diencode, yaitu `room_type` dan `city`.
+Namun, sepertinya `room_type` sudah  di encode dengan menggunakan one-hot encoding menjadi `room_shared` dan `room_private`. Sehingga kita hanya perlu drop kolom `room_type` dan melakukan one-hot encoding pada kolom `city`.
+
+```{python}
+# Drop kolom room_type
+X_train = X_train.drop('room_type', axis = 1)
+X_train.head()
+```
+
+```{python}
+# One Hot Encoding
+X_train = pd.get_dummies(X_train, columns = ['city'], drop_first = True)
+X_train.head()
+```
+
+```{python}
+X_train.shape
+```
+
+### Standardization Numerical Features
+
+```{python}
+from sklearn.preprocessing import StandardScaler
+X_train_num = X_train.select_dtypes(include = ['float64', 'int64'])
+scaler = StandardScaler()
+X_train_num_scaled = scaler.fit_transform(X_train_num)
+X_train_num_scaled = pd.DataFrame(X_train_num_scaled, columns = X_train_num.columns)
+X_train_num_scaled.head()
+```
+
+```{python}
+X_train_num_scaled.shape
+```
+
+```{python}
+# Menggabungkan kembali data numerik dan kategorik
+X_train = pd.concat([X_train_num_scaled.reset_index(drop=True), X_train.drop(X_train_num.columns, axis=1).reset_index(drop=True)], axis=1)
+X_train.head()
+```
+
+```{python}
+X_train.shape
+```
+
+** Log Transformation for Target Variable **
+
+```{python}
+y_train = np.log1p(y_train)
+```
+
+### Data Preprocessing Function for Test Data
+
+```{python}
+def preprocess_data(data, scaler, numerical_columns):
+    """
+    Fungsi untuk melakukan preprocessing data test
+    :param data: <pandas dataframe> data test
+    :param scaler: <sklearn.preprocessing> object scaler
+    :param numerical_columns: <list> list nama kolom numerik
+    :return data_preprocessed: <pandas dataframe> data test yang sudah dipreprocessing
+    """
+    # Drop kolom room_type
+    data = data.drop('room_type', axis = 1)
+    
+    # One Hot Encoding
+    data = pd.get_dummies(data, columns = ['city'], drop_first = True)
+    
+    # Standardization
+    data_num = data[numerical_columns]
+    data_num_scaled = scaler.transform(data_num)
+    data_num_scaled = pd.DataFrame(data_num_scaled, columns = data_num.columns)
+
+    # Menggabungkan kembali data numerik dan kategorik
+    data_preprocessed = pd.concat([data_num_scaled.reset_index(drop=True), data.drop(data_num.columns, axis=1).reset_index(drop=True)], axis=1)
+
+    return data_preprocessed
+```
+
+```{python}
+X_test = preprocess_data(X_test, scaler, X_train_num.columns)
+```
+
+```{python}
+y_test = np.log1p(y_test)
+```
+
+## Training a Machine Learning Models
+
+### Model Decision Tree Regressor Tanpa Hyperparameter Tuning
+
+```{python}
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.metrics import mean_squared_error
+
+model_dt = DecisionTreeRegressor(random_state = 123)
+model_dt.fit(X_train, y_train)
+```
+
+### Model Decision Tree Regressor dengan Hyperparameter Tuning
+
+
+```{python}
+from sklearn.model_selection import GridSearchCV
+param_grid = {
+    'max_depth': [5, 10, 15, 20, 25],
+    'min_samples_split': [2, 5, 10, 15, 100],
+    'min_samples_leaf': [1, 2, 5, 10, 15],
+    'max_features' : [5, 7, 10, 15, 21],
+}                       
+```
+
+Pamanfaatan `GridSearchCV` untuk mencari parameter terbaik pada model Decision Tree Regressor. Detil hyperparameter yang dimiliki oleh model Decision Tree Regressor dapat dilihat pada [dokumentasi](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html).
+
+Atau dapat menggunakan fungsi `get_params()` untuk mengetahui apa saja hyperparameter yang dimiliki oleh model.
+
+```{python}
+# Tunjukan apa saja hyperparameter yang bisa digunakan
+model_dt.get_params()
+```
+
+Hyperparameter yang akan di tuning adalah `max_depth`, `min_samples_split`, `min_samples_leaf`, dan `max_features`.
+
+Keterangan:
+
+- `max_depth` : Maximum depth of the tree.
+- `min_samples_split` : The minimum number of samples required to split an internal node.
+- `min_samples_leaf` : The minimum number of samples required to be at a leaf node.
+- `max_features` : The number of features to consider when looking for the best split.
+
+```{python}
+model_df_cv = GridSearchCV(DecisionTreeRegressor(random_state = 123), 
+                            param_grid, 
+                            scoring= 'neg_mean_squared_error',
+                            cv = 10, 
+                            n_jobs = -1)
+# n_jobs = -1 untuk menggunakan semua core CPU
+
+model_df_cv.fit(X_train, y_train)     
+```
+
+```{python}
+# Best parameter
+model_df_cv.best_params_
+```
+
+## Evaluasi Model
+
+```{python}
+y_pred_dt = model_dt.predict(X_test)
+y_pred_dt_cv = model_df_cv.predict(X_test)
+
+mse_dt = mean_squared_error(y_test, y_pred_dt)
+mse_dt_cv = mean_squared_error(y_test, y_pred_dt_cv)
+
+print('MSE Decision Tree Regressor (Tanpa Hyperparameter Tuning) :', round(mse_dt, 3))
+print('MSE Decision Tree Regressor (Dengan Hyperparameter Tuning):', round(mse_dt_cv, 3))
+```
+
+Hasi evaluasi model menunjukkan bahwa model Decision Tree Regressor dengan hyperparameter tuning relatif tidak jauh berbeda dengan model Decision Tree Regressor tanpa hyperparameter tuning, bahkan sedikt lebih buruk. Hal ini bisa saja terjadi karena model yang kita gunakan sudah cukup baik tanpa perlu melakukan tuning lebih lanjut. Namun, kita tidak bisa mengetahui secara pasti tanpa melakukan tuning lebih lanjut atau menggunakan model lainnya.

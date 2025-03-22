@@ -1,0 +1,8 @@
+- source: index.qmd
+  quarto-pub:
+    - id: afe87a58-2a0e-4476-927e-e4f6bff13520
+      url: https://derisiswara.quarto.pub/ml_w6
+- source: code_exercise.qmd
+  quarto-pub:
+    - id: 17dbf2e8-ce13-4631-b3a3-9c6a0fe1d61e
+      url: https://derisiswara.quarto.pub/week6_ml

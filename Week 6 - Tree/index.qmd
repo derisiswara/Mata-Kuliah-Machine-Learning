@@ -1,0 +1,106 @@
+---
+title: "Mata Kuliah: Machine Learning"
+subtitle: "Tree-Based Algorithms"
+format:
+  revealjs: 
+    slide-number: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: img/Logo-Horizontal.png
+    css: styles.css
+    footer: '[@2025 - Deri Siswara](https://derisiswara.quarto.pub/ml_w6)'
+---
+
+## Pendahuluan {.smaller}
+
+Dalam pembelajaran mesin, algoritma yang berbasis pohon disebut algoritma berbasis pohon. Algoritma ini menggunakan struktur seperti pohon untuk membuat keputusan atau prediksi. Beberapa algoritma berbasis pohon yang paling umum adalah:
+
+- **Decision Tree**: Struktur pohon sederhana di mana setiap node internal mewakili keputusan berdasarkan fitur, dan setiap node daun mewakili hasil (klasifikasi atau regresi).
+
+- **Random Forest**: Metode ensemble yang membuat kumpulan pohon keputusan dan menggabungkan hasilnya (biasanya dengan rata-rata atau pemungutan suara mayoritas) untuk meningkatkan akurasi dan mengurangi overfitting.
+
+- **Gradient Boosting Machines (GBM)**: Algoritma boosting yang membangun pohon secara berurutan, di mana setiap pohon mencoba memperbaiki kesalahan yang dibuat oleh pohon sebelumnya. Implementasi populer termasuk XGBoost, LightGBM, dan CatBoost.
+
+Algoritma ini banyak digunakan karena kemampuannya untuk menangani tugas klasifikasi dan regresi secara efektif serta interpretabilitasnya.
+
+## Decision Tree {.smaller}
+
+Decision tree membagi dataset menjadi beberapa wilayah (berbentuk kotak). Algoritma ini memilih fitur dan ambang batas yang dapat membagi target dengan baik. Langkah ini diulangi hingga kedalaman maksimum yang diinginkan tercapai, yang akan membuat batasan untuk mengklasifikasikan data berdasarkan wilayah yang telah dibuat sebelumnya.
+
+![Sumber: medium.com/@axelivandatanjung](https://miro.medium.com/v2/resize:fit:1270/1*urUhiTUf-ly_fV9vYmrtjw.png)
+
+## Decision Tree untuk Regresi {.smaller}
+
+Algoritma decision tree mirip dengan regresi piecewise-linear. Decision tree membagi ruang input menjadi beberapa wilayah, dan menghitung nilai rata-rata target pada set
+
+![](https://towardsdatascience.com/wp-content/uploads/2024/01/11rIfooU1naS3QnTpHiNVzA.png)
+
+
+## Komponen Decision Tree {.smaller}
+
+Decision tree terdiri dari beberapa komponen utama:
+
+- **Decision tree** seperti pohon, namun terbalik. **Root** ada di atas.
+- **Decision/internal node**: uji nilai dari salah satu atribut/fitur input.
+- Kumpulan **edges/branches** dari node: label dengan nilai atribut/fitur yang mungkin.
+- **Leaf node**: output value.
+
+![Sumber: Pacmann Academy](img/w6.png)
+
+## Cara Split Node (Partisi) {.smaller}
+
+1. Cari batas partisi/sekat terbaik untuk masing-masing variabel prediktor.
+2. Bandingkan partisi terbaik dari semua variabel prediktor… pilih yang paling baik.
+3. Lakukan penyekatan/spliting berdasarkan variabel yang dihasilkan pada langkah ke-2.
+4. Lakukan langkah 1-2-3 untuk setiap node, sampai tercapai kriteria penghentian algoritma.
+
+Contoh, asumsikan kita memiliki variabel income untuk memprediksi debt.
+
+![Sumber: Pacmann Academy](img/w6_1.png)
+
+## Cara Split Node (Partisi) {.smaller}
+
+Hitung mean squared error (MSE) untuk setiap partisi (feature space) pada variabel income. Pilih partisi dengan nilai MSE terendah.
+
+![Sumber: Pacmann Academy](img/w6_2.png)
+
+## Aturan Penghentian {.smaller}
+
+- **Kedalaman Maksimum**: Pohon berhenti tumbuh ketika kedalaman maksimum tercapai.
+- **Jumlah Sampel Minimum**: Pohon berhenti tumbuh ketika jumlah sampel minimum di node daun tercapai.
+
+![](https://towardsdatascience.com/wp-content/uploads/2024/08/1_1oWG8PbpPZtZdqMD5RUaA.png)
+
+## Overfitting
+
+![Sumber: Pacmann Academy](img/w6_3.png)
+
+# Materi Tambahan [*Click Here*](https://www.youtube.com/watch?v=g9c66TUylZ4)
+
+
+## Aplikasi Decision Tree untuk Regresi dengan Scikit-Learn {.smaller}
+
+Berikut adalah contoh penerapan algoritma Decision Tree untuk regresi menggunakan pustaka Scikit-Learn di Python:
+
+[DecisionTreeRegressor](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html)
+
+```{.python}
+class sklearn.tree.DecisionTreeRegressor(*, criterion='squared_error', splitter='best', 
+max_depth=None, min_samples_split=2, min_samples_leaf=1, 
+min_weight_fraction_leaf=0.0, max_features=None, random_state=None, 
+max_leaf_nodes=None, min_impurity_decrease=0.0, ccp_alpha=0.0, 
+monotonic_cst=None)                              
+```
+Contoh:
+
+```{.python}
+from sklearn.datasets import load_diabetes
+from sklearn.model_selection import cross_val_score
+from sklearn.tree import DecisionTreeRegressor
+X, y = load_diabetes(return_X_y=True)
+regressor = DecisionTreeRegressor(random_state=0)
+cross_val_score(regressor, X, y, cv=10)                               
+```
+
+# [Code Exercise](https://derisiswara.quarto.pub/week6_ml)

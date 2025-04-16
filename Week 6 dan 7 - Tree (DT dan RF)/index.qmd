@@ -104,3 +104,87 @@ cross_val_score(regressor, X, y, cv=10)
 ```
 
 # [Code Exercise](https://derisiswara.quarto.pub/week6_ml)
+
+# Random Forest
+
+## Breiman, L. 2001. Random Forests. Machine Learning 45: 5–32. {.smaller}
+
+![](img/rf1.png)
+
+## Banyaknya Artikel Ilmiah di Google Scholar dengan kata pencarian “random forest breiman” {.smaller}
+
+![](img/rf2.png)
+
+## Algoritme Random Forest {.smaller}
+
+![Sumber: Wang et al. (2019)](img/rf.jpg)
+
+## Algoritme Random Forest {.smaller}
+
+#### Ide Dasar:
+- *Ensemble* dari ratusan/ribuan pohon
+- korelasi prediksi antar pohon diusahakan minimal → diversity
+
+#### Algoritme:
+
+![](img/rf3.png)
+
+## Algoritme Random Forest {.smaller}
+
+1. Ambil Sampel Data: Pilih sebagian data secara acak dari kumpulan data utama dengan teknik bootstrapping resampling (replacement - Artinya setelah satu data dipilih, data itu tetap bisa dipilih lagi), sehingga setiap pohon mendapatkan kombinasi data yang sedikit berbeda.
+2. Bangun Banyak Pohon Keputusan: Buat beberapa pohon keputusan secara paralel. Setiap pohon dibangun menggunakan sampel data yang telah dipilih, dan pada setiap percabangan, hanya sebagian kecil fitur (variabel) yang dipilih secara acak untuk dipertimbangkan.
+3. Latih Setiap Pohon: Ajarkan setiap pohon keputusan untuk membuat keputusan berdasarkan pola dalam data sampelnya, tanpa memengaruhi pohon lain.
+4. Kumpulkan Hasil dari Semua Pohon: Setelah semua pohon selesai dilatih, masukkan data baru ke setiap pohon untuk mendapatkan prediksi dari masing-masing pohon.
+5. Gabungkan Prediksi (Voting): Untuk tugas klasifikasi, hitung suara terbanyak (majority voting) dari semua pohon untuk menentukan hasil akhir. Untuk tugas regresi, ambil rata-rata dari prediksi semua pohon.
+6. Hasil Akhir: Berikan output berupa kelas (untuk klasifikasi) atau nilai (untuk regresi) sebagai hasil prediksi Random Forest.
+
+## Hyperparameter Utama Random Forest di Sklearn {.smaller}
+
+1. **`n_estimators`**  
+   - **Apa itu**: Jumlah pohon keputusan yang dibuat di dalam Random Forest.  
+   - **Default**: 100  
+   - **Contoh**: `n_estimators=50` berarti ada 50 pohon.  
+   - **Efek**: Semakin banyak pohon, biasanya semakin akurat, tapi prosesnya jadi lebih lambat.
+
+2. **`max_depth`**  
+   - **Apa itu**: Kedalaman maksimum setiap pohon (berapa banyak tingkat keputusan).  
+   - **Default**: None (pohon tumbuh sampai semua daun murni atau batas lain tercapai).  
+   - **Contoh**: `max_depth=10` batasi pohon sampai 10 tingkat.  
+   - **Efek**: Membatasi kedalaman bisa mencegah overfitting (pohon terlalu hafal data).
+
+## Hyperparameter Utama Random Forest di Sklearn {.smaller}
+
+3. **`min_samples_split`**  
+   - **Apa itu**: Jumlah minimum sampel yang dibutuhkan untuk membagi sebuah simpul (node) di pohon.  
+   - **Default**: 2  
+   - **Contoh**: `min_samples_split=5` berarti simpul baru dibagi jika ada minimal 5 sampel.  
+   - **Efek**: Nilai lebih besar mencegah pohon terlalu rumit (overfitting).
+
+4. **`min_samples_leaf`**  
+   - **Apa itu**: Jumlah minimum sampel yang harus ada di daun (leaf node).  
+   - **Default**: 1  
+   - **Contoh**: `min_samples_leaf=2` berarti setiap daun harus punya minimal 2 sampel.  
+   - **Efek**: Membantu mengontrol ukuran pohon dan mencegah daun dengan sedikit data.
+
+## Hyperparameter Utama Random Forest di Sklearn {.smaller}
+
+5. **`max_features`**  
+   - **Apa itu**: Jumlah maksimum fitur (kolom data) yang dipertimbangkan saat mencari pemisahan terbaik di setiap simpul.  
+   - **Default**: "sqrt" (akar kuadrat dari total fitur).  
+   - **Contoh**: `max_features='log2'` atau `max_features=0.5` (50% dari fitur).  
+   - **Efek**: Membatasi fitur membuat pohon lebih beragam dan mengurangi korelasi antar pohon.
+
+6. **`bootstrap`**  
+   - **Apa itu**: Menentukan apakah bootstrapping resampling digunakan untuk membuat sampel data.  
+   - **Default**: True  
+   - **Contoh**: `bootstrap=False` berarti semua pohon pakai seluruh data (tanpa sampling).  
+   - **Efek**: Jika True, model lebih tahan overfitting karena ada keacakan.
+
+## Hyperparameter Utama Random Forest di Sklearn {.smaller}
+
+7. **`random_state`**  
+   - **Apa itu**: Angka untuk mengatur keacakan agar hasil bisa direproduksi.  
+   - **Default**: None  
+   - **Contoh**: `random_state=42` untuk hasil yang konsisten setiap kali dijalankan.  
+   - **Efek**: Berguna untuk debugging atau membandingkan hasil.
+

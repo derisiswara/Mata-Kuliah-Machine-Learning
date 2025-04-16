@@ -1,52 +1,10 @@
 ---
-title: Week 6 - Code Exercise
+title: Week 6 dan 7 - Code Exercise
 jupyter: python3
 format:
   html:
     toc: true
 ---
-
-## Modeling Workflow
----
-
-```
-1. Data Understanding
-2. Data Exploration and Preprocessing
-3. Training a Machine Learning Models
-4. Test Prediction
-```
-
-## Data Understanding
-### Airbnb Prices European Cities (Dataset) 
-
-About [Dataset](https://www.kaggle.com/datasets/cahyaalkahfi/airbnb-european-cities-join/)
-
-This dataset provides Airbnb price information from various cities in Europe, including Amsterdam, Athens, Barcelona, Berlin, Budapest, Lisbon, London, Paris, Rome, and Vienna. This dataset is the result of merging the following datasets: Airbnb Prices in European Cities, which are stored in separate files for each city and period. Therefore, this dataset includes two additional columns: city, indicating the city information, and weekends, indicating whether the stay period occurred during the weekend or not.
-
-Features:
-
-- **realSum**: The total price of the Airbnb listing. (Numeric)
-- **room_type**: The type of room being offered (e.g. private, shared, etc.). (Categorical)
-- **room_shared**: Whether the room is shared or not (Boolean)
-- **room_private**: Whether the room is private or not (Boolean)
-- **person_capacity**: The maximum number of people that can stay in the room (Numeric)
-- **host_is_superhost**: Whether the host is a super host or not (Boolean)
-- **multi**: Whether the listing is for multiple rooms or not (Boolean)
-- **biz**: Whether the listing is for business purposes or not (Boolean)
-- **cleanliness_rating**: The cleanliness rating of the listing (Numeric)
-- **guest_satisfaction_overall**: The overall guest satisfaction rating of the listing (Numeric)
-- **bedrooms**: The number of bedrooms in the listing (Numeric)
-- **dist**: The distance from the city center (Numeric)
-- **metro_dist**: The distance from the nearest metro station (Numeric)
-- **city**: The city where the listing is located (Categoric)
-- **weekends**: Whether the period is on weekends or not (Boolean)
-
-### Modeling Objective
-
-- **Regression**: Predicting the price of the Airbnb listing based on the available features.
-- **Target Variable**: `realSum`
-
-### Import Data
 
 ```{python}
 import pandas as pd
@@ -148,6 +106,7 @@ X_train.isnull().sum()
 Tidak terdapat missing value pada dataset.
 
 **Distribution of Target Variable**
+
 ```{python}
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -166,6 +125,7 @@ sns.boxplot(y_train)
 plt.title('Boxplot of Target Variable')
 plt.show()
 ```
+
 Melalui density plot maupun boxplot di atas, terlihat bahwa sebenarnya sebagian besar data memiliki kisaran harga sewa tidak lebih dari 5.000 atau bahkan tidak lebih dari 2.500. Agar lebih memastikan, maka kita akan mengecek nilai kuantil-kuantil pada data misalkan untuk kuantil 90; 95; 99 dan 99,9.
 
 ```{python}
@@ -179,7 +139,6 @@ print("Kuantil-99.9:", y_train.quantile(0.999))
 Nilai-nilai kuantil di atas menunjukkan harga sewa tertinggi pada batas-batas kuantil tersebut. Dari hasil tersebut kita dapatkan informasi bahwa 90% dari seluruh dataset kita memiliki harga sewa tidak lebih dari 501. Lebih lanjut, 95% memiliki harga sewa tidak lebih dari 661,99. Bahkan 99% memiliki harga sewa tidak lebih dari 1.160 dan 99,9% ternyata memiliki harga sewa tidak lebih dari 3.000.
 
 Melihat hasil ini maka harga sewa airbnb dengan nilai yang sangat tinggi mungkin tidak begitu banyak sehingga pada contoh ini akan kita lakukan pemangkasan data dan hanya mengambil 99% data saja (silahkan mencoba mengambil batasan lainnya yang dirasa tepat, misal gunakan 99,9% data). Artinya kita akan membuang 1% data dengan harga yang sangat tinggi, hal ini dilakukan agar model dapat bekerja lebih baik secara umum tanpa terganggu dengan nilai-nilai yang ekstrim namun sebenarnya merupakan kejadian yang sedikit.
-
 
 ```{python}
 # Membuang data ekstrim
@@ -206,7 +165,6 @@ plt.title('Boxplot of Target Variable')
 plt.show()
 ```
 
-
 Setelah dilakukan pemangkasan 1% data, kini dataset yang kita miliki sudah lebih merata meskipun masih terdapat kecenderungan menjulur ke arah kanan. Namun kondisi ini bisa dikatakan jauh lebih baik dibandingkan sebelumnya.
 
 ```{python}
@@ -217,6 +175,7 @@ X_train.shape, y_train.shape
 ```
 
 **Correlation Matrix**
+
 ```{python}
 # Menghitung matriks korelasi untuk peubah numerik
 corr_matrix = data.select_dtypes(include=['number']).corr()
@@ -359,8 +318,17 @@ model_dt = DecisionTreeRegressor(random_state = 123)
 model_dt.fit(X_train, y_train)
 ```
 
-### Model Decision Tree Regressor dengan Hyperparameter Tuning
+### Model Random Forest Regressor Tanpa Hyperparameter Tuning
 
+```{python}
+from sklearn.ensemble import RandomForestRegressor
+
+# Membuat model Random Forest Regressor
+model_rf = RandomForestRegressor(random_state=123)
+model_rf.fit(X_train, y_train)
+```
+
+### Model Decision Tree Regressor dengan Hyperparameter Tuning
 
 ```{python}
 from sklearn.model_selection import GridSearchCV
@@ -406,17 +374,52 @@ model_df_cv.fit(X_train, y_train)
 model_df_cv.best_params_
 ```
 
+### Model Random Forest Regressor dengan Hyperparameter Tuning
+
+```{python}
+param_grid_rf = {
+    'n_estimators': [50, 100, 200],
+    'max_depth': [5, 10, 15, 20, None],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4],
+    'max_features': ['auto', 'sqrt', 'log2']
+}
+```
+
+```{python}
+modell_rf_cv = GridSearchCV(RandomForestRegressor(random_state=123), 
+               param_grid_rf, 
+               scoring='neg_mean_squared_error', 
+               cv=5, 
+               n_jobs=-1)
+modell_rf_cv.fit(X_train, y_train)
+```
+
+```{python}
+# Best parameter
+modell_rf_cv.best_params_
+```
+
 ## Evaluasi Model
 
 ```{python}
 y_pred_dt = model_dt.predict(X_test)
 y_pred_dt_cv = model_df_cv.predict(X_test)
 
+y_pred_rf = model_rf.predict(X_test)
+y_pred_rf_cv = modell_rf_cv.predict(X_test)
+
 mse_dt = mean_squared_error(y_test, y_pred_dt)
 mse_dt_cv = mean_squared_error(y_test, y_pred_dt_cv)
 
+mse_rf = mean_squared_error(y_test, y_pred_rf)
+mse_rf_cv = mean_squared_error(y_test, y_pred_rf_cv)
+
 print('MSE Decision Tree Regressor (Tanpa Hyperparameter Tuning) :', round(mse_dt, 3))
 print('MSE Decision Tree Regressor (Dengan Hyperparameter Tuning):', round(mse_dt_cv, 3))
+print('MSE Random Forest Regressor (Tanpa Hyperparameter Tuning) :', round(mse_rf, 3))
+print('MSE Random Forest Regressor (Dengan Hyperparameter Tuning):', round(mse_rf_cv, 3))
 ```
 
 Hasi evaluasi model menunjukkan bahwa model Decision Tree Regressor dengan hyperparameter tuning relatif tidak jauh berbeda dengan model Decision Tree Regressor tanpa hyperparameter tuning, bahkan sedikt lebih buruk. Hal ini bisa saja terjadi karena model yang kita gunakan sudah cukup baik tanpa perlu melakukan tuning lebih lanjut. Namun, kita tidak bisa mengetahui secara pasti tanpa melakukan tuning lebih lanjut atau menggunakan model lainnya.
+

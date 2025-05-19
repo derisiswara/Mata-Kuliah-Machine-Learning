@@ -5,7 +5,7 @@ format:
   revealjs: 
     slide-number: true
     chalkboard: 
-      buttons: false
+      buttons: true
     preview-links: auto
     logo: img/Logo-Horizontal.png
     css: styles.css

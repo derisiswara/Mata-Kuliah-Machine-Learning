@@ -1,0 +1,4 @@
+- source: credit_risk.ipynb
+  quarto-pub:
+    - id: ec263d97-4781-49dd-8997-b295ff391b5d
+      url: https://derisiswara.quarto.pub/code-exercise-w11

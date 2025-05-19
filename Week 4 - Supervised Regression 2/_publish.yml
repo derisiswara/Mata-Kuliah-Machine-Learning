@@ -2,6 +2,8 @@
   quarto-pub:
     - id: 4fb3e83f-4fd3-4130-925a-cd40c2d38d81
       url: https://derisiswara.quarto.pub/ml_w3
+    - id: c128c2c4-b5c3-4bd1-abfd-3f052c5b638f
+      url: https://derisiswara.quarto.pub/ml_w4
 - source: code_exercise.qmd
   quarto-pub:
     - id: 56e02894-61f6-486b-b1a4-ecfc7d3389c2
@@ -10,3 +12,7 @@
   quarto-pub:
     - id: 8071ce40-8df7-4d24-9692-9e5fc6fd93f6
       url: https://derisiswara.quarto.pub/regresi-linier-dan-teknik-seleksi-peubah---subset-selection
+- source: week4_regresi_code.qmd
+  quarto-pub:
+    - id: 924b36dc-9ff4-4804-b43b-55f2fc52207b
+      url: https://derisiswara.quarto.pub/week4_ml

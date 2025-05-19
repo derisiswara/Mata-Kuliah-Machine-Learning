@@ -1,9 +1,9 @@
 {
     "id": "588EB813",
-    "path": "G:/Other computers/My Laptop/Project/_2025/ML Perbanas/Week 2 - ML Workflow/index.qmd",
+    "path": "G:/Other computers/My Laptop/Project/_2025/ML Perbanas/Mata-Kuliah-Machine-Learning/Week 8 - Regresi Logistik/index.qmd",
     "project_path": "index.qmd",
     "type": "quarto_markdown",
-    "hash": "3615777268",
+    "hash": "4026912280",
     "contents": "",
     "dirty": false,
     "created": 1740096999117.0,
@@ -18,11 +18,11 @@
         "docOutlineSize": "171"
     },
     "folds": "",
-    "lastKnownWriteTime": 1740287137,
+    "lastKnownWriteTime": 1745318275,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1740287137153,
+    "last_content_update": 1745318275,
     "read_only": false,
     "read_only_alternatives": []
 }

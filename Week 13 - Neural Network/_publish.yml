@@ -1,0 +1,4 @@
+- source: index.qmd
+  quarto-pub:
+    - id: e15b5d7a-048d-4486-9d84-229608f78cb9
+      url: https://derisiswara.quarto.pub/ml_w8

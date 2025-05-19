@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="index_files/libs/clipboard/clipboard.min.js"></script>
+<script src="index_files/libs/quarto-html/tabby.min.js"></script>
+<script src="index_files/libs/quarto-html/popper.min.js"></script>
+<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.6.40">
+
+  <title>Mata Kuliah: Machine Learning</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-bbe7401fe57d4b791b917637bb662036.css">
+  <link rel="stylesheet" href="styles.css">
+  <link href="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="index_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Mata Kuliah: Machine Learning</h1>
+  <p class="subtitle">K-Nearest Neighbors, Support Vector Machine, and Bayesian Classifier</p>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section>
+<section id="k-nearest-neighbors" class="title-slide slide level1 center">
+<h1>K-Nearest Neighbors</h1>
+
+</section>
+<section id="pendahuluan" class="slide level2 smaller">
+<h2>Pendahuluan</h2>
+<ul>
+<li><strong>K-Nearest Neighbors (KNN)</strong> adalah algoritma <em>supervised learning</em> yang sederhana namun powerful untuk klasifikasi dan regresi.</li>
+<li>KNN bekerja berdasarkan prinsip bahwa objek yang serupa cenderung berada di ruang fitur yang berdekatan (proximity principle).</li>
+<li>KNN adalah algoritma <strong>non-parametrik</strong> dan <strong>instance-based learning</strong>, dimana model tidak “dilatih” dalam arti tradisional, melainkan langsung menggunakan data training sebagai model.</li>
+<li>Dalam klasifikasi, prediksi didasarkan pada voting mayoritas dari K tetangga terdekat, sedangkan dalam regresi, prediksi adalah rata-rata nilai K tetangga terdekat.</li>
+<li>Parameter utama adalah <strong>K</strong> (jumlah tetangga terdekat) yang menentukan seberapa banyak tetangga yang diperhitungkan untuk membuat keputusan.</li>
+<li>Kelebihan KNN: mudah dipahami, tidak memerlukan asumsi distribusi data, dan efektif untuk dataset berukuran kecil hingga menengah.</li>
+<li>Keterbatasan: komputasi intensif untuk dataset besar, sensitif terhadap fitur yang tidak relevan, dan memerlukan normalisasi data.</li>
+</ul>
+</section>
+<section id="prinsip-dasar-knn" class="slide level2 smaller">
+<h2>Prinsip Dasar KNN</h2>
+
+<img data-src="https://scikit-learn.org/stable/_images/sphx_glr_plot_classification_001.png" class="r-stretch"><p>KNN adalah algoritma klasifikasi dan regresi yang menyimpan semua data training (lazy learning), mengklasifikasi data baru berdasarkan kesamaan/jarak dengan data training, mencari K tetangga terdekat dari data testing, dan menentukan label berdasarkan voting mayoritas (untuk klasifikasi) atau rata-rata (untuk regresi)</p>
+</section>
+<section id="prinsip-kerja-knn" class="slide level2 smaller">
+<h2>Prinsip Kerja KNN</h2>
+<p>Dalam KNN, prediksi untuk data baru <span class="math inline">\(x\)</span> dapat diformulasikan sebagai:</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 44%">
+<col style="width: 55%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Regression</th>
+<th>Classification</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Mean/Average:</td>
+<td>Majority Vote:</td>
+</tr>
+<tr class="even">
+<td><span class="math display">\[f(x) = \frac{1}{n} \sum_{i=1}^{n} y_i\]</span></td>
+<td><span class="math display">\[f(x) = \frac{1}{n} \sum_{i=1}^{n} I(y_i=1)\]</span></td>
+</tr>
+</tbody>
+</table>
+<style>
+/* Membuat tabel dua kolom (left-right) agar lebar penuh pada slide */
+.reveal table {
+  width: 100% !important;
+  table-layout: fixed;
+}
+.reveal table th, 
+.reveal table td {
+  width: 50%;
+  text-align: left;
+  vertical-align: top;
+  word-break: break-word;
+}
+</style>
+<ul>
+<li><p>Untuk regresi: Prediksi adalah rata-rata dari nilai target tetangga terdekat.</p></li>
+<li><p>Untuk klasifikasi: Prediksi ditentukan berdasarkan voting mayoritas, di mana <span class="math inline">\(I(y_i=1\)</span>) adalah fungsi indikator yang bernilai 1 jika kondisi terpenuhi.</p></li>
+</ul>
+</section>
+<section id="quiz" class="slide level2 smaller">
+<h2>Quiz</h2>
+<p><strong>Pertanyaan:</strong><br>
+Jika kita ingin memprediksi kelas dari titik data baru <span class="math inline">\(?\)</span> menggunakan algoritma K-Nearest Neighbors, termasuk ke kelas A atau B-kah titik tersebut jika kita menggunakan <span class="math inline">\(K=3\)</span> dan <span class="math inline">\(K=7\)</span>? Jelaskan alasan dan proses penentuannya!</p>
+
+<img data-src="img/0_knn.png" class="r-stretch"></section>
+<section id="metrik-jarak-pada-knn" class="slide level2 smaller">
+<h2>Metrik Jarak pada KNN</h2>
+<p>Metrik jarak sangat penting dalam KNN karena menentukan “kedekatan” antar sampel. Beberapa metrik jarak yang umum digunakan:</p>
+<p><strong>Euclidean Distance</strong>: <span class="math display">\[d(x, y) = \sqrt{\sum_{i=1}^{n}(x_i - y_i)^2}\]</span></p>
+<p><strong>Manhattan Distance</strong>: <span class="math display">\[d(x, y) = \sum_{i=1}^{n}|x_i - y_i|\]</span></p>
+<p>Metrik jarak yang dipilih dapat memengaruhi kinerja model KNN secara signifikan tergantung pada karakteristik data.</p>
+</section>
+<section id="metrik-jarak-pada-knn-1" class="slide level2 smaller">
+<h2>Metrik Jarak pada KNN</h2>
+
+<img data-src="img/jarak.jpeg" class="r-stretch"></section>
+<section id="pemilihan-nilai-k" class="slide level2 smaller">
+<h2>Pemilihan Nilai K</h2>
+<p>Pemilihan nilai K sangat krusial dalam KNN:</p>
+<ul>
+<li><strong>K terlalu kecil</strong>: Model sensitif terhadap noise (overfitting)</li>
+<li><strong>K terlalu besar</strong>: Model menjadi terlalu umum (underfitting)</li>
+</ul>
+<p>Beberapa pendekatan untuk memilih K: - Uji coba beberapa nilai K dan pilih yang memberikan performa terbaik pada validasi - Aturan praktis: K = √n (n adalah jumlah sampel) - K sebaiknya bilangan ganjil untuk klasifikasi biner (menghindari tie votes)</p>
+
+<img data-src="https://upload.wikimedia.org/wikipedia/commons/e/e7/KnnClassification.svg" class="r-stretch"><p>Gambar: Efek nilai K terhadap boundary keputusan. K=1 dan K=5</p>
+</section>
+<section id="feature-scaling-dan-normalisasi" class="slide level2 smaller">
+<h2>Feature Scaling dan Normalisasi</h2>
+<p>KNN sangat sensitif terhadap skala fitur! Fitur dengan skala lebih besar akan mendominasi perhitungan jarak.</p>
+<p><strong>Mengapa perlu normalisasi?</strong> - Contoh: Pada fitur usia (20-70) dan pendapatan (10.000-100.000), perbedaan pendapatan akan mendominasi perhitungan jarak</p>
+<div class="columns">
+<div class="column" style="width:33%;">
+<p><strong>Min-Max Scaling</strong><br>
+<span class="math display">\[X_{norm} = \frac{X - X_{min}}{X_{max} - X_{min}}\]</span></p>
+<ul>
+<li>Mengubah rentang fitur ke [0, 1]</li>
+<li>Sensitif terhadap outlier</li>
+</ul>
+</div><div class="column" style="width:33%;">
+<p><strong>Standardisasi (Z-score)</strong><br>
+<span class="math display">\[X_{norm} = \frac{X - \mu}{\sigma}\]</span></p>
+<ul>
+<li>Mean = 0, Std = 1</li>
+<li>Cocok untuk data berdistribusi normal</li>
+</ul>
+</div><div class="column" style="width:33%;">
+<p><strong>Robust Scaling</strong><br>
+<span class="math display">\[X_{norm} = \frac{X - median(X)}{IQR(X)}\]</span></p>
+<ul>
+<li>Menggunakan median dan IQR</li>
+<li>Lebih tahan terhadap outlier</li>
+</ul>
+</div></div>
+</section>
+<section id="materi-tambahan" class="slide level2">
+<h2>Materi Tambahan</h2>
+<ul>
+<li><p><a href="https://www.youtube.com/watch?v=0p0o5cmgLdE">Video</a></p></li>
+<li><p><a href="https://www.w3schools.com/python/python_ml_knn.asp">Dokumentasi Code</a></p></li>
+</ul>
+</section></section>
+<section>
+<section id="support-vector-machine" class="title-slide slide level1 center">
+<h1>Support Vector Machine</h1>
+
+</section>
+<section id="pendahuluan-1" class="slide level2 smaller">
+<h2>Pendahuluan</h2>
+<ul>
+<li><strong>Support Vector Machine (SVM)</strong> adalah algoritma <em>supervised learning</em> yang powerful untuk klasifikasi.</li>
+<li>SVM bekerja dengan prinsip menemukan hyperplane optimal yang memisahkan kelas-kelas data dengan margin maksimal.</li>
+<li>SVM adalah algoritma <strong>parametrik</strong> yang bertujuan untuk menemukan batas keputusan (decision boundary) yang memaksimalkan jarak antara kelas-kelas.</li>
+<li>SVM dapat menangani masalah klasifikasi linear maupun non-linear melalui penggunaan fungsi kernel.</li>
+<li>Parameter utama dalam SVM adalah <strong>C</strong> (parameter regularisasi) yang mengontrol trade-off antara margin yang lebar dan kesalahan klasifikasi, serta parameter kernel.</li>
+<li>Kelebihan SVM: efektif pada ruang berdimensi tinggi, robust terhadap overfitting terutama dalam klasifikasi teks dan gambar.</li>
+<li>Keterbatasan: kurang efisien untuk dataset besar, pemilihan kernel dan parameter yang tepat bisa menjadi tantangan.</li>
+</ul>
+</section>
+<section id="prinsip-dasar-svm" class="slide level2 smaller">
+<h2>Prinsip Dasar SVM</h2>
+
+<img data-src="img/hp4.png" class="r-stretch"><p>SVM bertujuan untuk menemukan <strong>hyperplane</strong> optimal yang memisahkan data dari kelas berbeda dengan margin maksimal. Support vectors adalah data points yang berada di tepi margin dan menentukan posisi hyperplane. SVM dapat menangani data yang tidak dapat dipisahkan secara linear melalui transformasi ke dimensi yang lebih tinggi menggunakan fungsi kernel.</p>
+</section>
+<section id="prinsip-dasar-svm-1" class="slide level2 smaller">
+<h2>Prinsip Dasar SVM</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="img/hp1.png"></p>
+<figcaption>1 dimensi/variabel</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="img/hp4.png"></p>
+<figcaption>2 dimensi/variabel</figcaption>
+</figure>
+</div>
+</div></div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="img/hp3.png" style="width:80.0%"></p>
+<figcaption>3 dimensi/variabel</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:50%;">
+
+</div></div>
+<p>Untuk &gt;3 dimenasi/variabel, tidak dapat divisualisasikan, tetapi prinsipnya sama.</p>
+</section>
+<section id="prinsip-dasar-svm-2" class="slide level2 smaller">
+<h2>Prinsip Dasar SVM</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><img data-src="img/hp2.png"></p>
+</div><div class="column" style="width:50%;">
+<p><img data-src="img/hp5.png"></p>
+</div></div>
+<p>Tugas kita adalah mencari hyperplane yang memisahkan data dari kelas yang berbeda dengan margin maksimal.</p>
+</section>
+<section id="prinsip-kerja-svm" class="slide level2 smaller">
+<h2>Prinsip Kerja SVM</h2>
+<p>Dalam SVM, hyperplane dapat diformulasikan sebagai:</p>
+<p><span class="math display">\[f(x) = w^T x + b\]</span></p>
+<p>Dimana: <span class="math inline">\(w\)</span> adalah vektor bobot (normal terhadap hyperplane), <span class="math inline">\(b\)</span> adalah bias, dan <span class="math inline">\(x\)</span> adalah vektor fitur input Untuk masalah klasifikasi biner.</p>
+<p>Prediksi dapat diformulasikan sebagai:</p>
+<p><span class="math display">\[\text{class} = \text{sign}(w^T x + b)\]</span></p>
+<p>Tujuan SVM adalah memaksimalkan margin antara hyperplane dan support vectors:</p>
+<p><span class="math display">\[\text{Maximize } \frac{2}{||w||} \text{ subject to } y_i(w^T x_i + b) \geq 1 \text{ for all } i\]</span></p>
+</section>
+<section id="fungsi-kernel-dalam-svm" class="slide level2 smaller">
+<h2>Fungsi Kernel dalam SVM</h2>
+<p>Kernel memungkinkan SVM bekerja di ruang dimensi yang lebih tinggi tanpa menghitung transformasi secara eksplisit (kernel trick).</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Linear Kernel</strong><br>
+<span class="math display">\[K(x_i, x_j) = x_i^T x_j\]</span> - Paling sederhana - Efektif untuk data yang dapat dipisahkan secara linear</p>
+<p><strong>Polynomial Kernel</strong><br>
+<span class="math display">\[K(x_i, x_j) = (x_i^T x_j + c)^d\]</span> - Parameter: derajat <span class="math inline">\(d\)</span> dan konstanta <span class="math inline">\(c\)</span> - Baik untuk data dengan pola non-linear sederhana</p>
+</div><div class="column" style="width:50%;">
+<p><strong>Radial Basis Function (RBF) Kernel</strong><br>
+<span class="math display">\[K(x_i, x_j) = \exp(-\gamma ||x_i - x_j||^2)\]</span> - Parameter: <span class="math inline">\(\gamma\)</span> mengontrol pengaruh satu sampel - Sangat efektif untuk berbagai jenis data non-linear - Default di sebagian besar implementasi SVM</p>
+<p><strong>Sigmoid Kernel</strong><br>
+<span class="math display">\[K(x_i, x_j) = \tanh(\alpha x_i^T x_j + c)\]</span> - Mirip dengan fungsi aktivasi pada neural network</p>
+</div></div>
+</section>
+<section id="fungsi-kernel-dalam-svm-1" class="slide level2 smaller">
+<h2>Fungsi Kernel dalam SVM</h2>
+
+<img data-src="https://scikit-learn.org/stable/_images/sphx_glr_plot_iris_svc_001.png" class="r-stretch"></section>
+<section id="parameter-c-dan-margin" class="slide level2 smaller">
+<h2>Parameter C dan Margin</h2>
+<p>Parameter C dalam SVM mengontrol trade-off antara margin yang lebar dan kesalahan klasifikasi:</p>
+<ul>
+<li><strong>C kecil</strong>: Margin lebih lebar, lebih toleran terhadap kesalahan klasifikasi (mungkin underfitting)</li>
+<li><strong>C besar</strong>: Margin lebih sempit, kurang toleran terhadap kesalahan klasifikasi (mungkin overfitting)</li>
+</ul>
+
+<img data-src="https://s3.stackabuse.com/media/articles/understanding-svm-hyperparameters-1.png" class="r-stretch"><p>Pemilihan parameter C yang tepat biasanya dilakukan melalui cross-validation.</p>
+</section>
+<section id="materi-tambahan-1" class="slide level2">
+<h2>Materi Tambahan</h2>
+<ul>
+<li><p><a href="https://www.youtube.com/watch?v=efR1C6CvhmE">Video</a></p></li>
+<li><p><a href="https://github.com/pb111/Support-Vector-Machines-Project/blob/master/Support%20Vector%20Machines%20with%20Python%20and%20Scikit-Learn.ipynb">Dokumentasi Code</a></p></li>
+</ul>
+</section></section>
+<section>
+<section id="bayesian-classifier" class="title-slide slide level1 center">
+<h1>Bayesian Classifier</h1>
+
+</section>
+<section id="pendahuluan-2" class="slide level2 smaller">
+<h2>Pendahuluan</h2>
+<ul>
+<li><strong>Bayesian Classifier</strong> adalah algoritma <em>supervised learning</em> berbasis probabilitas yang menggunakan Teorema Bayes.</li>
+<li>Algoritma ini memprediksi keanggotaan kelas berdasarkan probabilitas posterior yang dihitung dari probabilitas prior dan likelihood.</li>
+<li>Bayesian Classifier terutama <strong>Naive Bayes</strong> mengasumsikan independensi antar fitur (sehingga disebut “naive”).</li>
+<li>Meskipun asumsi independensi ini sering tidak terpenuhi dalam praktik, Naive Bayes tetap efektif untuk banyak kasus nyata.</li>
+<li>Beberapa varian Bayesian Classifier: Gaussian Naive Bayes, Multinomial Naive Bayes, dan Bernoulli Naive Bayes.</li>
+<li>Kelebihan: komputasi cepat, bekerja baik dengan dataset kecil, skalabel untuk dataset besar, dan mudah diinterpretasi.</li>
+<li>Keterbatasan: asumsi independensi fitur yang terlalu kuat dan estimasi probabilitas yang kurang akurat untuk fitur yang jarang muncul.</li>
+</ul>
+</section>
+<section id="teorema-bayes" class="slide level2 smaller">
+<h2>Teorema Bayes</h2>
+<p>Teorema Bayes adalah dasar dari seluruh pendekatan Bayesian Classifier:</p>
+<p><span class="math display">\[P(A|B) = \frac{P(B|A) \times P(A)}{P(B)}\]</span></p>
+<p>Dalam konteks klasifikasi:</p>
+<p><span class="math display">\[P(y|X) = \frac{P(X|y) \times P(y)}{P(X)}\]</span></p>
+<p>Dimana:</p>
+<ul>
+<li><p><span class="math inline">\(P(y|X)\)</span>: Probabilitas posterior kelas <span class="math inline">\(y\)</span> given fitur <span class="math inline">\(X\)</span></p></li>
+<li><p><span class="math inline">\(P(X|y)\)</span>: Likelihood dari fitur <span class="math inline">\(X\)</span> given kelas <span class="math inline">\(y\)</span></p></li>
+<li><p><span class="math inline">\(P(y)\)</span>: Probabilitas prior kelas <span class="math inline">\(y\)</span></p></li>
+<li><p><span class="math inline">\(P(X)\)</span>: Probabilitas fitur <span class="math inline">\(X\)</span> (evidence)</p></li>
+</ul>
+<aside class="notes">
+<p>Catatan: Komponen Teorema Bayes dalam Klasifikasi</p>
+<ul>
+<li><strong>Probabilitas Posterior (<span class="math inline">\(P(y|X)\)</span>):</strong> Probabilitas suatu kelas <span class="math inline">\(y\)</span> benar setelah melihat fitur <span class="math inline">\(X\)</span>. Contoh: Probabilitas email adalah spam setelah melihat kata-kata di dalamnya.</li>
+<li><strong>Likelihood (<span class="math inline">\(P(X|y)\)</span>):</strong> Probabilitas mengamati fitur <span class="math inline">\(X\)</span> jika objek termasuk kelas <span class="math inline">\(y\)</span>. Contoh: Probabilitas email mengandung kata “diskon” jika email tersebut spam.</li>
+<li><strong>Prior (<span class="math inline">\(P(y)\)</span>):</strong> Probabilitas awal kelas <span class="math inline">\(y\)</span> sebelum melihat fitur apapun. Contoh: 30% email adalah spam berdasarkan data historis.</li>
+<li><strong>Evidence (<span class="math inline">\(P(X)\)</span>):</strong> Probabilitas mengamati fitur <span class="math inline">\(X\)</span> secara umum, tanpa memandang kelasnya. Contoh: 31% email mengandung kata “diskon”.</li>
+</ul>
+<p><strong>Contoh:</strong><br>
+Jika 30% email adalah spam, 80% email spam mengandung “diskon”, dan 31% email mengandung “diskon”, maka probabilitas email dengan kata “diskon” adalah spam: <span class="math display">\[P(\text{spam}|\text{"diskon"}) = \frac{0.8 \times 0.3}{0.31} \approx 0.77\]</span> Artinya, ada 77% kemungkinan email tersebut adalah spam setelah diketahui mengandung kata “diskon”.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="naive-bayes-classifier" class="slide level2 smaller">
+<h2>Naive Bayes Classifier</h2>
+<p>Naive Bayes mengasumsikan independensi bersyarat antar fitur:</p>
+<p><span class="math display">\[P(X|y) = P(x_1|y) \times P(x_2|y) \times ... \times P(x_n|y) = \prod_{i=1}^{n} P(x_i|y)\]</span></p>
+<p>Sehingga probabilitas posterior menjadi:</p>
+<p><span class="math display">\[P(y|X) = \frac{P(y) \prod_{i=1}^{n} P(x_i|y)}{P(X)}\]</span></p>
+<p>Untuk klasifikasi, kita mencari kelas dengan probabilitas posterior tertinggi:</p>
+<p><span class="math display">\[\hat{y} = \arg\max_y P(y) \prod_{i=1}^{n} P(x_i|y)\]</span></p>
+<p>Denominator <span class="math inline">\(P(X)\)</span> dapat diabaikan karena konstan untuk semua kelas.</p>
+</section>
+<section id="kelebihan-dan-keterbatasan" class="slide level2 smaller">
+<h2>Kelebihan dan Keterbatasan</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Kelebihan Naive Bayes:</strong></p>
+<ul>
+<li><p>Efisien secara komputasional (linear)</p></li>
+<li><p>Bekerja baik dengan dataset kecil</p></li>
+<li><p>Menangani fitur kategoris dengan baik</p></li>
+<li><p>Tahan terhadap fitur yang tidak relevan</p></li>
+<li><p>Efektif untuk klasifikasi teks</p></li>
+<li><p>Intuitif dan mudah diimplementasikan</p></li>
+<li><p>Dapat diskalakan untuk dataset besar</p></li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><strong>Keterbatasan:</strong></p>
+<ul>
+<li><p>Asumsi independensi fitur sering tidak realistis</p></li>
+<li><p>Tidak dapat mempelajari interaksi antar fitur</p></li>
+<li><p>Estimasi probabilitas kurang akurat untuk fitur yang jarang muncul</p></li>
+<li><p>Sensitif terhadap bagaimana data direpresentasikan</p></li>
+<li><p>Dapat terpengaruh oleh ketidakseimbangan kelas</p></li>
+</ul>
+</div></div>
+</section>
+<section id="materi-tambahan-2" class="slide level2">
+<h2>Materi Tambahan</h2>
+<ul>
+<li><p><a href="https://www.youtube.com/watch?v=O2L2Uv9pdDA">Video</a></p></li>
+<li><p><a href="https://github.com/pb111/Naive-Bayes-Classification-Project/blob/master/Na%C3%AFve%20Bayes%20Classification%20with%20Python%20and%20Scikit-Learn.ipynb">Dokumentasi Code</a></p></li>
+</ul>
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="img/Logo-Horizontal.png" class="slide-logo"></p>
+<div class="footer footer-default">
+<p><a href="https://derisiswara.quarto.pub/ml_w10"><span class="citation" data-cites="2025">@2025</span> - Deri Siswara</a></p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="index_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="index_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="index_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="index_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="index_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="index_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="index_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="index_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="index_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":false},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();  
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {                     
+            return true;
+          }
+        }
+        return false;
+      }
+      const onCopySuccess = function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copied!");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copied!");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      }
+      const getTextToCopy = function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+        text: getTextToCopy
+      });
+      clipboard.on('success', onCopySuccess);
+      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+          text: getTextToCopy,
+          container: window.document.getElementById('quarto-embedded-source-code-modal')
+        });
+        clipboardModal.on('success', onCopySuccess);
+      }
+        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+        var mailtoRegex = new RegExp(/^mailto:/);
+          var filterRegex = new RegExp('/' + window.location.host + '/');
+        var isInternal = (href) => {
+            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+        }
+        // Inspect non-navigation links and adorn them if external
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+        for (var i=0; i<links.length; i++) {
+          const link = links[i];
+          if (!isInternal(link.href)) {
+            // undo the damage that might have been done by quarto-nav.js in the case of
+            // links that we want to consider external
+            if (link.dataset.originalHref !== undefined) {
+              link.href = link.dataset.originalHref;
+            }
+          }
+        }
+      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+        const config = {
+          allowHTML: true,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start',
+        };
+        if (contentFn) {
+          config.content = contentFn;
+        }
+        if (onTriggerFn) {
+          config.onTrigger = onTriggerFn;
+        }
+        if (onUntriggerFn) {
+          config.onUntrigger = onUntriggerFn;
+        }
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config); 
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note) {
+            return note.innerHTML;
+          } else {
+            return "";
+          }
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+    
+
+</body></html>

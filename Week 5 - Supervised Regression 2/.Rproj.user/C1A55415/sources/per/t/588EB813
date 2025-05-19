@@ -1,9 +1,9 @@
 {
     "id": "588EB813",
-    "path": "G:/Other computers/My Laptop/Project/_2025/ML Perbanas/Week 2 - ML Workflow/index.qmd",
+    "path": "G:/Other computers/My Laptop/Project/_2025/ML Perbanas/Mata-Kuliah-Machine-Learning/Week 5 - Supervised Regression 2/index.qmd",
     "project_path": "index.qmd",
     "type": "quarto_markdown",
-    "hash": "3615777268",
+    "hash": "4102440275",
     "contents": "",
     "dirty": false,
     "created": 1740096999117.0,
@@ -12,17 +12,17 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "11,14",
+        "cursorPosition": "7,19",
         "scrollLine": "0",
         "docOutlineVisible": "1",
         "docOutlineSize": "171"
     },
     "folds": "",
-    "lastKnownWriteTime": 1740287137,
+    "lastKnownWriteTime": 1744995907,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1740287137153,
+    "last_content_update": 1744995907538,
     "read_only": false,
     "read_only_alternatives": []
 }

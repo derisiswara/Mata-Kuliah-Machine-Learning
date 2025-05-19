@@ -1,0 +1,949 @@
+---
+title: "Credit Risk Prediction - Supervised Learning for Classification"
+author: "Deri Siswara"
+format: html
+date: "`r Sys.Date()`"
+toc: true
+jupyter: python3
+---
+
+## Case
+
+- You are employed as a data scientist in a risk analysis team within the financial sector.
+- Your company's profit is derived from providing loans to customers.
+- However, there is a risk of financial loss if customers default on their loans.
+- To mitigate potential losses, it is essential to prevent high-risk applicants (who may default) from being approved for loans.
+- As a data scientist, your objective is to develop a classification model to distinguish between low-risk and high-risk applicants using customer data, thereby reducing the likelihood of financial loss.
+
+## Dataset Description
+
+Detailed data description of Credit Risk dataset:
+
+**Description**
+
+| **Feature Name**             | **Description**                           |
+|------------------------------|-------------------------------------------|
+| `person_age`                 | Age                                       |
+| `person_income`              | Annual Income                             |
+| `person_home_ownership`      | Home ownership                            |
+| `person_emp_length`          | Employment length (in years)              |
+| `loan_intent`                | Loan intent                               |
+| `loan_grade`                 | Loan grade                                |
+| `loan_amnt`                  | Loan amount                               |
+| `loan_int_rate`              | Interest rate                             |
+| `loan_status`                | Loan status (0 is non-default, 1 is default) |
+| `loan_percent_income`        | Percent income                            |
+| `cb_person_default_on_file`  | Historical default                        |
+| `cb_person_cred_hist_length` | Credit history length                     |
+
+## Modeling Workflow
+
+```
+1. Import data to Python
+2. Data Preprocessing
+3. Training a Machine Learning Models
+4. Test Prediction
+5. Lets Explore
+```
+
+### 1. Import data to Python
+
+```{python}
+# Import Numpy and Pandas library
+import numpy as np
+import pandas as pd
+```
+
+```{python}
+# Function to read the data
+def read_data(fname):
+    data = pd.read_csv(fname)
+    print('Data shape:', data.shape)
+    return data
+# Read the risk data
+data = read_data(fname='credit_risk_dataset.csv')
+```
+
+```{python}
+data.head()
+```
+
+```{python}
+# Extract all columns name
+data.columns
+```
+
+### 2. Data Preprocessing
+
+**The processing pipeline**
+```
+2.1 Input-Output Split
+2.2 Train-Valid-Test Split
+2.3 Remove & Preprocess Anomalous Data
+2.4 Numerical Imputation
+2.5 Feature Engineering the Data
+2.6 Create a Preprocessing Function
+```
+
+#### 2.1. Input-Output Split
+
+- We're going to split input & output according to the modeling objective.
+- Create a function to split the input & output
+
+```{python}
+# Function to split the data target anb features
+def split_input_output(data, target_col):
+    X = data.drop(columns=target_col)
+    y = data[target_col]
+    print('X shape:', X.shape)
+    print('y shape:', y.shape)
+    return X, y
+```
+
+```{python}
+# Load the train data only
+X, y = split_input_output(data=data,
+                          target_col='loan_status')
+```
+
+```{python}
+X.head()
+```
+
+```{python}
+y.head()
+```
+
+#### 2.2. Train-Test Split
+
+- Now, we want to split the data before modeling.
+- Split the data into three set:
+  - Train, for training the model
+  - Validation, for choosing the best model
+  - Test, for error generalization
+
+- You should make the splitting proportion train (80%), valid (10%), and test (10%)
+
+```{python}
+# Function to split the data into train and test
+from sklearn.model_selection import train_test_split
+def split_train_test(X, y, test_size=0.2, seed=0): # 0.2 rule of thumb
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=seed)
+    print('X_train shape:', X_train.shape)
+    print('y_train shape:', y_train.shape)
+    print('X_test shape:', X_test.shape)
+    print('y_test shape:', y_test.shape)
+    return X_train, X_test, y_train, y_test
+```
+
+```{python}
+# Split the data
+# First, split the train, valid, and test
+X_train, X_not, y_train, y_not = split_train_test(X, y, test_size=0.2, seed=0)
+X_test, X_valid, y_test, y_valid = split_train_test(X_not, y_not, test_size=0.5, seed=0)
+```
+
+```{python}
+# Validate
+print(len(X_train)/len(X))  # should be 0.8
+print(len(X_test)/len(X))   # should be 0.1
+print(len(X_valid)/len(X))  # should be 0.1
+```
+
+The target variable relatively imbalanced.
+
+```{python}
+X_train.head()
+```
+
+#### EDA before Preprocessing
+
+- Find the number of missing values
+
+```{python}
+# Check missing value
+100 * (X_train.isna().sum(0) / len(X_train))
+```
+
+- We will impute all these variables if there is any missing value
+
+- First, check the features distribution
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
+```
+
+```{python}
+# Identify numeric variables
+numeric_vars = X_train.select_dtypes(include=['number']).columns.tolist()
+numeric_vars
+```
+
+```{python}
+# Plot histogram
+fig, ax = plt.subplots(nrows=3, ncols=3, figsize=(12, 8))
+axes = ax.flatten()
+
+# Suppress FutureWarning
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+# Loop through each numeric variable and plot its KDE (Kernel Density Estimate)
+for i, col in enumerate(X_train[numeric_vars].columns):
+    sns.kdeplot(X_train[col], ax=axes[i], shade=True)
+    axes[i].set_title(f'Distribution of {col}')
+    axes[i].set_xlabel(col)
+    axes[i].set_ylabel('Density')
+
+# Adjust layout to prevent overlap
+plt.tight_layout()
+
+# Display the plot
+plt.show()
+```
+
+Summary:
+
+The data contains significant skewness and potential outliers, as evidenced by the KDE plots:
+- The `person_emp_length`, `person_age`, `person_income`variable shows unusually high values.
+- The `loan_amnt` and `loan_percent_income` distributions suggest there might be outliers or extreme values affecting the overall shape of the data.
+- The presence of these anomalies indicates the need for data cleaning and preprocessing before further analysis.
+- Given the skewed distribution of most numerical variables, median imputation would be a more robust approach for handling any missing values compared to mean imputation, as it is less affected by outliers.
+
+```{python}
+# Check numerical summary
+X_train.describe()
+```
+
+- Let's find the cut-off value of each features
+
+```{python}
+# 'person_age' has outliers
+X_train[X_train['person_age']>90]
+```
+
+```{python}
+# person_income has outliers
+X_train[X_train['person_income']>3000000]
+```
+
+```{python}
+# person_emp_length has outliers
+X_train[X_train['person_emp_length']>50]
+```
+
+```{python}
+# Identify categoric  variables
+cat_vars = X_train.select_dtypes(exclude=['number']).columns.tolist()
+cat_vars
+```
+
+```{python}
+# Loop through each column and print value counts
+for col in cat_vars:
+    print(f"Value counts for {col}:\n")
+    print(X_train[col].value_counts())
+    print("\n" + "-"*40 + "\n")
+```
+
+- Next, explore the `loan_status`
+
+```{python}
+y_train.value_counts()
+```
+
+- Explore the relation between features and `loan_status`
+
+```{python}
+# Concat the data first
+train_data = pd.concat((X_train, y_train), axis=1)
+train_data.head()
+```
+
+```{python}
+# Create a heatmap
+# Get the correlation matrix (numeric vs numeric)
+corr_matrix = train_data[numeric_vars + ['loan_status']].corr()
+corr_with_loan_status = corr_matrix['loan_status'].sort_values(ascending=False)
+print(corr_with_loan_status)
+```
+
+```{python}
+# Plot the heatmap
+sns.heatmap(corr_matrix, annot=True)
+plt.show()
+```
+
+```{python}
+# Create a barplot for categorical variables vs loan_status
+
+# Set up the figure size and layout
+fig, ax = plt.subplots(nrows=len(cat_vars), ncols=1, figsize=(10, 5 * len(cat_vars)))
+
+# Flatten ax in case there's only one categorical variable
+if len(cat_vars) == 1:
+    ax = [ax]
+
+# Loop through each categorical variable and create a bar plot
+for i, col in enumerate(cat_vars):
+    sns.countplot(data=train_data, x=col, hue='loan_status', ax=ax[i])
+    ax[i].set_title(f'{col} vs loan_status')
+    ax[i].set_xlabel(col)
+    ax[i].set_ylabel('Count')
+    ax[i].legend(title='loan_status')
+    plt.xticks(rotation=45)
+
+# Adjust layout to prevent overlap
+plt.tight_layout()
+
+# Display the plots
+plt.show()
+```
+
+#### 2.3. Remove & Preprocess Anomalous Data
+
+- Let's remove our data from anomalous.
+- Please see the EDA to help you remove the anomalous data
+
+```{python}
+# Find the data indices to drop based on multiple conditions
+idx_to_drop = X_train[(X_train['person_age'] > 90) | 
+                      (X_train['person_income'] > 3000000) | 
+                      (X_train['person_emp_length'] > 50)].index.tolist()
+```
+
+```{python}
+# Check the index
+print(f'Number of index to drop:', len(idx_to_drop))
+idx_to_drop
+```
+
+- Now, lets drop the data for `X_train` and also `y_train`
+
+```{python}
+X_train_dropped = X_train.drop(index=idx_to_drop)
+y_train_dropped = y_train.drop(index=idx_to_drop)
+```
+
+```{python}
+# Validate
+print('Shape of X train after dropped:', X_train_dropped.shape)
+X_train_dropped.head()
+```
+
+```{python}
+# Validate
+print('Shape of y train after dropped:', y_train_dropped.shape)
+y_train_dropped.head()
+```
+
+```{python}
+# Validate
+X_train_dropped.describe()
+```
+
+```{python}
+# Plot histogram
+fig, ax = plt.subplots(nrows=3, ncols=3, figsize=(12, 8))
+axes = ax.flatten()
+
+for i, col in enumerate(X_train_dropped[numeric_vars].columns):
+    sns.kdeplot(X_train_dropped[col], ax=axes[i])
+    axes[i].set_title(f'Distribution of {col}')
+
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
+# Create a heatmap
+# Get the correlation matrix (numeric vs numeric)
+corr_matrix = train_data[numeric_vars + ['loan_status']].corr()
+corr_with_loan_status = corr_matrix['loan_status'].sort_values(ascending=False)
+print(corr_with_loan_status)
+```
+
+#### 2.4. Create Imputation
+
+- Now, let's perform a numerical imputation (because all features are numerical)
+- First check the missing value of the numerical data
+
+```{python}
+# Check missing value
+X_train_dropped.isna().sum(0)
+```
+
+- Create a function to fit a numerical features imputer
+
+```{python}
+from sklearn.impute import KNNImputer
+import pandas as pd
+import numpy as np
+
+# Function to fit the KNN imputer
+def num_imputer_fit(data, n_neighbors=5):
+    imputer = KNNImputer(n_neighbors=n_neighbors, missing_values=np.nan)
+    imputer.fit(data)
+    return imputer
+
+# Function to transform the data using the fitted KNN imputer
+def num_imputer_transform(data, imputer):
+    imputed_data = imputer.transform(data)
+    return pd.DataFrame(imputed_data, columns=data.columns)
+```
+
+- Perform imputation
+
+```{python}
+# Get the numerical imputer
+num_imputer = num_imputer_fit(X_train_dropped[numeric_vars])
+
+# Transform the data
+X_train_imputed = num_imputer_transform(X_train_dropped[numeric_vars], num_imputer)
+
+# Reset the indices
+X_train_imputed = X_train_imputed.reset_index(drop=True)
+X_train_dropped_cat = X_train_dropped[cat_vars].reset_index(drop=True)
+
+# Concatenate the DataFrames
+X_train_imputed = pd.concat([X_train_imputed, X_train_dropped_cat], axis=1)
+```
+
+```{python}
+# Validate
+X_train_imputed.isna().sum(0)
+```
+
+Great!
+
+#### 2.5. Feature engineering the data
+
+- We standardize the data to enhance its performance during model optimization.
+- We apply one-hot encoding to the data to improve its performance during model optimization.
+
+```{python}
+# Create two functions to perform scaling & transform scaling
+from sklearn.preprocessing import StandardScaler
+def fit_scaler(data):
+    scaler = StandardScaler()
+    scaler.fit(data)
+    return scaler
+def transform_scaler(data, scaler):
+    scaled_data = scaler.transform(data)
+    return pd.DataFrame(scaled_data, columns=data.columns)
+```
+
+```{python}
+# Fit the scaler
+scaler = fit_scaler(X_train_imputed[numeric_vars])
+
+# Transform the scaler
+X_train_clean =  transform_scaler(X_train_imputed[numeric_vars], scaler)
+X_train_clean = pd.concat([X_train_clean, X_train_imputed[cat_vars]], axis=1)
+```
+
+```{python}
+X_train_clean["loan_grade"].unique()
+```
+
+```{python}
+from sklearn.preprocessing import OneHotEncoder
+def encode_and_one_hot(data, cat_vars, loan_grade_col='loan_grade', default_col='cb_person_default_on_file'):
+    # Ordinal encoding for loan_grade
+    loan_grade_mapping = {'A': 1, 'B': 2, 'C': 3, 'D': 4, 'E': 5, 'F': 6, 'G': 7}
+    data[loan_grade_col] = data[loan_grade_col].map(loan_grade_mapping)
+    
+    # Convert 'Y'/'N' in cb_person_default_on_file to 1/0
+    default_mapping = {'Y': 1, 'N': 0}
+    data[default_col] = data[default_col].map(default_mapping)
+    
+    # Remove columns that are specifically encoded from cat_vars list
+    cat_vars = [col for col in cat_vars if col not in [loan_grade_col, default_col]]
+    
+    # Apply OneHotEncoder to the specified categorical variables
+    encoder = OneHotEncoder(drop='first', sparse=False)  # drop='first' to avoid multicollinearity
+    encoded_data = pd.DataFrame(
+        encoder.fit_transform(data[cat_vars]),
+        columns=encoder.get_feature_names_out(cat_vars)
+    )
+
+    # Combine the encoded data with the original data, excluding original categorical columns
+    result = pd.concat([data, encoded_data], axis=1)
+    result = result.drop(cat_vars, axis=1)
+    
+    return result
+X_train_clean = encode_and_one_hot(X_train_clean, cat_vars)
+```
+
+```{python}
+X_train_clean.describe()
+```
+
+```{python}
+X_train_clean.columns
+```
+
+#### 2.6. Create the preprocess function
+
+- Now, let's create a function to preprocess other set of data (valid & test) so that we can predict that
+
+```{python}
+# Create a function to preprocess the dataset
+def preprocess_data(data, num_imputer, scaler, cat_vars, numeric_vars):
+    
+    # Step 2.4: Impute missing numerical values
+    num_imputer = num_imputer_fit(data[numeric_vars])
+    data_imputed = num_imputer_transform(data[numeric_vars], num_imputer)
+   
+    # Reset the indices
+    data_imputed = data_imputed.reset_index(drop=True)
+    data_cat = data[cat_vars].reset_index(drop=True)
+    
+    # Concatenate the DataFrames
+    data_imputed = pd.concat([data_imputed, data_cat], axis=1)
+    
+    # Step 2.5: Scale the numerical features
+    scaler = fit_scaler(data_imputed[numeric_vars])
+    data_scaled = transform_scaler(data_imputed[numeric_vars], scaler)
+    data_scaled = pd.concat([data_scaled, data_imputed[cat_vars]], axis=1)
+    
+    # Step 2.6: One-hot encode the categorical features
+    clean_data = encode_and_one_hot(data_scaled, cat_vars)
+
+    # Convert the scaled data back to DataFrame
+    clean_data = pd.DataFrame(clean_data)
+    
+    # Output the shape of the original and cleaned data
+    print(f"Original data shape: {data.shape}")
+    print(f"Cleaned data shape : {clean_data.shape}")
+    
+    return clean_data
+```
+
+```{python}
+# Preprocess the data training again
+X_train_clean = preprocess_data(data=X_train_dropped, num_imputer=num_imputer, scaler=scaler, cat_vars=cat_vars, numeric_vars=numeric_vars)
+```
+
+```{python}
+# Validate
+X_train_clean.head()
+```
+
+```{python}
+# Transform other set of data
+X_valid_clean = preprocess_data(data=X_valid, num_imputer=num_imputer, scaler=scaler, cat_vars=cat_vars, numeric_vars=numeric_vars)
+X_test_clean = preprocess_data(data=X_test, num_imputer=num_imputer, scaler=scaler, cat_vars=cat_vars, numeric_vars=numeric_vars)
+```
+
+### 3. Training Machine Learning Models
+
+```
+3.1 Prepare model evaluation function
+3.2 Train & evaluate several models
+3.3 Choose the best model
+```
+
+#### 3.1. Preprare model evaluation function
+
+- Before modeling, let's prepare two functions
+  - `extract_cv_results`: to return the score and best param from hyperparameter search
+  - `evaluate_model`: to return the performance metrics of a model
+
+```{python}
+# Function to evaluate the model and tuning hyperparameters
+
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
+from sklearn.metrics import confusion_matrix
+
+def extract_cv_results(cv_obj):
+    best_score_train = cv_obj.cv_results_['mean_train_score'][cv_obj.best_index_]
+    best_score_valid = cv_obj.cv_results_['mean_test_score'][cv_obj.best_index_]
+    best_params = cv_obj.best_params_
+    return best_score_train, best_score_valid, best_params
+
+def binary_classification_metrics(y_actual, y_pred):
+    accuracy = accuracy_score(y_actual, y_pred)
+    f1 = f1_score(y_actual, y_pred)
+    precision = precision_score(y_actual, y_pred)
+    recall = recall_score(y_actual, y_pred)
+    
+    print(f"Classification Metrics:")
+    print(f"-----------------------")
+    print(f"Accuracy : {accuracy:.4f}")
+    print(f"F1 Score : {f1:.4f}")
+    print(f"Precision: {precision:.4f}")
+    print(f"Recall   : {recall:.4f}")
+    
+    return accuracy, f1, precision, recall
+```
+
+#### 3.2. Train and Cross Validate Several Models
+
+```{python}
+# Import sklearn library of those six models + gridsearchcv
+from sklearn.dummy import DummyClassifier
+# from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
+from sklearn.model_selection import GridSearchCV
+```
+
+##### Perform CV for baseline model
+
+```{python}
+# Perform GridSearchCV for Baseline model
+# Set up the DummyClassifier for a baseline model in a classification task
+clf_base = GridSearchCV(cv=5, 
+                        estimator=DummyClassifier(strategy='most_frequent'), 
+                        param_grid={}, 
+                        return_train_score=True, 
+                        scoring='balanced_accuracy')
+# Fit the baseline model
+clf_base.fit(X_train_clean, y_train_dropped)
+```
+
+```{python}
+# Validate the CV Score
+train_base, valid_base, best_param_base = extract_cv_results(clf_base)
+
+print(f'Train score - Baseline model: {train_base}')
+print(f'Valid score - Baseline model: {valid_base}')
+print(f'Best Params - Baseline model: {best_param_base}')
+```
+
+##### Perform CV for Logistic Regression Model
+
+```{python}
+# Perform GridSearchCV for Logistic Regression model
+param_logit = {
+    'penalty': ['l1', 'l2'],  # Regularization types
+    'C': [0.01, 0.1, 1, 10],  # Inverse of regularization strength
+    'solver': ['liblinear']    # 'liblinear' supports both 'l1' and 'l2' penalties
+}
+clf_lr = GridSearchCV(cv=5, 
+                      estimator=LogisticRegression(max_iter=1000), 
+                      param_grid=param_logit, 
+                      return_train_score=True, 
+                      scoring='balanced_accuracy')
+# Fit the Logistic Regression model
+clf_lr.fit(X_train_clean, y_train_dropped)
+```
+
+```{python}
+# Validate the CV Score
+train_lr, valid_lr, best_param_lr = extract_cv_results(clf_lr)
+
+print(f'Train score - LinReg model: {train_lr}')
+print(f'Valid score - LinReg model: {valid_lr}')
+print(f'Best Params - LinReg model: {best_param_lr}')
+```
+
+##### Perform CV for Decision Tree Model
+
+```{python}
+# Perform GridSearchCV for Decision Tree model
+# Perform GridSearchCV for Decision Tree model
+param_dt = {'max_depth': [None, 5, 10, 15], 
+            'min_samples_split': [2, 10, 20]}
+clf_dt = GridSearchCV(cv=5, 
+                      estimator=DecisionTreeClassifier(), 
+                      param_grid=param_dt, 
+                      return_train_score=True, 
+                      scoring='balanced_accuracy')
+# Fit the Decision Tree model
+clf_dt.fit(X_train_clean, y_train_dropped)
+```
+
+```{python}
+# Validate the CV Score
+train_dt, valid_dt, best_param_dt = extract_cv_results(clf_dt)
+print(f'Train score - LinReg model: {train_dt}')
+print(f'Valid score - LinReg model: {valid_dt}')
+print(f'Best Params - LinReg model: {best_param_dt}')
+```
+
+##### Perform CV for Random Forest Model
+
+```{python}
+# Define parameter grid for Random Forest
+param_rf = {
+    'n_estimators': [50, 100],  # Fewer boosting rounds for lighter computation
+    'max_depth': [3, 6],        # Less variation in tree depth
+}
+
+# Perform GridSearchCV for Random Forest model
+clf_rf = GridSearchCV(
+    cv=5,
+    estimator=RandomForestClassifier(),
+    param_grid=param_rf,
+    return_train_score=True,
+    scoring='balanced_accuracy'  # Use balanced accuracy for scoring
+)
+
+# Fit the Random Forest model
+clf_rf.fit(X_train_clean, y_train_dropped)
+
+# Extract and print CV results
+train_rf, valid_rf, best_param_rf = extract_cv_results(clf_rf)
+print(f'Train score - Random Forest model: {train_rf}')
+print(f'Valid score - Random Forest model: {valid_rf}')
+print(f'Best Params - Random Forest model: {best_param_rf}')
+```
+
+##### Perform CV for XGBoost Model
+
+```{python}
+# Define parameter grid for XGBoost
+param_xgb = {
+    'n_estimators': [50, 100],     # Fewer boosting rounds for lighter computation
+    'max_depth': [3, 6],           # Less variation in tree depth
+    'learning_rate': [0.01,0.1],   # Only one option for learning rate
+}
+
+# Perform GridSearchCV for XGBoost model
+clf_xgb = GridSearchCV(
+    cv=5,
+    estimator=XGBClassifier(use_label_encoder=False, eval_metric='logloss'), 
+    param_grid=param_xgb,
+    return_train_score=True,
+    scoring='balanced_accuracy'  # Use balanced accuracy for scoring
+)
+
+# Fit the XGBoost model
+clf_xgb.fit(X_train_clean, y_train_dropped)
+
+# Extract and print CV results
+train_xgb, valid_xgb, best_param_xgb = extract_cv_results(clf_xgb)
+print(f'Train score - XGBoost model: {train_xgb}')
+print(f'Valid score - XGBoost model: {valid_xgb}')
+print(f'Best Params - XGBoost model: {best_param_xgb}')
+```
+
+### 4. Find best trashold for each model with data validation and best model with data test
+
+#### 4.1. Apply best parameter to the valid data
+
+```{python}
+import numpy as np
+from sklearn.metrics import balanced_accuracy_score
+
+# Define a function to find the best threshold that minimizes financial losses
+def find_best_threshold_min_loss(y_true, y_proba, loss_per_FN, loss_per_FP, start=0.3, end=0.7, step=0.01):
+    thresholds = []
+    losses = []
+    
+    best_threshold = 0.5
+    min_loss = float('inf')
+    
+    # Loop through thresholds from start to end in specified increments
+    for threshold in np.arange(start, end + step, step):
+        # Convert probabilities to binary predictions
+        y_pred = (y_proba >= threshold).astype(int)
+        
+        # Calculate the confusion matrix components
+        tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+        
+        # Calculate financial loss due to false negatives and false positives
+        loss_due_to_FN = fn * loss_per_FN
+        loss_due_to_FP = fp * loss_per_FP
+        
+        # Calculate total financial impact
+        total_financial_impact = loss_due_to_FN + loss_due_to_FP
+        
+        # Store threshold and loss
+        thresholds.append(threshold)
+        losses.append(total_financial_impact)
+        
+        # Update best threshold if current loss is lower
+        if total_financial_impact < min_loss:
+            min_loss = total_financial_impact
+            best_threshold = threshold
+    
+    return best_threshold, min_loss, thresholds, losses
+```
+
+```{python}
+import pandas as pd
+
+# Define the loss values
+loss_per_FN = 35_000_000  # Rp 35,000,000 for false negatives
+loss_per_FP = 10_000_000  # Rp 10,000,000 for false positives
+
+# Collect best thresholds and minimum losses for each model
+model_names = ['Baseline', 'Logistic Regression', 'Decision Tree', 'Random Forest', 'XGBoost']
+best_thresholds = []
+min_losses = []
+
+# Baseline (DummyClassifier)
+y_proba_base = clf_base.predict_proba(X_valid_clean)[:, 1]
+best_threshold_base, min_loss_base, _, _ = find_best_threshold_min_loss(
+    y_valid, y_proba_base, loss_per_FN, loss_per_FP, start=0.3, end=0.7
+)
+best_thresholds.append(best_threshold_base)
+min_losses.append(min_loss_base)
+
+# Logistic Regression
+y_proba_lr = clf_lr.predict_proba(X_valid_clean)[:, 1]
+best_threshold_lr, min_loss_lr, _, _ = find_best_threshold_min_loss(
+    y_valid, y_proba_lr, loss_per_FN, loss_per_FP, start=0.3, end=0.7
+)
+best_thresholds.append(best_threshold_lr)
+min_losses.append(min_loss_lr)
+
+# Decision Tree
+y_proba_dt = clf_dt.predict_proba(X_valid_clean)[:, 1]
+best_threshold_dt, min_loss_dt, _, _ = find_best_threshold_min_loss(
+    y_valid, y_proba_dt, loss_per_FN, loss_per_FP, start=0.3, end=0.7
+)
+best_thresholds.append(best_threshold_dt)
+min_losses.append(min_loss_dt)
+
+# Random Forest
+y_proba_rf = clf_rf.predict_proba(X_valid_clean)[:, 1]
+best_threshold_rf, min_loss_rf, _, _ = find_best_threshold_min_loss(
+    y_valid, y_proba_rf, loss_per_FN, loss_per_FP, start=0.3, end=0.7
+)
+best_thresholds.append(best_threshold_rf)
+min_losses.append(min_loss_rf)
+
+# XGBoost
+y_proba_xgb = clf_xgb.predict_proba(X_valid_clean)[:, 1]
+best_threshold_xgb, min_loss_xgb, _, _ = find_best_threshold_min_loss(
+    y_valid, y_proba_xgb, loss_per_FN, loss_per_FP, start=0.3, end=0.7
+)
+best_thresholds.append(best_threshold_xgb)
+min_losses.append(min_loss_xgb)
+
+# Create a summary DataFrame
+summary_df = pd.DataFrame({
+    'Model': model_names,
+    'Best Threshold': best_thresholds,
+    'Minimum Loss': min_losses
+})
+
+# Display the summary table
+print('Summary of Best Thresholds and Minimum Loss for Each Model:')
+print(summary_df)
+```
+
+```{python}
+from sklearn.metrics import classification_report
+
+# Baseline (DummyClassifier)
+y_proba_base = clf_base.predict_proba(X_test_clean)[:, 1]
+y_pred_base = (y_proba_base >= best_threshold_base).astype(int)
+report_base = classification_report(y_test, y_pred_base)
+print("Classification Report for Baseline Model:")
+print(report_base)
+
+# Logistic Regression
+y_proba_lr = clf_lr.predict_proba(X_test_clean)[:, 1]
+y_pred_lr = (y_proba_lr >= best_threshold_lr).astype(int)
+report_lr = classification_report(y_test, y_pred_lr)
+print("\nClassification Report for Logistic Regression:")
+print(report_lr)
+
+# Decision Tree
+y_proba_dt = clf_dt.predict_proba(X_test_clean)[:, 1]
+y_pred_dt = (y_proba_dt >= best_threshold_dt).astype(int)
+report_dt = classification_report(y_test, y_pred_dt)
+print("\nClassification Report for Decision Tree:")
+print(report_dt)
+
+# Random Forest
+y_proba_rf = clf_rf.predict_proba(X_test_clean)[:, 1]
+y_pred_rf = (y_proba_rf >= best_threshold_rf).astype(int)
+report_rf = classification_report(y_test, y_pred_rf)
+print("\nClassification Report for Random Forest:")
+print(report_rf)
+
+# XGBoost
+y_proba_xgb = clf_xgb.predict_proba(X_test_clean)[:, 1]
+y_pred_xgb = (y_proba_xgb >= best_threshold_xgb).astype(int)
+report_xgb = classification_report(y_test, y_pred_xgb)
+print("\nClassification Report for XGBoost:")
+print(report_xgb)
+```
+
+
+### 5. Model Evaluation and Financial Impact
+
+#### 5.1 Model Evaluation
+
+My machine learning workflow idea is to train the data using the training set to find the best hyperparameters. Then, I tune the threshold with validation data to minimize the financial loss impact. Finally, I test the model with test data as out-of-sample data to determine the best model ready for use in the real world.
+
+Among all the models, the Random Forest model turned out to be the best. Although XGBoost was the best during the hyperparameter search, it did not perform well on the out-of-sample test data, indicating overfitting. It is important to note that in my work, the hyperparameter values were kept simple to expedite computation due to hardware limitations.
+
+I also emphasize here that I don't use the F1 score because we see from the financial impact that TN is also important, so we prioritize balance for both default and non-default classes.
+
+### 5.2 Financial Impact
+
+How does your best model perform in the test data? Is your best model good?
+
+Answer:
+It performs not well enough, the accuracy of the model is decreasing in the test data. The higher decrease is in the precision score, indicating that many of the positive predictions made by the model are incorrect (many false positives).
+
+Compare the financial impact between your best model & baseline model. Is your best model better than the baseline model? Assumptions:
+
+- If you falsely predict good applicants as bad, you would lose potential revenue of Rp 10.000.000/applicant on average.
+- If you falsely predict bad applicants as good, you would lose Rp 35.000.000/applicant on average.
+
+Confusion Matrix Breakdown:
+- True Positives (TP): 955 (Correctly predicted bad applicants)
+- False Positives (FP): 289 (Falsely predict good applicants as bad)
+- False Negatives (FN): 383 (Falsely predict bad applicants as good)
+- True Negatives (TN): 4890 (Correctly predicted good applicants)
+
+```{python}
+# Baseline
+import numpy as np
+
+# Extract value confusion matrix
+tn, fp, fn, tp = confusion_matrix(y_test, y_pred_base).ravel()
+
+# Given financial losses
+loss_per_FN = 35_000_000  # Rp 35,000,000 for false negatives
+loss_per_FP = 10_000_000  # Rp 10,000,000 for false positives
+
+# Calculate the total financial loss due to FN and FP
+loss_due_to_FN = fn * loss_per_FN
+loss_due_to_FP = fp * loss_per_FP
+
+# Calculate the total financial impact
+total_financial_impact = loss_due_to_FN + loss_due_to_FP
+
+# Print the results
+print(f"Loss due to False Negatives (FN): Rp {loss_due_to_FN:,}")
+print(f"Loss due to False Positives (FP): Rp {loss_due_to_FP:,}")
+print(f"Total Financial Impact: Rp {total_financial_impact:,}")
+```
+
+```{python}
+# Basemodel
+import numpy as np
+
+# Extract value confusion matrix
+tn, fp, fn, tp = confusion_matrix(y_test, y_pred_rf).ravel()
+
+# Given financial losses
+loss_per_FN = 35_000_000  # Rp 35,000,000 for false negatives
+loss_per_FP = 10_000_000  # Rp 10,000,000 for false positives
+
+# Calculate the total financial loss due to FN and FP
+loss_due_to_FN = fn * loss_per_FN
+loss_due_to_FP = fp * loss_per_FP
+
+# Calculate the total financial impact
+total_financial_impact = loss_due_to_FN + loss_due_to_FP
+
+# Print the results
+print(f"Loss due to False Negatives (FN): Rp {loss_due_to_FN:,}")
+print(f"Loss due to False Positives (FP): Rp {loss_due_to_FP:,}")
+print(f"Total Financial Impact: Rp {total_financial_impact:,}")
+```
+

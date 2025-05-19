@@ -1,5 +1,5 @@
 ---
-title: Regresi Linier dan Teknik Seleksi Peubah - Subset-Selection
+title: Regresi Linier dan Teknik Seleksi Peubah
 jupyter: python3
 format:
   html:
@@ -347,7 +347,7 @@ test_score
 ```
 
 
-## Conclusion
+## Conclusion 1
 
 ```{python}
 best_scores_df = pd.DataFrame({"Model": ["Baseline", "OLS full features", "OLS best features"],
@@ -359,3 +359,300 @@ best_scores_df
 Sedikit lebih besar dibandingkan dengan model OLS full features. Mana yang lebih baik? Tentu saja, kita harus melihat trade-off antara kompleksitas model dan performa. Jika performa model tidak meningkat secara signifikan, kita mungkin lebih memilih model yang lebih sederhana.
 
 Ingat trade-off antara bias dan varians!
+
+## Shrinkage Methods: Ridge, Lasso, Elastic Net
+
+```{python}
+from sklearn.linear_model import Ridge, Lasso, ElasticNet
+from sklearn.model_selection import GridSearchCV
+```
+
+### Ridge
+
+```{python}
+alphas = [0.5, 1.0, 2.5, 5.0, 7.5, 10.0,
+          12.5, 15.0, 17.5, 30.0, 50.0]
+
+mse_train_list = []
+mse_cv_list = []
+model_list = []
+
+for alpha in alphas:
+    model_i, train_score_i, \
+        cv_score_i, model_param_i = fit_model(estimator = Ridge(alpha=alpha),
+                                              X_train = X_train,
+                                              y_train = y_train)
+
+    mse_train_list.append(train_score_i)
+    mse_cv_list.append(cv_score_i)
+    model_list.append(model_param_i)
+```
+
+```{python}
+# Plot error
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 6))
+
+ax.plot(alphas, mse_train_list, c="r", marker=".", label="Train")
+ax.plot(alphas, mse_cv_list, c="g", marker=".", label="CV")
+
+ax.set_xlabel("alpha")
+ax.set_ylabel("MSE")
+
+plt.grid()
+plt.legend()
+plt.show()
+```
+
+```{python}
+# Best parameter adalah saat MSE di CV paling kecil
+best_idx = np.argmin(mse_cv_list)
+best_alpha = alphas[best_idx]
+best_ridge_cv = mse_cv_list[best_idx]
+
+best_alpha, best_ridge_cv
+```
+
+```{python}
+# Best model
+best_param_ridge = model_list[best_idx]
+best_param_ridge
+```
+
+Cara lebih cepat dengan GridSearchCV
+
+```{python}
+# Buat model & parameter model yang ingin divariasikan
+ridge = Ridge()
+
+param_space = {"alpha": alphas}
+param_space
+```
+
+```{python}
+# Lakukan grid search dengan CV
+cv_ridge = GridSearchCV(estimator = ridge,
+                        param_grid = param_space,
+                        scoring = "neg_mean_squared_error",
+                        cv = 5)
+
+# Fit searching
+cv_ridge.fit(X = X_train,
+             y = y_train)
+```
+
+```{python}
+cv_ridge.best_params_
+```
+
+```{python}
+# Buat objek baru
+best_ridge = Ridge(alpha = cv_ridge.best_params_["alpha"])
+
+# Fit model
+best_ridge.fit(X = X_train,
+               y = y_train)
+```
+
+```{python}
+best_ridge.coef_
+```
+
+
+### Lasso
+
+```{python}
+alphas = [0.05, 0.10, 0.15, 0.20, 0.25, 1.00,
+          1.25, 1.50, 1.75, 3.00, 5.00]
+
+mse_train_list = []
+mse_cv_list = []
+model_list = []
+
+for alpha in alphas:
+    model_i, train_score_i, \
+        cv_score_i, model_param_i = fit_model(estimator = Lasso(alpha=alpha),
+                                              X_train = X_train,
+                                              y_train = y_train)
+
+    mse_train_list.append(train_score_i)
+    mse_cv_list.append(cv_score_i)
+    model_list.append(model_param_i)
+```
+
+
+```{python}
+# Plot error
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 6))
+
+ax.plot(alphas, mse_train_list, c="r", marker=".", label="Train")
+ax.plot(alphas, mse_cv_list, c="g", marker=".", label="CV")
+
+ax.set_xlabel("alpha")
+ax.set_ylabel("MSE")
+
+plt.grid()
+plt.legend()
+plt.show()
+```
+
+
+```{python}
+# Best parameter adalah saat MSE di CV paling kecil
+best_idx = np.argmin(mse_cv_list)
+best_alpha = alphas[best_idx]
+best_lasso_cv = mse_cv_list[best_idx]
+best_alpha, best_lasso_cv
+```
+
+
+```{python}
+# Best model
+best_param_lasso = model_list[best_idx]
+best_param_lasso
+```
+
+Dengan GridSearchCV
+
+
+```{python}
+# Buat model & parameter model yang ingin divariasikan
+lasso = Lasso()
+param_space = {"alpha": alphas}
+
+# Lakukan grid search dengan CV
+cv_lasso = GridSearchCV(estimator = lasso,
+                        param_grid = param_space,
+                        scoring = "neg_mean_squared_error",
+                        cv = 5)
+
+# Fit searching
+cv_lasso.fit(X = X_train,
+             y = y_train)
+```
+
+```{python}
+cv_lasso.best_params_
+```
+
+```{python}
+# Buat objek baru
+best_lasso = Lasso(alpha = cv_lasso.best_params_["alpha"])
+
+# Fit model
+best_lasso.fit(X = X_train,
+               y = y_train)
+```
+
+
+```{python}
+best_lasso.coef_
+```
+
+### Elastic Net
+
+Langsung dengan GridSearchCV
+
+```{python}
+alphas = [0.05, 0.10, 0.15, 0.20, 0.25, 1.00, 1.25, 1.50, 1.75, 3.00, 5.00]
+l1_ratios = [0.1, 0.5, 0.7, 0.9, 1.0]
+```
+
+```{python}
+# Buat model & parameter model yang ingin divariasikan
+elastic = ElasticNet()
+param_space = {"alpha": alphas,
+               "l1_ratio": l1_ratios}
+
+# Lakukan grid search dengan CV
+cv_elastic = GridSearchCV(estimator = elastic,
+                          param_grid = param_space,
+                          scoring = "neg_mean_squared_error",
+                          cv = 5)
+# Fit searching
+cv_elastic.fit(X = X_train,
+               y = y_train)                           
+```
+
+```{python}
+cv_elastic.best_params_
+```
+
+```{python}
+# Buat objek baru
+best_elastic = ElasticNet(alpha = cv_elastic.best_params_["alpha"],
+                          l1_ratio = cv_elastic.best_params_["l1_ratio"])
+best_elastic.fit(X = X_train,
+                 y = y_train)                             
+```
+
+```{python}
+best_elastic.coef_
+```
+
+```{python}
+# Cek scores cv from cv_elastic best
+best_elastic_cv = -cv_elastic.best_score_
+best_elastic_cv
+```
+
+## Conclusion 2
+
+```{python}
+best_params = pd.concat([lr_params_df,
+                         lr_params_best,
+                         best_param_ridge,
+                         best_param_lasso,
+                         pd.DataFrame(best_elastic.coef_, index=X_train.columns, columns=["ElasticNet"])],
+                        axis=1)
+best_params.columns = ["OLS full features", "OLS best features", "Ridge", "Lasso", "ElasticNet"]
+best_params
+```
+
+```{python}
+# Skor MSE
+best_scores_df = pd.DataFrame({"Model": ["Baseline", "OLS full features", "OLS best features", "Ridge", "Lasso", "ElasticNet"],
+                               "MSE": [mse_baseline_cv, mse_lr_cv, cv_best_score, best_ridge_cv, best_lasso_cv, best_elastic_cv]})
+
+best_scores_df
+```
+
+```{python}
+# Cek test scores
+def mse_model(estimator, X_test, y_test):
+    # Predict
+    y_pred = estimator.predict(X_test)
+
+    # Cari mse
+    mse = mean_squared_error(y_test, y_pred)
+
+    return mse
+
+mse_model(estimator = lr_best,
+          X_test = X_test[lr_params_best.index[:-1]],
+          y_test = y_test)
+```
+
+```{python}
+mse_model(estimator = best_elastic,
+          X_test = X_test,
+          y_test = y_test)
+```
+
+```{python}
+# Evaluate all models on the test set
+test_scores = {
+    "Baseline": mse_model(estimator=baseline_model, X_test=X_test, y_test=y_test),
+    "OLS full features": mse_model(estimator=lr, X_test=X_test, y_test=y_test),
+    "OLS best features": mse_model(estimator=lr_best, X_test=X_test[lr_params_best.index[:-1]], y_test=y_test),
+    "Ridge": mse_model(estimator=best_ridge, X_test=X_test, y_test=y_test),
+    "Lasso": mse_model(estimator=best_lasso, X_test=X_test, y_test=y_test),
+    "ElasticNet": mse_model(estimator=best_elastic, X_test=X_test, y_test=y_test)
+}
+
+test_scores_df = pd.DataFrame(list(test_scores.items()), columns=["Model", "Test MSE"])
+test_scores_df
+```
+
+## References
+
+https://scikit-learn.org/stable/modules/linear_model.html#

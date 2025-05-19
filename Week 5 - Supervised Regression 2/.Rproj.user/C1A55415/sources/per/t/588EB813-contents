@@ -1,257 +1,150 @@
 ---
-title: "Mata Kuliah: **Machine Learning**"
-subtitle: "Machine Learning Workflow"
+title: "Mata Kuliah: Machine Learning"
+subtitle: "Regresi Tak Linear"
 format:
   revealjs: 
     slide-number: true
     chalkboard: 
-      buttons: false
+      buttons: true
     preview-links: auto
     logo: img/Logo-Horizontal.png
     css: styles.css
-    footer: '[@2025 - Deri Siswara](https://derisiswara.quarto.pub/ml_w2)'
+    footer: '[@2025 - Deri Siswara](https://derisiswara.quarto.pub/ml_w5)'
 ---
 
-## Background {.smaller}
+## Pendahuluan {.smaller}
 
-::: columns
-::: {.column width="45%"}
+Regresi tak linear adalah salah satu metode regresi yang memodelkan hubungan antara input dan output dengan menggunakan fungsi-fungsi matematika yang tidak linier.
 
-![](img/meme4.png){.absolute height="500"}
+![](https://study.com/cimages/multimages/16/linear_function_vs_nonlinear_function.png){.absolute top="200"}
 
-:::
+## Pendahuluan {.smaller}
 
-::: {.column width="10%"}
-:::
+Apa fungsi regresi yang paling _fit_ untuk data berikut?  
 
-::: {.column width="45%"}
+```{python}
+#| echo: false
+# import wagedata.csv and making scatter plot wage vs experience
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+```
 
-Karakter data scientist (DS) baru:
+```{python}
+# Atur besar plot
+plt.rcParams['figure.figsize'] = [15, 7]
+df1 = pd.read_csv('wagedata.csv')
+plt.scatter(df1['experience'], np.log(df1['wage']),color='black', s=20)
+plt.xlabel('Pengalaman Kerja (Tahun)')
+plt.ylabel('Dolar per Minggu (Ln)')
+plt.title('Hubungan Upah dan Pengalaman Kerja')
+plt.show()
+```
 
-- **Bingung** harus mulai dari mana.
-- Penuh energi dan ingin menyelesaikan masalah menggunakan teknologi ML terbaru.
-- Memiliki keterampilan di bidang matematika/statistika/ilmu komputer/bisnis.
-- Tidak mengetahui end-to-end workflow ML.
+## Pendahuluan {.smaller}
 
-:::
-:::
+Hubungan antara upah dan pengalaman kerja dapat dijelaskan dengan fungsi regresi tak linier. Semakin lama pengalaman kerja, upah yang diterima akan meningkat, namun maksimumnya akan tercapai. Setelah mencapai titik maksimum, upah akan tetap konstan atau bahkan menurun seiring bertambahnya pengalaman kerja.
 
-## Background {.smaller}
+```{python}
+# Atur besar plot
+plt.rcParams['figure.figsize'] = [10, 5]
+# Plot log(wage) terhadap experience
+plt.scatter(df1['experience'], np.log(df1['wage']), label='Data', color='black', s=20)
+plt.xlabel('Pengalaman Kerja (Tahun)')
+plt.ylabel('Dolar per Minggu (Ln)')
+plt.title('Hubungan Upah dan Pengalaman Kerja')
 
-::: columns
-::: {.column width="45%"}
+# Garis regresi pertama
+experience_range = np.linspace(df1['experience'].min(), df1['experience'].max(), 100)
+plt.plot(experience_range, 5 + 0.01 * experience_range, color='blue', linestyle='--', label='Garis Regresi: a = 5, b = 0.01')
 
-![](img/meme1.jpg){.absolute height="500"}
+# Garis regresi kedua dengan fungsi LinearRegression atau OLS
+model = LinearRegression()
+X = df1[['experience']]
+y = np.log(df1['wage'])
+model.fit(X, y)
+y_pred = model.predict(X)
+plt.plot(df1['experience'], y_pred, color='red', label='Garis Regresi: OLS')
 
-:::
+# Add quadratic function to the plot
+quadratic_model = LinearRegression()
+X_quad = np.column_stack((df1['experience'], df1['experience']**2))
+quadratic_model.fit(X_quad, np.log(df1['wage']))
+order_id = np.argsort(df1['experience'])
+plt.plot(df1['experience'][order_id], quadratic_model.predict(X_quad)[order_id], color='green', linewidth=2, label='Regresi Tak Linear: Kuadratik')
 
-::: {.column width="10%"}
-:::
+# Tambahkan label untuk kedua garis
+plt.legend(loc='lower right')
+plt.show()
+```
 
-::: {.column width="45%"}
 
-Kesalahan umum yang dilakukan oleh DS baru:
+## Startegi Menghadapi Pola Tak Linear {.smaller}
 
-- Tidak memahami **proses bisnis**.
-- Tidak tahu tipe model ML seperti apa yang harus dibangun.
-- Hanya bisa bekerja jika datanya sudah bersih.
-- Tidak tahu cara membersihkan data.
-- Mendapatkan akurasi 99% pada data uji.
-- Membuat model ML tetapi hanya melakukan fitting, tanpa pernah melakukan prediksi.
+- Transformasi Variabel: Mengubah variabel input atau output dengan fungsi matematika tertentu, dengan harapan data hasil transformasi memiliki pola linier.
+- Melakukan pemodelan per cluster atau segmentasi data.
+- Menggunakan fungsi regresi tak linier. Misalnya, regresi polinomial, regresi piecewise, regresi spline, regresi generalized additive model (GAM),
+- Menggunakan metode _machine learning_ lain seperti _random forest_, _support vector machine_, _neural network_, _deep learning_, dan lain-lain.
+- Pemulusan (_smoothing_) data.
 
-:::
-:::
+## Transformasi Variabel {.smaller}
 
+![](img/trans.png){.absolute}
 
-## Common Machine Learning Workflow {.smaller}
+## Regresi Polinomial {.smaller}
 
+#### Model:
 
-![](img/mlwf.png){.absolute}
+$$
+Y = \beta_0 + \beta_1 X + \beta_2 X^2 + \ldots + \beta_p X^d + \epsilon
+$$
 
+di mana $d$ adalah derajat polinomial.
 
-## Business Understanding {.smaller}
+Derajat polinomial yang sering digunakan adalah derajat 2 (kuadratik) dan derajat 3 (kubik).
 
-- Penting untuk memahami proses data tercipta, perjalanan pengguna (user journey), dan proses bisnis (business process).
-- Anda dapat membangun solusi ML untuk mengotomatisasi proses bisnis.
+Derajat polinomial yang tinggi dapat menyebabkan _overfitting_. Kurva berbentuk terlalu liar, terutama pada bagian ujung.
 
-#### Old Way
+![](img/poli.png){.absolute top="400" } 
 
-![](img/bp1.png){.absolute top="250"}
+## Fungsi Tangga (Piecewise) {.smaller}
 
+#### Model:
 
+$$
+Y = \beta_0 + \beta_1 I(X \leq c_1) + \beta_2 I(c_1 < X \leq c_2) + \ldots + \beta_k I(c_{k-1} < X \leq c_k) + \epsilon
+$$
 
-## Business Understanding {.smaller}
+di mana $I$ adalah fungsi indikator.
 
-- Penting untuk memahami proses data tercipta, perjalanan pengguna (user journey), dan proses bisnis (business process).
-- Anda dapat membangun solusi ML untuk mengotomatisasi proses bisnis.
+Fungsi tangga membagi data menjadi beberapa segmen dan memodelkan setiap segmen dengan fungsi linier.
 
-#### New Way
+Setiap segmen memiliki _intercept_ dan _slope_ yang berbeda. 
 
-![](img/bp2.png){.absolute top="250"}
+![](img/tangga.png){.absolute top="400" } 
 
+## Regresi Spline {.smaller}
 
-## Objective Metrics {.smaller}
+Regresi spline adalah metode regresi yang membagi data menjadi beberapa segmen dan memodelkan setiap segmen dengan fungsi polinomial. Regresi ini adalah generalisasi dari regresi polinomial dan regresi tangga.
 
-- Metrik objektif adalah ukuran yang digunakan untuk mengevaluasi model ML. Metrik ini biasanya berhubungan dengan metrik bisnis yang diterjemahkan.
+Kelebihan regresi spline adalah fleksibilitas dalam menangkap pola data yang kompleks.
 
-#### Kasus leads scoring
+![](img/spline.png){.absolute top="300" }
 
-![](img/om1.png){.absolute top="200"}
+## Pemulusan Data (Smoothing) {.smaller}
 
-## Objective Metrics {.smaller}
+Pemulusan data adalah teknik untuk mengurangi fluktuasi atau noise dalam data sehingga pola utama lebih mudah terlihat. Teknik ini sering digunakan dalam analisis deret waktu. **Metode Pemulusan Data**:
 
-- Metrik objektif adalah ukuran yang digunakan untuk mengevaluasi model ML. Metrik ini biasanya berhubungan dengan metrik bisnis yang diterjemahkan.
+- **Moving Average**: Menghitung rata-rata dari sejumlah titik data dalam jendela bergerak.
+- **Exponential Smoothing**: Memberikan bobot yang lebih besar pada titik data yang lebih baru.
+- **LOESS (Locally Estimated Scatterplot Smoothing)**: Menggunakan regresi lokal untuk memuluskan data.
 
-#### Kasus leads scoring
+![](https://bpcdn.co/images/2015/03/27153236/EMA-vs-SMA-780x443.png){.absolute top="400" width="400" height="200" left="300"}
 
-![](img/om2.png){.absolute top="200"}
-
-## Objective Metrics {.smaller}
-
-- Metrik objektif adalah ukuran yang digunakan untuk mengevaluasi model ML. Metrik ini biasanya berhubungan dengan metrik bisnis yang diterjemahkan.
-- Selalu **skeptis**: Tidak langsung percaya pada hasil atau model Machine Learning (ML) tanpa melakukan verifikasi yang mendalam.
-
-#### Kasus leads scoring
-
-![](img/om3.png){.absolute top="300"}
-
-
-## Data Preparation {.smaller}
-
-- Data preparation adalah proses paling penting dalam ML.
-- Tahapan umum dalam data preparation yaitu data gathering, data definition, dan  data validation.
-- Seorang DS harus mengerti **konteks** data yang digunakan dan tipe data sesuai dengan definisinya.
-
-![](img/dp2.webp){.absolute top="300" height="300" left="100"}
-
-
-## Data Splitting {.smaller}
-
-#### Mana yang lebih bagus?
-
-![](img/ds1.png){.absolute top="100"}
-
-## Data Splitting {.smaller}
-
-#### Mana yang lebih bagus?
-
-- Model B lebih bagus karena dapat memprediksi data yang belum pernah dilihat sebelumnya.
-
-![](img/ds2.png){.absolute top="150"}
-
-## Data Splitting {.smaller}
-
-Membagi (split) data menjadi 3 bagian:
-
-![](img/ds3.png){.absolute top="150"}
-
-## Hati-hati dengan data leakage {.smaller}
-
-- Data leakage adalah kondisi dimana data yang digunakan untuk training model juga digunakan untuk testing model.
-- Bisa juga data target yang digunakan masuk juga ke dalam input data.
-- Data leakage bisa membuat model ML menjadi overfitting, membuat seakan model ML sangat bagus tapi saat testing atau deployment performanya sangat buruk.
-
-![](img/dl1.png){.absolute top="300"}
-
-## Hati-hati dengan data leakage {.smaller}
-
-- Data leakage adalah kondisi dimana data yang digunakan untuk training model juga digunakan untuk testing model.
-- Bisa juga data target yang digunakan masuk juga ke dalam input data.
-- Data leakage bisa membuat model ML menjadi overfitting, membuat seakan model ML sangat bagus tapi saat testing atau deployment performanya sangat buruk.
-
-![](img/dl2.png){.absolute top="300"}
-
-## Data Understanding (EDA) {.smaller}
-
-#### Tujuan:
-
-- Mencari pattern dalam data.
-- Cari anomali yang mengurangi akurasi model.
-- Tahap ini biasa disebut exploratory data analysis (EDA).
-
-![](img/eda1.png){.absolute top="300"}
-
-![](img/2a.png){.absolute top="550" height="200" width="400"}
-
-## Data Preprocessing {.smaller}
-
-Objektif utama yaitu mengubah data ke format yang dapat diterima oleh model.
-
-Contoh data preprocessing:
-
-- Handling missing values
-- Handling outliers
-- Handling categorical data
-- Transformasi data (scaling)
-
-Terdapat beragam teknik atau pendekatan dalan setiap data preprocessing. Misal nya di handling missing values, kita bisa menggunakan teknik imputation, drop missing values, dll. Di outliers handling, kita bisa menggunakan teknik IQR, Z-score, dll.
-
-## Feature Engineering {.smaller}
-
-Feature engineering adalah proses membuat fitur baru (input baru) dari fitur yang sudah ada. Tujuannya adalah untuk meningkatkan performa model ML. Fitur baru ini lebih representatif dan informatif terhadap data target.
-
-![](img/fe1.png){.absolute top="200"}
-
-
-## Fitting Model {.smaller}
-
-Fitting model adalah proses dimana model ML belajar dari data training. Model ML akan mencari pola atau pattern dalam data training.
-
-Hasil dari fitting dapat:
-
-- Underfitting: Bias akan besar, tidak fit dengan data.
-- Overfitting: Model terlalu kompleks, sensitif terhadap perubahan data.
-- Good fit: Model memiliki performa yang baik.
-
-![](img/fm1.png){.absolute top="360"}
-
-## Fitting Model {.smaller}
-
-Trade-off antara bias dan variance:
-
-![](http://scott.fortmann-roe.com/docs/docs/BiasVariance/biasvariance.png){.absolute top="100" height="600" width="800"}
-
-
-## Cross Validation {.smaller}
-
-Cari hyperparameter terbaik dengan cross validation.
-
-- Dari data training, kita bagi menjadi beberapa bagian (k-fold). 
-- Setiap bagian akan dijadikan data validasi, dan bagian lainnya sebagai data training.
-
-![](img/cf2.png){.absolute top="200"}
-
-
-## Cross Validation {.smaller}
-
-Cari hyperparameter terbaik dengan cross validation.
-
-![](img/cf1.png){.absolute top="200"}
-
-## Evaluation {.smaller}
-
-Lakukan evaluasi pada data uji (test).
-
-![](https://pub.mdpi-res.com/electronics/electronics-10-00593/article_deploy/html/images/electronics-10-00593-g003.png?1615444326){.absolute top="200"}
-
-
-## Evaluation {.smaller}
-
-Lakukan evaluasi pada data uji (test).
-
-![](img/evl1.jpg){.absolute top="200"}
-
-## Error Analysis {.smaller}
-
-- Tujuan utama adalah mengetahui penyebab kesalahan pada model.
-- Dengan memahami sumber kesalahan, performa model dapat ditingkatkan.
-- Proses ini dilakukan dengan menganalisis error pada test set dan memahami alasan di balik kesalahan tersebut.
-
-![](img/error.png){.absolute top="300"}
+# [Code Exercise](http://derisiswara.quarto.pub/week5_ml/) {.smaller}
 
 ##  Reference {.smaller}
 
-- Introduction to Machine Learning with Python: A Guide for Data Scientist, Andreas C. Muller & Sarah Guido, O’Reilly Media Inc. 2017
-- Mastering Machine Learning with Python in Six Steps: A Practical Implementation Guide to Predictive Data Analytics Using Python, Manohar Swamynathan, Apress. 2017
-- Introduction To Machine Learning Second Edition, Ethem Alpaydin, The MIT Press. 2010
-- Pacmann Academy
+- James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An Introduction to Statistical Learning: With Applications in R. New York: Springer.
+- Hastie, T., Tibshirani, R., & Friedman, J. (2009). The Elements of Statistical Learning: Data Mining, Inference, and Prediction (2nd ed.). New York: Springer Science and Business Media.

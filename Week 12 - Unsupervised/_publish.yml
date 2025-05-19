@@ -1,0 +1,8 @@
+- source: index.qmd
+  quarto-pub:
+    - id: 8e31c7ea-c537-4aaa-8dac-07a3242d1a0f
+      url: https://derisiswara.quarto.pub/ml_w12
+- source: clustering_w12.ipynb
+  quarto-pub:
+    - id: 9342372f-b633-48f0-b099-75fda5f4b228
+      url: https://derisiswara.quarto.pub/code-exercise-w12

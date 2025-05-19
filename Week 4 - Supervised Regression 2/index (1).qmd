@@ -1,6 +1,6 @@
 ---
 title: "Mata Kuliah: Machine Learning"
-subtitle: "Regresi Linier dan Teknik Seleksi Peubah: Shrinkage Methods (Ridge, Lasso, Elastic Net)"
+subtitle: "Regresi Linier dan Teknik Seleksi Peubah: Subset-Selection"
 format:
   revealjs: 
     slide-number: true
@@ -9,129 +9,208 @@ format:
     preview-links: auto
     logo: img/Logo-Horizontal.png
     css: styles.css
-    footer: '[@2025 - Deri Siswara](https://derisiswara.quarto.pub/ml_w4)'
+    footer: '[@2025 - Deri Siswara](https://derisiswara.quarto.pub/ml_w3)'
 ---
 
-## Review {.smaller}
+## Introduction
 
-#### Model Selection: Subset vs Shrinkage
+- Kita memiliki pasangan **variabel input** dan **variabel output**  
+- **Cari sebuah fungsi** yang merepresentasikan **hubungan** antara input dan output  
+- Kemudian, tujuan kita adalah **meminimalkan kesalahan (error)**  
 
-1. Subset Selection  
+## Input-Output Relationship
+
+![](https://study.com/cimages/multimages/16/linear_function_vs_nonlinear_function.png){.absolute top="200"}
+
+## Data Case {.smaller}
+::: columns
+::: {.column width="60%"}
+
+##### Data Biaya Iklan Bulanan vs Penjualan Bulanan
+
+| Bulan       | Biaya Iklan (Rp) | Penjualan (Rp) |
+|-------------|------------------|----------------|
+| Januari     | 10,000,000       | 50,000,000     |
+| Februari    | 12,000,000       | 70,000,000     |
+| Maret       | 15,000,000       | 60,000,000     |
+| April       | 11,000,000       | 52,000,000     |
+| Mei         | 14,000,000       | 58,000,000     |
+| Juni        | 13,000,000       | 57,000,000     |
+| Juli        | 16,000,000       | 62,000,000     |
+| Agustus     | 18,000,000       | 55,000,000     |
+| September   | 17,000,000       | 63,000,000     |
+| Oktober     | 19,000,000       | 68,000,000     |
+| November    | 20,000,000       | 70,000,000     |
+| Desember    | 22,000,000       | 75,000,000     |
+
+
+:::
+
+::: {.column width="5%"}
+:::
+
+::: {.column width="35%"}
+
+- Input adalah biaya iklan bulanan
+- Output adalah penjualan bulanan
+- Hubungan antara biaya iklan dan penjualan adalah **linier** atau **non-linier**?
+- Cari fungsi yang merepresentasikan hubungan tersebut
+
+:::
+:::
+
+## What is Function?
+
+- **Fungsi** adalah hubungan matematis antara **input** dan **output**
+- **Fungsi linier**: $f(x) = ax + b$. Artinya, output adalah hasil perkalian input dengan koefisien $a$ ditambah dengan konstanta $b$. Ini adalah fungsi deterministik.
+- Pada regresi linier, terdapat ketidakpastian yang biasanya ditulis sebagai $\epsilon$ atau **error term**. Sehingga fungsinya menjadi: $f(x) = ax + b + \epsilon$ atau $y = ax + b + \epsilon$
+- **Tujuan**: Cari nilai $a$ dan $b$ yang paling baik untuk meminimalkan kesalahan $\epsilon$.
+
+
+## Data Penjualan Bulanan Vs Biaya Iklan Bulanan {.smaller}
+####  Scatter Plot with Linear Relationship
+```{r}
+# Load necessary libraries
+library(ggplot2)
+
+# Create data frame
+data <- data.frame(
+  Bulan = c("Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"),
+  Biaya_Iklan = c(10000000, 12000000, 15000000, 11000000, 14000000, 13000000, 16000000, 18000000, 17000000, 19000000, 20000000, 22000000),
+  Penjualan = c(50000000, 70000000, 60000000, 52000000, 58000000, 57000000, 62000000, 55000000, 63000000, 68000000, 70000000, 75000000)
+)
+
+# Create scatter plot with linear trend line
+ggplot(data, aes(x = Biaya_Iklan, y = Penjualan)) +
+  geom_point( size = 5) +
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  labs(title = "Scatter Plot with Linear Trend",
+       x = "Biaya Iklan (Rp)",
+       y = "Penjualan (Rp)") +
+  theme_minimal()
+```
+
+```{r}
+reg1 <- lm(Penjualan ~ Biaya_Iklan, data = data)
+reg1$coefficients
+```
+
+## Finding the Best Fit {.smaller}
+
+- **Least Squares Method**: Cari nilai $a$ dan $b$ yang meminimalkan kesalahan $\epsilon$.
+- **Residuals**: Selisih antara nilai prediksi dengan nilai observasi.
+- **Residual Sum of Squares (RSS)**: Jumlah kuadrat dari selisih antara nilai prediksi dengan nilai observasi.
+- **Objective**: Minumumkan RSS.
+
+$$ RSS = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 $$
+$$ \hat{y}_i = ax_i + b $$
+$$ \text{Find } a, b \text{ that minimize } RSS = \sum_{i=1}^{n} (y_i - ax_i - b)^2 $$
+
+- **Metode lain:** Maximum Likelihood Estimation (MLE), Bayesian Estimation, dll.
+
+## Multiple Linear Regression {.smaller}
+
+- **Multiple Linear Regression**: Hubungan antara satu variabel output dengan **dua atau lebih** variabel input.
+- **Fungsi**: $y = a_1x_1 + a_2x_2 + ... + a_nx_n + b + \epsilon$
+- Atau bisa ditulis dalam bentuk matriks: $y = X\beta + \epsilon$
+
+- RSS menjadi:
+$$ RSS = \sum (y - \hat{y})^2 $$
+$$ \hat{y} = X\beta $$
+$$ \text{Minimize } RSS = \sum (y - X\beta)^2 $$
+$$ \text{Find } \beta \text{ that minimize } RSS $$
+
+$$ \beta = (X^TX)^{-1}X^Ty $$
+
+## Additional Technique: Gradien Descent {.smaller}
+
+- **Gradient Descent**: Teknik optimasi yang digunakan untuk mencari nilai minimum dari suatu fungsi dengan cara iteratif.
+- **Objective**: Minimalkan fungsi kesalahan (error) dengan mengubah nilai parameter secara iteratif.
+
+![](https://miro.medium.com/v2/resize:fit:1400/1*E-5K5rHxCRTPrSWF60XLWw.gif){.absolute top="300"}
+
+## Additional Material {.smaller}
+
+{{< video https://www.youtube.com/watch?v=7ArmBVF2dCs width="800" height="500" >}}
+
+## Model Selection {.smaller}
+- **Akurasi prediksi**: Estimasi menggunakan kuadrat terkecil (LS) sering kali memiliki bias rendah namun dengan variabilitas yang tinggi. Akurasi prediksi dapat ditingkatkan dengan menerapkan metode penyeleksian model atau input dan teknik penyusutan (*shrinking*), yang membuat beberapa koefisien (β) menjadi nol.
+
+Terdapat dua pendekatan utama dalam seleksi model:
+
+1. **Subset Selection**  
+   Pendekatan ini bertujuan untuk mengidentifikasi subset dari *p* prediktor yang dianggap memiliki hubungan dengan respons. Model kemudian dibuat menggunakan metode kuadrat terkecil pada himpunan variabel yang telah dikurangi.  
+
+2. **Shrinkage**  
+   Pendekatan ini menggunakan semua *p* prediktor dalam model. Namun, koefisien estimasi akan menyusut mendekati nol dibandingkan dengan estimasi kuadrat terkecil. Teknik penyusutan ini, yang juga dikenal sebagai regularisasi, berfungsi untuk mengurangi varians.
+
+## Subset vs Shrinkage {.smaller}
+
+1. **Subset Selection**  
    - Best-Subset Selection  
    - Forward-Stepwise Selection  
    - Backward-Stepwise Selection  
 
-2. Shrinkage Methods  
+2. **Shrinkage Methods (Regularization)**  
    - Ridge Regression  
-   - Lasso (Least Absolute Shrinkage and Selection Operator)  
-   - Elastic Net
+   - Lasso (*Least Absolute Shrinkage and Selection Operator*)
 
-# Shrinkage Methods
+## Best-Subset Selection {.smaller}
+#### Algorithm
 
-## Logika Dasar Metode Penyusutan Peubah (Shrinkage Methods) {.smaller}
+1. Biarkan **M₀** sebagai **null model**, yaitu model tanpa prediktor, yang hanya memprediksi rata-rata sampel untuk setiap observasi.  
+2. Untuk **k = 1, 2, ..., p**:  
+   - (a) Bangun semua model dengan tepat **k** prediktor.  
+   - (b) Pilih model terbaik di antara model tersebut, yang disebut **Mₖ**, dengan kriteria memiliki **RSS terkecil** atau **R² terbesar**.  
+3. Pilih satu model terbaik dari **M₀ hingga Mₚ** menggunakan kesalahan prediksi tervalidasi silang, **AIC, BIC, atau Adjusted R²**.  
 
-- Metode kuadrat terkecil biasa (*ordinary least squares*) dapat berkinerja kurang optimal, terutama saat terdapat banyak peubah $X$, atau ketika jumlah peubah ($p$) melebihi jumlah observasi ($n$), atau setidaknya mendekati ($p \approx n$).  
-- Alternatifnya adalah dengan menerapkan penalti (*penalized*), yang memungkinkan dilakukannya penyusutan (*shrinkage*) peubah, atau yang dikenal juga dengan regularisasi (*regularization*).  
-- Dampak dari penerapan penalti ini adalah menyusutkan nilai koefisien (beberapa bisa menjadi nol), yang juga membantu mengurangi permasalahan multikolinieritas. Koefisien yang sangat kecil dapat “dibuang” (dikurangi pengaruhnya) dengan metode tertentu.  
-- Dalam metode penyusutan, ditambahkan parameter $\lambda$ yang mengendalikan tingkat penyusutan.  
-- Terdapat tiga metode penalti utama: **ridge regression**, **lasso**, dan **elastic net**.
+## Forward-Stepwise Selection {.smaller}
+#### Algorithm
+1. Biarkan **M₀** sebagai **null model**, yaitu model tanpa prediktor.  
+2. Untuk **k = 0, ..., p - 1**:  
+   - (a) Pertimbangkan semua model yang menambahkan **satu prediktor** ke model **Mₖ**.  
+   - (b) Pilih model terbaik di antara model tersebut dan sebut sebagai **Mₖ₊₁**, dengan kriteria memiliki **RSS terkecil** atau **R² terbesar**.  
+3. Pilih satu model terbaik dari **M₀ hingga Mₚ** menggunakan **AIC, BIC, atau Adjusted R²**.  
 
-## Teknis Penyusutan Peubah {.smaller}
+## Backward-Stepwise Selection {.smaller}
+#### Algorithm
+1. Biarkan **Mₚ** sebagai **full model**, yaitu model dengan semua **p** prediktor.  
+2. Untuk **k = p, p - 1, ..., 1**:  
+   - (a) Pertimbangkan semua model yang **menghapus satu prediktor** dari model **Mₖ**.  
+   - (b) Pilih model terbaik di antara model tersebut dan sebut sebagai **Mₖ₋₁**, dengan kriteria memiliki **RSS terkecil** atau **R² terbesar**.  
+3. Pilih satu model terbaik dari **M₀ hingga Mₚ** menggunakan **AIC, BIC, atau Adjusted R²**.  
 
-$$
-Y = \beta_0 + \beta_1 X_1 + \ldots + \beta_p X_p + \epsilon
-$$
+## Ukuran Kebaikan Model {.smaller}
+- **AIC** = $\frac{1}{n\sigma^2} (RSS + 2d\sigma^2)$  
+- **BIC** = $\frac{1}{n} (RSS + \log(n)d\sigma^2)$  
+- **Adjusted R²** = $1 - \frac{RSS / (n - d - 1)}{TSS / (n - 1)}$  
 
-- Metode ini memasukkan semua peubah bebas $X_i$ ($i = 1, 2, \ldots, p$).  
-- Namun penduga koefisien $X_i$ ($\beta_1, \beta_2, \ldots, \beta_p$) disusutkan menuju nol.  
-- Jika, misalnya, $\beta_k$ nilainya mendekati nol atau sama dengan nol, maka hal ini setara dengan mengeliminasi peubah $X_k$ dari model.
+Keterangan:  
+- **AIC** = Akaike Information Criterion  
+- **BIC** = Bayesian Information Criterion  
+- **RSS** = Residual Sum of Squares  
+- **n** = jumlah data  
+- **d** = jumlah variabel prediktor  
 
-## Subset vs Shrinkage {.smaller}
+- Jika tersedia data validasi, maka **Cross-Validation** dapat digunakan untuk memilih model terbaik.
 
-- Dengan mempertahankan sebagian peubah (predictors) dan membuang sisanya, metode *subset selection* menghasilkan model yang relatif lebih mudah diinterpretasikan dan berpotensi memiliki galat prediksi yang lebih rendah dibandingkan model penuh.  
-- Namun, karena proses ini bersifat *diskrit*—variabel dipilih atau tidak dipilih sama sekali—sering kali metode ini memiliki varians yang tinggi, sehingga belum tentu menurunkan galat prediksi model penuh.  
-- Metode *shrinkage* bersifat lebih *kontinu* dan umumnya tidak terlalu terpengaruh oleh variabilitas yang tinggi.
+## Ukuran Kebaikan Model {.smaller}
 
+Saat mengevaluasi dengan **Cross-Validation**, beberapa metrik evaluasi yang umum digunakan adalah:
+$$ MSE = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2 $$
 
-## Ilustrasi Shrinkage Methods {.smaller}
+$$ RMSE = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2} $$
 
-![](img/a1.png){.absolute}
+$$ MAE = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i| $$
 
-## Ridge Regression {.smaller}
-
-Di **scikit-learn** Python, kita dapat menggunakan `Ridge` atau dikenal sebagai `L2` regularization.
-
-$$
-\min_{\beta} \bigl\{\;\|y - X\beta\|_{2}^{2} \;+\; \alpha\,\|\beta\|_{2}^{2}\bigr\}
-$$
-
-- $\|\beta\|_2^2$ menyatakan penalti **L2** (kuadrat norma 2) dari $\beta$.  
-- $\alpha$ adalah parameter regularisasi yang mengatur kekuatan penalti.  
-
-## Lasso {.smaller}
-Di **scikit-learn** Python, kita dapat menggunakan `Lasso` atau dikenal sebagai `L1` regularization.
-
-$$
-\min_{\beta} \bigl\{\;\|y - X\beta\|_{2}^{2} \;+\; \alpha\,\|\beta\|_{1}\bigr\}
-$$
-
-- $\|\beta \|_1$ menyatakan penalti **L1** (norma 1) dari $\beta$.  
-- $\alpha$ adalah parameter regularisasi yang mengatur seberapa kuat penalti diterapkan.  
-- Penalti L1 cenderung membuat beberapa koefisien $\beta_j$ tepat menjadi nol, sehingga melakukan *feature selection* secara otomatis.
-
-## Elastic Net {.smaller}
-Di **scikit-learn** Python, kita dapat menggunakan `ElasticNet`, yang merupakan gabungan dari *Ridge* dan *Lasso*.
-
-$$
-\min_{\beta} \Bigl\{\;\|y - X\beta\|_{2}^{2} \;+\; \alpha \bigl[\;\rho\,\|\beta\|_{1} + (1-\rho)\,\|\beta\|_{2}^{2}\bigr]\Bigr\}
-$$
-
-- Kombinasi penalti L1 dan L2, masing-masing dikendalikan oleh $\rho$ (disebut `l1_ratio` di scikit-learn) dan $\alpha$.  
-- Saat $\rho = 1$, Elastic Net menjadi Lasso murni; sedangkan $\rho = 0$ menjadi Ridge.  
-- Memadukan kelebihan Ridge (stabil terhadap multikolinieritas) dan Lasso (menekan koefisien ke nol).  
-
-## Mengingat Kembali _Norm_ {.smaller}
-
-Norm adalah fungsi yang mengukur panjang vektor. Dalam konteks ini, kita mengenal dua jenis norm yang sering digunakan dalam *regularization*:
-
-**Norm L2 (Euclidean Norm)**:
-
-$$
-\|x\|_2 := \sqrt{\sum_{i=1}^n x_i^2}
-$$
-
-**Norm L1 ( Manhattan Norm)**:
-
-$$
-\|x\|_1 := \sum_{i=1}^n |x_i|
-$$
-
-## Pemilihan Nilai Parameter $\alpha$ (Tuning Parameter) {.smaller}
-
-- Sama seperti pendekatan pemilihan subset, diperlukan metode khusus untuk menentukan model terbaik.  
-- Pada regresi *ridge* dan *LASSO*, kita perlu memilih nilai parameter *tuning* $\alpha$.  
-- *Cross-validation* dapat digunakan untuk mengestimasi galat. Kita membuat sekumpulan (grid) nilai $\alpha$, lalu menghitung kesalahan prediksi untuk setiap nilai $\alpha$ tersebut.  
-- Nilai $\alpha$ dengan kesalahan *cross-validation* terkecil kemudian dipilih sebagai parameter terbaik.  
-- Terakhir, model disesuaikan kembali menggunakan seluruh data yang tersedia dengan nilai $\alpha$ terpilih.
-
-## Pemilihan Nilai Parameter $\alpha$ (Tuning Parameter) {.smaller}
-
-![](https://images.datacamp.com/image/upload/f_auto,q_auto:best/v1543424181/ridge-1_r4qss4.png
-){.absolute}
-
-## Hubungan LS, Ridge, Lasso, Elastic Net {.smaller}
-
-- Salah satu kelemahan pada *regular least squares* adalah tidak adanya mekanisme untuk mengatasi *overfitting*.  
-- *Ridge regression* menanggulangi masalah ini dengan “menyusutkan” koefisien parameter tertentu.  
-- Kelemahan *ridge regression* adalah tidak mampu melakukan *feature selection*. Kelemahan ini diatasi oleh *LASSO*.
-- *LASSO* melangkah lebih jauh dengan memaksa sebagian koefisien parameter menjadi nol, sehingga secara efektif mengeliminasi peubah $X$ tertentu dari model.  
-- *Elastic Net* menggabungkan keunggulan *ridge regression* dan *LASSO* sekaligus. *Elastic Net* lebih fleksibel dan memberi stabilitas.
-
-# [Code Exercise](http://derisiswara.quarto.pub/week4_ml/) {.smaller}
+::: {.notes}
+Gunakan MSE jika Anda ingin menghukum error besar secara lebih signifikan dan tidak keberatan dengan sensitivitas terhadap outlier.
+Gunakan MAE jika Anda menginginkan metrik yang lebih robust terhadap outlier dan memberikan rata-rata error yang konsisten.
+Gunakan RMSE jika interpretasi error dalam satuan asli data penting dan Anda masih ingin penalti yang lebih besar untuk kesalahan besar.
+:::
 
 ##  Reference {.smaller}
 
-- James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An Introduction to Statistical Learning: With Applications in R. New York: Springer.
-- Hastie, T., Tibshirani, R., & Friedman, J. (2009). The Elements of Statistical Learning: Data Mining, Inference, and Prediction (2nd ed.). New York: Springer Science and Business Media.
-- Kusman S. (2021). "Machine Learning: Teori dan Implementasi dengan R", Penerbit Informatika
+- An introduction to statistical learning by Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani
+- Kusman Sadik, 2021, "Machine Learning: Teori dan Implementasi dengan R", Penerbit Informatika
 - Pacmann Academy

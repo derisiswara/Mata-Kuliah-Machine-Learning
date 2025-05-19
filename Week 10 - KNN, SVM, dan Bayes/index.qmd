@@ -1,0 +1,389 @@
+---
+title: "Mata Kuliah: Machine Learning"
+subtitle: "K-Nearest Neighbors, Support Vector Machine, and Bayesian Classifier"
+format:
+  revealjs: 
+    slide-number: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: img/Logo-Horizontal.png
+    css: styles.css
+    footer: '[@2025 - Deri Siswara](https://derisiswara.quarto.pub/ml_w10)'
+---
+
+# K-Nearest Neighbors
+
+## Pendahuluan {.smaller}
+
+- **K-Nearest Neighbors (KNN)** adalah algoritma *supervised learning* yang sederhana namun powerful untuk klasifikasi dan regresi.
+- KNN bekerja berdasarkan prinsip bahwa objek yang serupa cenderung berada di ruang fitur yang berdekatan (proximity principle).
+- KNN adalah algoritma **non-parametrik** dan **instance-based learning**, dimana model tidak "dilatih" dalam arti tradisional, melainkan langsung menggunakan data training sebagai model.
+- Dalam klasifikasi, prediksi didasarkan pada voting mayoritas dari K tetangga terdekat, sedangkan dalam regresi, prediksi adalah rata-rata nilai K tetangga terdekat.
+- Parameter utama adalah **K** (jumlah tetangga terdekat) yang menentukan seberapa banyak tetangga yang diperhitungkan untuk membuat keputusan.
+- Kelebihan KNN: mudah dipahami, tidak memerlukan asumsi distribusi data, dan efektif untuk dataset berukuran kecil hingga menengah.
+- Keterbatasan: komputasi intensif untuk dataset besar, sensitif terhadap fitur yang tidak relevan, dan memerlukan normalisasi data.
+
+## Prinsip Dasar KNN {.smaller}
+
+![](https://scikit-learn.org/stable/_images/sphx_glr_plot_classification_001.png)
+
+KNN adalah algoritma klasifikasi dan regresi yang menyimpan semua data training (lazy learning), mengklasifikasi data baru berdasarkan kesamaan/jarak dengan data training, mencari K tetangga terdekat dari data testing, dan menentukan label berdasarkan voting mayoritas (untuk klasifikasi) atau rata-rata (untuk regresi)
+
+## Prinsip Kerja KNN {.smaller}
+
+Dalam KNN, prediksi untuk data baru $x$ dapat diformulasikan sebagai:
+
+| Regression | Classification |
+|------------|---------------|
+| Mean/Average: | Majority Vote: |
+| $$f(x) = \frac{1}{n} \sum_{i=1}^{n} y_i$$ | $$f(x) = \frac{1}{n} \sum_{i=1}^{n} I(y_i=1)$$ |
+
+<style>
+/* Membuat tabel dua kolom (left-right) agar lebar penuh pada slide */
+.reveal table {
+  width: 100% !important;
+  table-layout: fixed;
+}
+.reveal table th, 
+.reveal table td {
+  width: 50%;
+  text-align: left;
+  vertical-align: top;
+  word-break: break-word;
+}
+</style>
+
+- Untuk regresi: Prediksi adalah rata-rata dari nilai target tetangga terdekat.
+
+- Untuk klasifikasi: Prediksi ditentukan berdasarkan voting mayoritas, di mana $I(y_i=1$) adalah fungsi indikator yang bernilai 1 jika kondisi terpenuhi.
+
+## Quiz {.smaller}
+
+**Pertanyaan:**  
+Jika kita ingin memprediksi kelas dari titik data baru $?$ menggunakan algoritma K-Nearest Neighbors, termasuk ke kelas A atau B-kah titik tersebut jika kita menggunakan $K=3$ dan $K=7$? Jelaskan alasan dan proses penentuannya!
+
+![](img/0_knn.png)
+
+## Metrik Jarak pada KNN {.smaller}
+
+Metrik jarak sangat penting dalam KNN karena menentukan "kedekatan" antar sampel. Beberapa metrik jarak yang umum digunakan:
+
+**Euclidean Distance**:
+$$d(x, y) = \sqrt{\sum_{i=1}^{n}(x_i - y_i)^2}$$
+
+**Manhattan Distance**:
+$$d(x, y) = \sum_{i=1}^{n}|x_i - y_i|$$
+
+Metrik jarak yang dipilih dapat memengaruhi kinerja model KNN secara signifikan tergantung pada karakteristik data.
+
+## Metrik Jarak pada KNN {.smaller}
+
+![](img/jarak.jpeg)
+
+## Pemilihan Nilai K {.smaller}
+
+Pemilihan nilai K sangat krusial dalam KNN:
+
+- **K terlalu kecil**: Model sensitif terhadap noise (overfitting)
+- **K terlalu besar**: Model menjadi terlalu umum (underfitting)
+
+Beberapa pendekatan untuk memilih K:
+- Uji coba beberapa nilai K dan pilih yang memberikan performa terbaik pada validasi
+- Aturan praktis: K = √n (n adalah jumlah sampel)
+- K sebaiknya bilangan ganjil untuk klasifikasi biner (menghindari tie votes)
+
+![](https://upload.wikimedia.org/wikipedia/commons/e/e7/KnnClassification.svg)
+
+Gambar: Efek nilai K terhadap boundary keputusan. K=1 dan K=5
+
+## Feature Scaling dan Normalisasi {.smaller}
+
+KNN sangat sensitif terhadap skala fitur! Fitur dengan skala lebih besar akan mendominasi perhitungan jarak.
+
+**Mengapa perlu normalisasi?**
+- Contoh: Pada fitur usia (20-70) dan pendapatan (10.000-100.000), perbedaan pendapatan akan mendominasi perhitungan jarak
+
+<div class="columns">
+
+::: {.column width="33%"}
+
+**Min-Max Scaling**  
+$$X_{norm} = \frac{X - X_{min}}{X_{max} - X_{min}}$$
+
+- Mengubah rentang fitur ke [0, 1]
+- Sensitif terhadap outlier
+
+:::
+
+::: {.column width="33%"}
+
+**Standardisasi (Z-score)**  
+$$X_{norm} = \frac{X - \mu}{\sigma}$$
+
+- Mean = 0, Std = 1
+- Cocok untuk data berdistribusi normal
+
+:::
+
+::: {.column width="33%"}
+
+**Robust Scaling**  
+$$X_{norm} = \frac{X - median(X)}{IQR(X)}$$
+
+- Menggunakan median dan IQR
+- Lebih tahan terhadap outlier
+
+:::
+
+</div>
+
+## Materi Tambahan
+
+- [Video](https://www.youtube.com/watch?v=0p0o5cmgLdE)
+
+- [Dokumentasi Code](https://www.w3schools.com/python/python_ml_knn.asp)
+
+# Support Vector Machine
+
+## Pendahuluan {.smaller}
+
+- **Support Vector Machine (SVM)** adalah algoritma *supervised learning* yang powerful untuk klasifikasi.
+- SVM bekerja dengan prinsip menemukan hyperplane optimal yang memisahkan kelas-kelas data dengan margin maksimal.
+- SVM adalah algoritma **parametrik** yang bertujuan untuk menemukan batas keputusan (decision boundary) yang memaksimalkan jarak antara kelas-kelas.
+- SVM dapat menangani masalah klasifikasi linear maupun non-linear melalui penggunaan fungsi kernel.
+- Parameter utama dalam SVM adalah **C** (parameter regularisasi) yang mengontrol trade-off antara margin yang lebar dan kesalahan klasifikasi, serta parameter kernel.
+- Kelebihan SVM: efektif pada ruang berdimensi tinggi, robust terhadap overfitting terutama dalam klasifikasi teks dan gambar.
+- Keterbatasan: kurang efisien untuk dataset besar, pemilihan kernel dan parameter yang tepat bisa menjadi tantangan.
+
+## Prinsip Dasar SVM {.smaller}
+
+![](img/hp4.png)
+
+SVM bertujuan untuk menemukan **hyperplane** optimal yang memisahkan data dari kelas berbeda dengan margin maksimal. Support vectors adalah data points yang berada di tepi margin dan menentukan posisi hyperplane. SVM dapat menangani data yang tidak dapat dipisahkan secara linear melalui transformasi ke dimensi yang lebih tinggi menggunakan fungsi kernel.
+
+## Prinsip Dasar SVM {.smaller}
+
+<div class="columns">
+
+::: {.column width="50%"}
+![1 dimensi/variabel](img/hp1.png)
+:::
+
+::: {.column width="50%"}
+![2 dimensi/variabel](img/hp4.png)
+:::
+
+</div>
+
+<div class="columns">
+
+::: {.column width="50%"}
+![3 dimensi/variabel](img/hp3.png){ width="80%"}
+:::
+
+::: {.column width="50%"}
+:::
+
+</div>
+
+
+Untuk >3 dimenasi/variabel, tidak dapat divisualisasikan, tetapi prinsipnya sama.
+
+## Prinsip Dasar SVM {.smaller}
+
+<div class="columns">
+
+::: {.column width="50%"}
+![](img/hp2.png)
+:::
+
+::: {.column width="50%"}
+![](img/hp5.png)
+:::
+
+</div>
+
+Tugas kita adalah mencari hyperplane yang memisahkan data dari kelas yang berbeda dengan margin maksimal.
+
+## Prinsip Kerja SVM {.smaller}
+
+Dalam SVM, hyperplane dapat diformulasikan sebagai:
+
+$$f(x) = w^T x + b$$
+
+Dimana: $w$ adalah vektor bobot (normal terhadap hyperplane), $b$ adalah bias, dan $x$ adalah vektor fitur input Untuk masalah klasifikasi biner. 
+
+Prediksi dapat diformulasikan sebagai:
+
+$$\text{class} = \text{sign}(w^T x + b)$$
+
+Tujuan SVM adalah memaksimalkan margin antara hyperplane dan support vectors:
+
+$$\text{Maximize } \frac{2}{||w||} \text{ subject to } y_i(w^T x_i + b) \geq 1 \text{ for all } i$$
+
+## Fungsi Kernel dalam SVM {.smaller}
+
+Kernel memungkinkan SVM bekerja di ruang dimensi yang lebih tinggi tanpa menghitung transformasi secara eksplisit (kernel trick).
+
+<div class="columns">
+
+::: {.column width="50%"}
+
+**Linear Kernel**  
+$$K(x_i, x_j) = x_i^T x_j$$
+- Paling sederhana
+- Efektif untuk data yang dapat dipisahkan secara linear
+
+**Polynomial Kernel**  
+$$K(x_i, x_j) = (x_i^T x_j + c)^d$$
+- Parameter: derajat $d$ dan konstanta $c$
+- Baik untuk data dengan pola non-linear sederhana
+
+:::
+
+::: {.column width="50%"}
+
+**Radial Basis Function (RBF) Kernel**  
+$$K(x_i, x_j) = \exp(-\gamma ||x_i - x_j||^2)$$
+- Parameter: $\gamma$ mengontrol pengaruh satu sampel
+- Sangat efektif untuk berbagai jenis data non-linear
+- Default di sebagian besar implementasi SVM
+
+**Sigmoid Kernel**  
+$$K(x_i, x_j) = \tanh(\alpha x_i^T x_j + c)$$
+- Mirip dengan fungsi aktivasi pada neural network
+
+:::
+
+</div>
+
+## Fungsi Kernel dalam SVM {.smaller}
+
+![](https://scikit-learn.org/stable/_images/sphx_glr_plot_iris_svc_001.png)
+
+## Parameter C dan Margin {.smaller}
+
+Parameter C dalam SVM mengontrol trade-off antara margin yang lebar dan kesalahan klasifikasi:
+
+- **C kecil**: Margin lebih lebar, lebih toleran terhadap kesalahan klasifikasi (mungkin underfitting)
+- **C besar**: Margin lebih sempit, kurang toleran terhadap kesalahan klasifikasi (mungkin overfitting)
+
+![](https://s3.stackabuse.com/media/articles/understanding-svm-hyperparameters-1.png)
+
+Pemilihan parameter C yang tepat biasanya dilakukan melalui cross-validation.
+
+## Materi Tambahan
+
+- [Video](https://www.youtube.com/watch?v=efR1C6CvhmE)
+
+- [Dokumentasi Code](https://github.com/pb111/Support-Vector-Machines-Project/blob/master/Support%20Vector%20Machines%20with%20Python%20and%20Scikit-Learn.ipynb)
+
+# Bayesian Classifier
+## Pendahuluan {.smaller}
+
+- **Bayesian Classifier** adalah algoritma *supervised learning* berbasis probabilitas yang menggunakan Teorema Bayes.
+- Algoritma ini memprediksi keanggotaan kelas berdasarkan probabilitas posterior yang dihitung dari probabilitas prior dan likelihood.
+- Bayesian Classifier terutama **Naive Bayes** mengasumsikan independensi antar fitur (sehingga disebut "naive").
+- Meskipun asumsi independensi ini sering tidak terpenuhi dalam praktik, Naive Bayes tetap efektif untuk banyak kasus nyata.
+- Beberapa varian Bayesian Classifier: Gaussian Naive Bayes, Multinomial Naive Bayes, dan Bernoulli Naive Bayes.
+- Kelebihan: komputasi cepat, bekerja baik dengan dataset kecil, skalabel untuk dataset besar, dan mudah diinterpretasi.
+- Keterbatasan: asumsi independensi fitur yang terlalu kuat dan estimasi probabilitas yang kurang akurat untuk fitur yang jarang muncul.
+
+## Teorema Bayes {.smaller}
+
+Teorema Bayes adalah dasar dari seluruh pendekatan Bayesian Classifier:
+
+$$P(A|B) = \frac{P(B|A) \times P(A)}{P(B)}$$
+
+Dalam konteks klasifikasi:
+
+$$P(y|X) = \frac{P(X|y) \times P(y)}{P(X)}$$
+
+Dimana:
+
+- $P(y|X)$: Probabilitas posterior kelas $y$ given fitur $X$
+
+- $P(X|y)$: Likelihood dari fitur $X$ given kelas $y$
+
+- $P(y)$: Probabilitas prior kelas $y$
+
+- $P(X)$: Probabilitas fitur $X$ (evidence)
+
+::: {.notes}
+Catatan: Komponen Teorema Bayes dalam Klasifikasi
+
+- **Probabilitas Posterior ($P(y|X)$):** Probabilitas suatu kelas $y$ benar setelah melihat fitur $X$. Contoh: Probabilitas email adalah spam setelah melihat kata-kata di dalamnya.
+- **Likelihood ($P(X|y)$):** Probabilitas mengamati fitur $X$ jika objek termasuk kelas $y$. Contoh: Probabilitas email mengandung kata "diskon" jika email tersebut spam.
+- **Prior ($P(y)$):** Probabilitas awal kelas $y$ sebelum melihat fitur apapun. Contoh: 30% email adalah spam berdasarkan data historis.
+- **Evidence ($P(X)$):** Probabilitas mengamati fitur $X$ secara umum, tanpa memandang kelasnya. Contoh: 31% email mengandung kata "diskon".
+
+**Contoh:**  
+Jika 30% email adalah spam, 80% email spam mengandung "diskon", dan 31% email mengandung "diskon", maka probabilitas email dengan kata "diskon" adalah spam:
+$$P(\text{spam}|\text{"diskon"}) = \frac{0.8 \times 0.3}{0.31} \approx 0.77$$
+Artinya, ada 77% kemungkinan email tersebut adalah spam setelah diketahui mengandung kata "diskon".
+:::
+
+## Naive Bayes Classifier {.smaller}
+
+Naive Bayes mengasumsikan independensi bersyarat antar fitur:
+
+$$P(X|y) = P(x_1|y) \times P(x_2|y) \times ... \times P(x_n|y) = \prod_{i=1}^{n} P(x_i|y)$$
+
+Sehingga probabilitas posterior menjadi:
+
+$$P(y|X) = \frac{P(y) \prod_{i=1}^{n} P(x_i|y)}{P(X)}$$
+
+Untuk klasifikasi, kita mencari kelas dengan probabilitas posterior tertinggi:
+
+$$\hat{y} = \arg\max_y P(y) \prod_{i=1}^{n} P(x_i|y)$$
+
+Denominator $P(X)$ dapat diabaikan karena konstan untuk semua kelas.
+
+## Kelebihan dan Keterbatasan {.smaller}
+
+<div class="columns">
+
+::: {.column width="50%"}
+
+**Kelebihan Naive Bayes:**
+
+- Efisien secara komputasional (linear)
+
+- Bekerja baik dengan dataset kecil
+
+- Menangani fitur kategoris dengan baik
+
+- Tahan terhadap fitur yang tidak relevan
+
+- Efektif untuk klasifikasi teks
+
+- Intuitif dan mudah diimplementasikan
+
+- Dapat diskalakan untuk dataset besar
+
+:::
+
+::: {.column width="50%"}
+
+**Keterbatasan:**
+
+- Asumsi independensi fitur sering tidak realistis
+
+- Tidak dapat mempelajari interaksi antar fitur
+
+- Estimasi probabilitas kurang akurat untuk fitur yang jarang muncul
+
+- Sensitif terhadap bagaimana data direpresentasikan
+
+- Dapat terpengaruh oleh ketidakseimbangan kelas
+
+:::
+
+</div>
+
+## Materi Tambahan
+
+- [Video](https://www.youtube.com/watch?v=O2L2Uv9pdDA)
+
+- [Dokumentasi Code](https://github.com/pb111/Naive-Bayes-Classification-Project/blob/master/Na%C3%AFve%20Bayes%20Classification%20with%20Python%20and%20Scikit-Learn.ipynb)

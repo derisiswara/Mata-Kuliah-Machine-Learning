@@ -1,6 +1,6 @@
 ---
-title: "Mata Kuliah: **Machine Learning**"
-subtitle: "Machine Learning Workflow"
+title: "Mata Kuliah: Machine Learning"
+subtitle: "Tree-Based Algorithms"
 format:
   revealjs: 
     slide-number: true
@@ -9,249 +9,182 @@ format:
     preview-links: auto
     logo: img/Logo-Horizontal.png
     css: styles.css
-    footer: '[@2025 - Deri Siswara](https://derisiswara.quarto.pub/ml_w2)'
+    footer: '[@2025 - Deri Siswara](https://derisiswara.quarto.pub/ml_w6)'
 ---
 
-## Background {.smaller}
+## Pendahuluan {.smaller}
 
-::: columns
-::: {.column width="45%"}
+Dalam pembelajaran mesin, algoritma yang berbasis pohon disebut algoritma berbasis pohon. Algoritma ini menggunakan struktur seperti pohon untuk membuat keputusan atau prediksi. Beberapa algoritma berbasis pohon yang paling umum adalah:
 
-![](img/meme4.png){.absolute height="500"}
+- **Decision Tree**: Struktur pohon sederhana di mana setiap node internal mewakili keputusan berdasarkan fitur, dan setiap node daun mewakili hasil (klasifikasi atau regresi).
 
-:::
+- **Random Forest**: Metode ensemble yang membuat kumpulan pohon keputusan dan menggabungkan hasilnya (biasanya dengan rata-rata atau pemungutan suara mayoritas) untuk meningkatkan akurasi dan mengurangi overfitting.
 
-::: {.column width="10%"}
-:::
+- **Gradient Boosting Machines (GBM)**: Algoritma boosting yang membangun pohon secara berurutan, di mana setiap pohon mencoba memperbaiki kesalahan yang dibuat oleh pohon sebelumnya. Implementasi populer termasuk XGBoost, LightGBM, dan CatBoost.
 
-::: {.column width="45%"}
+Algoritma ini banyak digunakan karena kemampuannya untuk menangani tugas klasifikasi dan regresi secara efektif serta interpretabilitasnya.
 
-Karakter data scientist (DS) baru:
+## Decision Tree {.smaller}
 
-- **Bingung** harus mulai dari mana.
-- Penuh energi dan ingin menyelesaikan masalah menggunakan teknologi ML terbaru.
-- Memiliki keterampilan di bidang matematika/statistika/ilmu komputer/bisnis.
-- Tidak mengetahui end-to-end workflow ML.
+Decision tree membagi dataset menjadi beberapa wilayah (berbentuk kotak). Algoritma ini memilih fitur dan ambang batas yang dapat membagi target dengan baik. Langkah ini diulangi hingga kedalaman maksimum yang diinginkan tercapai, yang akan membuat batasan untuk mengklasifikasikan data berdasarkan wilayah yang telah dibuat sebelumnya.
 
-:::
-:::
+![Sumber: medium.com/@axelivandatanjung](https://miro.medium.com/v2/resize:fit:1270/1*urUhiTUf-ly_fV9vYmrtjw.png)
 
-## Background {.smaller}
+## Decision Tree untuk Regresi {.smaller}
 
-::: columns
-::: {.column width="45%"}
+Algoritma decision tree mirip dengan regresi piecewise-linear. Decision tree membagi ruang input menjadi beberapa wilayah, dan menghitung nilai rata-rata target pada set
 
-![](img/meme1.jpg){.absolute height="500"}
+![](https://towardsdatascience.com/wp-content/uploads/2024/01/11rIfooU1naS3QnTpHiNVzA.png)
 
-:::
 
-::: {.column width="10%"}
-:::
+## Komponen Decision Tree {.smaller}
 
-::: {.column width="45%"}
+Decision tree terdiri dari beberapa komponen utama:
 
-Kesalahan umum yang dilakukan oleh DS baru:
+- **Decision tree** seperti pohon, namun terbalik. **Root** ada di atas.
+- **Decision/internal node**: uji nilai dari salah satu atribut/fitur input.
+- Kumpulan **edges/branches** dari node: label dengan nilai atribut/fitur yang mungkin.
+- **Leaf node**: output value.
 
-- Tidak memahami **proses bisnis**.
-- Tidak tahu tipe model ML seperti apa yang harus dibangun.
-- Hanya bisa bekerja jika datanya sudah bersih.
-- Tidak tahu cara membersihkan data.
-- Mendapatkan akurasi 99% pada data uji.
-- Membuat model ML tetapi hanya melakukan fitting, tanpa pernah melakukan prediksi.
+![Sumber: Pacmann Academy](img/w6.png)
 
-:::
-:::
+## Cara Split Node (Partisi) {.smaller}
 
+1. Cari batas partisi/sekat terbaik untuk masing-masing variabel prediktor.
+2. Bandingkan partisi terbaik dari semua variabel prediktor… pilih yang paling baik.
+3. Lakukan penyekatan/spliting berdasarkan variabel yang dihasilkan pada langkah ke-2.
+4. Lakukan langkah 1-2-3 untuk setiap node, sampai tercapai kriteria penghentian algoritma.
 
-## Common Machine Learning Workflow {.smaller}
+Contoh, asumsikan kita memiliki variabel income untuk memprediksi debt.
 
+![Sumber: Pacmann Academy](img/w6_1.png)
 
-![](img/mlwf.png){.absolute}
+## Cara Split Node (Partisi) {.smaller}
 
+Hitung mean squared error (MSE) untuk setiap partisi (feature space) pada variabel income. Pilih partisi dengan nilai MSE terendah.
 
-## Business Understanding {.smaller}
+![Sumber: Pacmann Academy](img/w6_2.png)
 
-- Penting untuk memahami proses data tercipta, perjalanan pengguna (user journey), dan proses bisnis (business process).
-- Anda dapat membangun solusi ML untuk mengotomatisasi proses bisnis.
+## Aturan Penghentian {.smaller}
 
-#### Old Way
+- **Kedalaman Maksimum**: Pohon berhenti tumbuh ketika kedalaman maksimum tercapai.
+- **Jumlah Sampel Minimum**: Pohon berhenti tumbuh ketika jumlah sampel minimum di node daun tercapai.
 
-![](img/bp1.png){.absolute top="250"}
+![](https://towardsdatascience.com/wp-content/uploads/2024/08/1_1oWG8PbpPZtZdqMD5RUaA.png)
 
+## Overfitting
 
+![Sumber: Pacmann Academy](img/w6_3.png)
 
-## Business Understanding {.smaller}
+# Materi Tambahan [*Click Here*](https://www.youtube.com/watch?v=g9c66TUylZ4)
 
-- Penting untuk memahami proses data tercipta, perjalanan pengguna (user journey), dan proses bisnis (business process).
-- Anda dapat membangun solusi ML untuk mengotomatisasi proses bisnis.
 
-#### New Way
+## Aplikasi Decision Tree untuk Regresi dengan Scikit-Learn {.smaller}
 
-![](img/bp2.png){.absolute top="250"}
+Berikut adalah contoh penerapan algoritma Decision Tree untuk regresi menggunakan pustaka Scikit-Learn di Python:
 
+[DecisionTreeRegressor](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html)
 
-## Objective Metrics {.smaller}
+```{.python}
+class sklearn.tree.DecisionTreeRegressor(*, criterion='squared_error', splitter='best', 
+max_depth=None, min_samples_split=2, min_samples_leaf=1, 
+min_weight_fraction_leaf=0.0, max_features=None, random_state=None, 
+max_leaf_nodes=None, min_impurity_decrease=0.0, ccp_alpha=0.0, 
+monotonic_cst=None)                              
+```
+Contoh:
 
-- Metrik objektif adalah ukuran yang digunakan untuk mengevaluasi model ML. Metrik ini biasanya berhubungan dengan metrik bisnis yang diterjemahkan.
+```{.python}
+from sklearn.datasets import load_diabetes
+from sklearn.model_selection import cross_val_score
+from sklearn.tree import DecisionTreeRegressor
+X, y = load_diabetes(return_X_y=True)
+regressor = DecisionTreeRegressor(random_state=0)
+cross_val_score(regressor, X, y, cv=10)                               
+```
 
-#### Kasus leads scoring
+# [Code Exercise](https://derisiswara.quarto.pub/week6_ml)
 
-![](img/om1.png){.absolute top="200"}
+# Random Forest
 
-## Objective Metrics {.smaller}
+## Breiman, L. 2001. Random Forests. Machine Learning 45: 5–32. {.smaller}
 
-- Metrik objektif adalah ukuran yang digunakan untuk mengevaluasi model ML. Metrik ini biasanya berhubungan dengan metrik bisnis yang diterjemahkan.
+![](img/rf1.png)
 
-#### Kasus leads scoring
+## Banyaknya Artikel Ilmiah di Google Scholar dengan kata pencarian “random forest breiman” {.smaller}
 
-![](img/om2.png){.absolute top="200"}
+![](img/rf2.png)
 
-## Objective Metrics {.smaller}
+## Algoritme Random Forest {.smaller}
 
-- Metrik objektif adalah ukuran yang digunakan untuk mengevaluasi model ML. Metrik ini biasanya berhubungan dengan metrik bisnis yang diterjemahkan.
-- Selalu **skeptis**: Tidak langsung percaya pada hasil atau model Machine Learning (ML) tanpa melakukan verifikasi yang mendalam.
+![Sumber: Wang et al. (2019)](img/rf.jpg)
 
-#### Kasus leads scoring
+## Algoritme Random Forest {.smaller}
 
-![](img/om3.png){.absolute top="300"}
+#### Ide Dasar:
+- *Ensemble* dari ratusan/ribuan pohon
+- korelasi prediksi antar pohon diusahakan minimal → diversity
 
+#### Algoritme:
 
-## Data Preparation {.smaller}
+![](img/rf3.png)
 
-- Data preparation adalah proses paling penting dalam ML.
-- Tahapan umum dalam data preparation yaitu data gathering, data definition, dan  data validation.
-- Seorang DS harus mengerti **konteks** data yang digunakan dan tipe data sesuai dengan definisinya.
+## Algoritme Random Forest {.smaller}
 
-![](img/dp2.webp){.absolute top="300" height="300" left="100"}
+1. Ambil Sampel Data: Pilih sebagian data secara acak dari kumpulan data utama dengan teknik bootstrapping resampling (replacement - Artinya setelah satu data dipilih, data itu tetap bisa dipilih lagi), sehingga setiap pohon mendapatkan kombinasi data yang sedikit berbeda.
+2. Bangun Banyak Pohon Keputusan: Buat beberapa pohon keputusan secara paralel. Setiap pohon dibangun menggunakan sampel data yang telah dipilih, dan pada setiap percabangan, hanya sebagian kecil fitur (variabel) yang dipilih secara acak untuk dipertimbangkan.
+3. Latih Setiap Pohon: Ajarkan setiap pohon keputusan untuk membuat keputusan berdasarkan pola dalam data sampelnya, tanpa memengaruhi pohon lain.
+4. Kumpulkan Hasil dari Semua Pohon: Setelah semua pohon selesai dilatih, masukkan data baru ke setiap pohon untuk mendapatkan prediksi dari masing-masing pohon.
+5. Gabungkan Prediksi (Voting): Untuk tugas klasifikasi, hitung suara terbanyak (majority voting) dari semua pohon untuk menentukan hasil akhir. Untuk tugas regresi, ambil rata-rata dari prediksi semua pohon.
+6. Hasil Akhir: Berikan output berupa kelas (untuk klasifikasi) atau nilai (untuk regresi) sebagai hasil prediksi Random Forest.
 
+## Hyperparameter Utama Random Forest di Sklearn {.smaller}
 
-## Data Splitting {.smaller}
+1. **`n_estimators`**  
+   - **Apa itu**: Jumlah pohon keputusan yang dibuat di dalam Random Forest.  
+   - **Default**: 100  
+   - **Contoh**: `n_estimators=50` berarti ada 50 pohon.  
+   - **Efek**: Semakin banyak pohon, biasanya semakin akurat, tapi prosesnya jadi lebih lambat.
 
-#### Mana yang lebih bagus?
+2. **`max_depth`**  
+   - **Apa itu**: Kedalaman maksimum setiap pohon (berapa banyak tingkat keputusan).  
+   - **Default**: None (pohon tumbuh sampai semua daun murni atau batas lain tercapai).  
+   - **Contoh**: `max_depth=10` batasi pohon sampai 10 tingkat.  
+   - **Efek**: Membatasi kedalaman bisa mencegah overfitting (pohon terlalu hafal data).
 
-![](img/ds1.png){.absolute top="100"}
+## Hyperparameter Utama Random Forest di Sklearn {.smaller}
 
-## Data Splitting {.smaller}
+3. **`min_samples_split`**  
+   - **Apa itu**: Jumlah minimum sampel yang dibutuhkan untuk membagi sebuah simpul (node) di pohon.  
+   - **Default**: 2  
+   - **Contoh**: `min_samples_split=5` berarti simpul baru dibagi jika ada minimal 5 sampel.  
+   - **Efek**: Nilai lebih besar mencegah pohon terlalu rumit (overfitting).
 
-#### Mana yang lebih bagus?
+4. **`min_samples_leaf`**  
+   - **Apa itu**: Jumlah minimum sampel yang harus ada di daun (leaf node).  
+   - **Default**: 1  
+   - **Contoh**: `min_samples_leaf=2` berarti setiap daun harus punya minimal 2 sampel.  
+   - **Efek**: Membantu mengontrol ukuran pohon dan mencegah daun dengan sedikit data.
 
-- Model B lebih bagus karena dapat memprediksi data yang belum pernah dilihat sebelumnya.
+## Hyperparameter Utama Random Forest di Sklearn {.smaller}
 
-![](img/ds2.png){.absolute top="150"}
+5. **`max_features`**  
+   - **Apa itu**: Jumlah maksimum fitur (kolom data) yang dipertimbangkan saat mencari pemisahan terbaik di setiap simpul.  
+   - **Default**: "sqrt" (akar kuadrat dari total fitur).  
+   - **Contoh**: `max_features='log2'` atau `max_features=0.5` (50% dari fitur).  
+   - **Efek**: Membatasi fitur membuat pohon lebih beragam dan mengurangi korelasi antar pohon.
 
-## Data Splitting {.smaller}
+6. **`bootstrap`**  
+   - **Apa itu**: Menentukan apakah bootstrapping resampling digunakan untuk membuat sampel data.  
+   - **Default**: True  
+   - **Contoh**: `bootstrap=False` berarti semua pohon pakai seluruh data (tanpa sampling).  
+   - **Efek**: Jika True, model lebih tahan overfitting karena ada keacakan.
 
-Membagi (split) data menjadi 3 bagian:
+## Hyperparameter Utama Random Forest di Sklearn {.smaller}
 
-![](img/ds3.png){.absolute top="150"}
+7. **`random_state`**  
+   - **Apa itu**: Angka untuk mengatur keacakan agar hasil bisa direproduksi.  
+   - **Default**: None  
+   - **Contoh**: `random_state=42` untuk hasil yang konsisten setiap kali dijalankan.  
+   - **Efek**: Berguna untuk debugging atau membandingkan hasil.
 
-## Hati-hati dengan data leakage {.smaller}
-
-- Data leakage adalah kondisi dimana data yang digunakan untuk training model juga digunakan untuk testing model.
-- Bisa juga data target yang digunakan masuk juga ke dalam input data.
-- Data leakage bisa membuat model ML menjadi overfitting, membuat seakan model ML sangat bagus tapi saat testing atau deployment performanya sangat buruk.
-
-![](img/dl1.png){.absolute top="300"}
-
-## Hati-hati dengan data leakage {.smaller}
-
-- Data leakage adalah kondisi dimana data yang digunakan untuk training model juga digunakan untuk testing model.
-- Bisa juga data target yang digunakan masuk juga ke dalam input data.
-- Data leakage bisa membuat model ML menjadi overfitting, membuat seakan model ML sangat bagus tapi saat testing atau deployment performanya sangat buruk.
-
-![](img/dl2.png){.absolute top="300"}
-
-## Data Understanding (EDA) {.smaller}
-
-#### Tujuan:
-
-- Mencari pattern dalam data.
-- Cari anomali yang mengurangi akurasi model.
-- Tahap ini biasa disebut exploratory data analysis (EDA).
-
-![](img/eda1.png){.absolute top="300"}
-
-![](img/2a.png){.absolute top="550" height="200" width="400"}
-
-## Data Preprocessing {.smaller}
-
-Objektif utama yaitu mengubah data ke format yang dapat diterima oleh model.
-
-Contoh data preprocessing:
-
-- Handling missing values
-- Handling outliers
-- Handling categorical data
-- Transformasi data (scaling)
-
-Terdapat beragam teknik atau pendekatan dalan setiap data preprocessing. Misal nya di handling missing values, kita bisa menggunakan teknik imputation, drop missing values, dll. Di outliers handling, kita bisa menggunakan teknik IQR, Z-score, dll.
-
-## Feature Engineering {.smaller}
-
-Feature engineering adalah proses membuat fitur baru (input baru) dari fitur yang sudah ada. Tujuannya adalah untuk meningkatkan performa model ML. Fitur baru ini lebih representatif dan informatif terhadap data target.
-
-![](img/fe1.png){.absolute top="200"}
-
-
-## Fitting Model {.smaller}
-
-Fitting model adalah proses dimana model ML belajar dari data training. Model ML akan mencari pola atau pattern dalam data training.
-
-Hasil dari fitting dapat:
-
-- Underfitting: Bias akan besar, tidak fit dengan data.
-- Overfitting: Model terlalu kompleks, sensitif terhadap perubahan data.
-- Good fit: Model memiliki performa yang baik.
-
-![](img/fm1.png){.absolute top="360"}
-
-## Fitting Model {.smaller}
-
-Trade-off antara bias dan variance:
-
-![](http://scott.fortmann-roe.com/docs/docs/BiasVariance/biasvariance.png){.absolute top="100" height="600" width="800"}
-
-
-## Cross Validation {.smaller}
-
-Cari hyperparameter terbaik dengan cross validation.
-
-- Dari data training, kita bagi menjadi beberapa bagian (k-fold). 
-- Setiap bagian akan dijadikan data validasi, dan bagian lainnya sebagai data training.
-
-![](img/cf2.png){.absolute top="200"}
-
-
-## Cross Validation {.smaller}
-
-Cari hyperparameter terbaik dengan cross validation.
-
-![](img/cf1.png){.absolute top="200"}
-
-## Evaluation {.smaller}
-
-Lakukan evaluasi pada data uji (test).
-
-![](https://pub.mdpi-res.com/electronics/electronics-10-00593/article_deploy/html/images/electronics-10-00593-g003.png?1615444326){.absolute top="200"}
-
-
-## Evaluation {.smaller}
-
-Lakukan evaluasi pada data uji (test).
-
-![](img/evl1.jpg){.absolute top="200"}
-
-## Error Analysis {.smaller}
-
-- Tujuan utama adalah mengetahui penyebab kesalahan pada model.
-- Dengan memahami sumber kesalahan, performa model dapat ditingkatkan.
-- Proses ini dilakukan dengan menganalisis error pada test set dan memahami alasan di balik kesalahan tersebut.
-
-![](img/error.png){.absolute top="300"}
-
-##  Reference {.smaller}
-
-- Introduction to Machine Learning with Python: A Guide for Data Scientist, Andreas C. Muller & Sarah Guido, O’Reilly Media Inc. 2017
-- Mastering Machine Learning with Python in Six Steps: A Practical Implementation Guide to Predictive Data Analytics Using Python, Manohar Swamynathan, Apress. 2017
-- Introduction To Machine Learning Second Edition, Ethem Alpaydin, The MIT Press. 2010
-- Pacmann Academy

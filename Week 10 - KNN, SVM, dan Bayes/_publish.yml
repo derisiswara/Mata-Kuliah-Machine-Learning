@@ -1,0 +1,4 @@
+- source: index.qmd
+  quarto-pub:
+    - id: 83af7678-e6a8-4c77-9ad8-341bc34fe057
+      url: https://derisiswara.quarto.pub/ml_w10

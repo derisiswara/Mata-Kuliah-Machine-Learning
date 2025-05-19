@@ -1,4 +1,3 @@
-- source: index.qmd
 - source: project.ipynb
   quarto-pub:
     - id: ea08f6f5-7e41-445b-b3db-65182e762a9e

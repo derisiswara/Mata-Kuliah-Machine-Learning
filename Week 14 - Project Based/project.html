@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Deri Siswara">
+
+<title>Panduan Project-Based Learning (Tugas Terstruktur)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="project_files/libs/clipboard/clipboard.min.js"></script>
+<script src="project_files/libs/quarto-html/quarto.js"></script>
+<script src="project_files/libs/quarto-html/popper.min.js"></script>
+<script src="project_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="project_files/libs/quarto-html/anchor.min.js"></script>
+<link href="project_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="project_files/libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="project_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="project_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="project_files/libs/bootstrap/bootstrap-8a79a254b8e706d3c925cde0a310d4f0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#pendahuluan" id="toc-pendahuluan" class="nav-link active" data-scroll-target="#pendahuluan">Pendahuluan</a></li>
+  <li><a href="#deskripsi-dataset" id="toc-deskripsi-dataset" class="nav-link" data-scroll-target="#deskripsi-dataset">Deskripsi Dataset</a>
+  <ul class="collapse">
+  <li><a href="#dataset-input" id="toc-dataset-input" class="nav-link" data-scroll-target="#dataset-input">Dataset Input:</a></li>
+  <li><a href="#atribut-pada-dataset" id="toc-atribut-pada-dataset" class="nav-link" data-scroll-target="#atribut-pada-dataset">Atribut pada Dataset:</a></li>
+  <li><a href="#target-variable" id="toc-target-variable" class="nav-link" data-scroll-target="#target-variable">Target Variable:</a></li>
+  <li><a href="#informasi-tambahan" id="toc-informasi-tambahan" class="nav-link" data-scroll-target="#informasi-tambahan">Informasi Tambahan:</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Panduan Project-Based Learning (Tugas Terstruktur)</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Deri Siswara </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="pendahuluan" class="level2">
+<h2 class="anchored" data-anchor-id="pendahuluan">Pendahuluan</h2>
+<p>Dataset yang akan digunakan dalam proyek ini adalah Statlog German Credit Data dari UCI Machine Learning Repository (https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data). Dataset ini berisi informasi tentang pinjaman dan risiko kredit di Jerman, dengan tujuan untuk memprediksi apakah seorang peminjam memiliki risiko kredit yang baik atau buruk. Dataset ini telah menjadi salah satu referensi standar untuk tugas klasifikasi di bidang keuangan dan manajemen risiko kredit.</p>
+<p><strong>Cara Import Data</strong></p>
+<ol type="1">
+<li>Instalasi library ucimlrepo</li>
+</ol>
+<div id="34a487d1" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pip install ucimlrepo</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Collecting ucimlrepo
+  Obtaining dependency information for ucimlrepo from https://files.pythonhosted.org/packages/3b/07/1252560194df2b4fad1cb3c46081b948331c63eb1bb0b97620d508d12a53/ucimlrepo-0.0.7-py3-none-any.whl.metadata
+  Downloading ucimlrepo-0.0.7-py3-none-any.whl.metadata (5.5 kB)
+Requirement already satisfied: pandas&gt;=1.0.0 in c:\users\derik\anaconda3\lib\site-packages (from ucimlrepo) (2.0.3)
+Requirement already satisfied: certifi&gt;=2020.12.5 in c:\users\derik\anaconda3\lib\site-packages (from ucimlrepo) (2023.11.17)
+Requirement already satisfied: python-dateutil&gt;=2.8.2 in c:\users\derik\appdata\roaming\python\python311\site-packages (from pandas&gt;=1.0.0-&gt;ucimlrepo) (2.9.0.post0)
+Requirement already satisfied: pytz&gt;=2020.1 in c:\users\derik\anaconda3\lib\site-packages (from pandas&gt;=1.0.0-&gt;ucimlrepo) (2023.3.post1)
+Requirement already satisfied: tzdata&gt;=2022.1 in c:\users\derik\anaconda3\lib\site-packages (from pandas&gt;=1.0.0-&gt;ucimlrepo) (2023.3)
+Requirement already satisfied: numpy&gt;=1.21.0 in c:\users\derik\anaconda3\lib\site-packages (from pandas&gt;=1.0.0-&gt;ucimlrepo) (1.24.3)
+Requirement already satisfied: six&gt;=1.5 in c:\users\derik\appdata\roaming\python\python311\site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas&gt;=1.0.0-&gt;ucimlrepo) (1.17.0)
+Downloading ucimlrepo-0.0.7-py3-none-any.whl (8.0 kB)
+Installing collected packages: ucimlrepo
+Successfully installed ucimlrepo-0.0.7
+Note: you may need to restart the kernel to use updated packages.</code></pre>
+</div>
+</div>
+<ol start="2" type="1">
+<li>Import data</li>
+</ol>
+<div id="a456d841" class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ucimlrepo <span class="im">import</span> fetch_ucirepo </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># fetch dataset </span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>statlog_german_credit_data <span class="op">=</span> fetch_ucirepo(<span class="bu">id</span><span class="op">=</span><span class="dv">144</span>) </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># data (as pandas dataframes) </span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> statlog_german_credit_data.data.features </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> statlog_german_credit_data.data.targets </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{'uci_id': 144, 'name': 'Statlog (German Credit Data)', 'repository_url': 'https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data', 'data_url': 'https://archive.ics.uci.edu/static/public/144/data.csv', 'abstract': 'This dataset classifies people described by a set of attributes as good or bad credit risks. Comes in two formats (one all numeric). Also comes with a cost matrix', 'area': 'Social Science', 'tasks': ['Classification'], 'characteristics': ['Multivariate'], 'num_instances': 1000, 'num_features': 20, 'feature_types': ['Categorical', 'Integer'], 'demographics': ['Other', 'Marital Status', 'Age', 'Occupation'], 'target_col': ['class'], 'index_col': None, 'has_missing_values': 'no', 'missing_values_symbol': None, 'year_of_dataset_creation': 1994, 'last_updated': 'Thu Aug 10 2023', 'dataset_doi': '10.24432/C5NC77', 'creators': ['Hans Hofmann'], 'intro_paper': None, 'additional_info': {'summary': 'Two datasets are provided.  the original dataset, in the form provided by Prof. Hofmann, contains categorical/symbolic attributes and is in the file "german.data".   \r\n \r\nFor algorithms that need numerical attributes, Strathclyde University produced the file "german.data-numeric".  This file has been edited and several indicator variables added to make it suitable for algorithms which cannot cope with categorical variables.   Several attributes that are ordered categorical (such as attribute 17) have been coded as integer.    This was the form used by StatLog.\r\n\r\nThis dataset requires use of a cost matrix (see below)\r\n\r\n ..... 1        2\r\n----------------------------\r\n  1   0        1\r\n-----------------------\r\n  2   5        0\r\n\r\n(1 = Good,  2 = Bad)\r\n\r\nThe rows represent the actual classification and the columns the predicted classification.\r\n\r\nIt is worse to class a customer as good when they are bad (5), than it is to class a customer as bad when they are good (1).\r\n', 'purpose': None, 'funded_by': None, 'instances_represent': None, 'recommended_data_splits': None, 'sensitive_data': None, 'preprocessing_description': None, 'variable_info': 'Attribute 1:  (qualitative)      \r\n Status of existing checking account\r\n             A11 :      ... &lt;    0 DM\r\n\t       A12 : 0 &lt;= ... &lt;  200 DM\r\n\t       A13 :      ... &gt;= 200 DM / salary assignments for at least 1 year\r\n               A14 : no checking account\r\n\r\nAttribute 2:  (numerical)\r\n\t      Duration in month\r\n\r\nAttribute 3:  (qualitative)\r\n\t      Credit history\r\n\t      A30 : no credits taken/ all credits paid back duly\r\n              A31 : all credits at this bank paid back duly\r\n\t      A32 : existing credits paid back duly till now\r\n              A33 : delay in paying off in the past\r\n\t      A34 : critical account/  other credits existing (not at this bank)\r\n\r\nAttribute 4:  (qualitative)\r\n\t      Purpose\r\n\t      A40 : car (new)\r\n\t      A41 : car (used)\r\n\t      A42 : furniture/equipment\r\n\t      A43 : radio/television\r\n\t      A44 : domestic appliances\r\n\t      A45 : repairs\r\n\t      A46 : education\r\n\t      A47 : (vacation - does not exist?)\r\n\t      A48 : retraining\r\n\t      A49 : business\r\n\t      A410 : others\r\n\r\nAttribute 5:  (numerical)\r\n\t      Credit amount\r\n\r\nAttibute 6:  (qualitative)\r\n\t      Savings account/bonds\r\n\t      A61 :          ... &lt;  100 DM\r\n\t      A62 :   100 &lt;= ... &lt;  500 DM\r\n\t      A63 :   500 &lt;= ... &lt; 1000 DM\r\n\t      A64 :          .. &gt;= 1000 DM\r\n              A65 :   unknown/ no savings account\r\n\r\nAttribute 7:  (qualitative)\r\n\t      Present employment since\r\n\t      A71 : unemployed\r\n\t      A72 :       ... &lt; 1 year\r\n\t      A73 : 1  &lt;= ... &lt; 4 years  \r\n\t      A74 : 4  &lt;= ... &lt; 7 years\r\n\t      A75 :       .. &gt;= 7 years\r\n\r\nAttribute 8:  (numerical)\r\n\t      Installment rate in percentage of disposable income\r\n\r\nAttribute 9:  (qualitative)\r\n\t      Personal status and sex\r\n\t      A91 : male   : divorced/separated\r\n\t      A92 : female : divorced/separated/married\r\n              A93 : male   : single\r\n\t      A94 : male   : married/widowed\r\n\t      A95 : female : single\r\n\r\nAttribute 10: (qualitative)\r\n\t      Other debtors / guarantors\r\n\t      A101 : none\r\n\t      A102 : co-applicant\r\n\t      A103 : guarantor\r\n\r\nAttribute 11: (numerical)\r\n\t      Present residence since\r\n\r\nAttribute 12: (qualitative)\r\n\t      Property\r\n\t      A121 : real estate\r\n\t      A122 : if not A121 : building society savings agreement/ life insurance\r\n              A123 : if not A121/A122 : car or other, not in attribute 6\r\n\t      A124 : unknown / no property\r\n\r\nAttribute 13: (numerical)\r\n\t      Age in years\r\n\r\nAttribute 14: (qualitative)\r\n\t      Other installment plans \r\n\t      A141 : bank\r\n\t      A142 : stores\r\n\t      A143 : none\r\n\r\nAttribute 15: (qualitative)\r\n\t      Housing\r\n\t      A151 : rent\r\n\t      A152 : own\r\n\t      A153 : for free\r\n\r\nAttribute 16: (numerical)\r\n              Number of existing credits at this bank\r\n\r\nAttribute 17: (qualitative)\r\n\t      Job\r\n\t      A171 : unemployed/ unskilled  - non-resident\r\n\t      A172 : unskilled - resident\r\n\t      A173 : skilled employee / official\r\n\t      A174 : management/ self-employed/\r\n\t\t     highly qualified employee/ officer\r\n\r\nAttribute 18: (numerical)\r\n\t      Number of people being liable to provide maintenance for\r\n\r\nAttribute 19: (qualitative)\r\n\t      Telephone\r\n\t      A191 : none\r\n\t      A192 : yes, registered under the customers name\r\n\r\nAttribute 20: (qualitative)\r\n\t      foreign worker\r\n\t      A201 : yes\r\n\t      A202 : no\r\n', 'citation': None}}</code></pre>
+</div>
+</div>
+<div id="1c1f1efa" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># export to pandas dataframe</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(X)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'target'</span>] <span class="op">=</span> y</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>df.to_csv(<span class="st">'statlog_german_credit_data.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Attribute1</th>
+<th data-quarto-table-cell-role="th">Attribute2</th>
+<th data-quarto-table-cell-role="th">Attribute3</th>
+<th data-quarto-table-cell-role="th">Attribute4</th>
+<th data-quarto-table-cell-role="th">Attribute5</th>
+<th data-quarto-table-cell-role="th">Attribute6</th>
+<th data-quarto-table-cell-role="th">Attribute7</th>
+<th data-quarto-table-cell-role="th">Attribute8</th>
+<th data-quarto-table-cell-role="th">Attribute9</th>
+<th data-quarto-table-cell-role="th">Attribute10</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">Attribute12</th>
+<th data-quarto-table-cell-role="th">Attribute13</th>
+<th data-quarto-table-cell-role="th">Attribute14</th>
+<th data-quarto-table-cell-role="th">Attribute15</th>
+<th data-quarto-table-cell-role="th">Attribute16</th>
+<th data-quarto-table-cell-role="th">Attribute17</th>
+<th data-quarto-table-cell-role="th">Attribute18</th>
+<th data-quarto-table-cell-role="th">Attribute19</th>
+<th data-quarto-table-cell-role="th">Attribute20</th>
+<th data-quarto-table-cell-role="th">target</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>A11</td>
+<td>6</td>
+<td>A34</td>
+<td>A43</td>
+<td>1169</td>
+<td>A65</td>
+<td>A75</td>
+<td>4</td>
+<td>A93</td>
+<td>A101</td>
+<td>...</td>
+<td>A121</td>
+<td>67</td>
+<td>A143</td>
+<td>A152</td>
+<td>2</td>
+<td>A173</td>
+<td>1</td>
+<td>A192</td>
+<td>A201</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>A12</td>
+<td>48</td>
+<td>A32</td>
+<td>A43</td>
+<td>5951</td>
+<td>A61</td>
+<td>A73</td>
+<td>2</td>
+<td>A92</td>
+<td>A101</td>
+<td>...</td>
+<td>A121</td>
+<td>22</td>
+<td>A143</td>
+<td>A152</td>
+<td>1</td>
+<td>A173</td>
+<td>1</td>
+<td>A191</td>
+<td>A201</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>A14</td>
+<td>12</td>
+<td>A34</td>
+<td>A46</td>
+<td>2096</td>
+<td>A61</td>
+<td>A74</td>
+<td>2</td>
+<td>A93</td>
+<td>A101</td>
+<td>...</td>
+<td>A121</td>
+<td>49</td>
+<td>A143</td>
+<td>A152</td>
+<td>1</td>
+<td>A172</td>
+<td>2</td>
+<td>A191</td>
+<td>A201</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>A11</td>
+<td>42</td>
+<td>A32</td>
+<td>A42</td>
+<td>7882</td>
+<td>A61</td>
+<td>A74</td>
+<td>2</td>
+<td>A93</td>
+<td>A103</td>
+<td>...</td>
+<td>A122</td>
+<td>45</td>
+<td>A143</td>
+<td>A153</td>
+<td>1</td>
+<td>A173</td>
+<td>2</td>
+<td>A191</td>
+<td>A201</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>A11</td>
+<td>24</td>
+<td>A33</td>
+<td>A40</td>
+<td>4870</td>
+<td>A61</td>
+<td>A73</td>
+<td>3</td>
+<td>A93</td>
+<td>A101</td>
+<td>...</td>
+<td>A124</td>
+<td>53</td>
+<td>A143</td>
+<td>A153</td>
+<td>2</td>
+<td>A173</td>
+<td>2</td>
+<td>A191</td>
+<td>A201</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">995</td>
+<td>A14</td>
+<td>12</td>
+<td>A32</td>
+<td>A42</td>
+<td>1736</td>
+<td>A61</td>
+<td>A74</td>
+<td>3</td>
+<td>A92</td>
+<td>A101</td>
+<td>...</td>
+<td>A121</td>
+<td>31</td>
+<td>A143</td>
+<td>A152</td>
+<td>1</td>
+<td>A172</td>
+<td>1</td>
+<td>A191</td>
+<td>A201</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">996</td>
+<td>A11</td>
+<td>30</td>
+<td>A32</td>
+<td>A41</td>
+<td>3857</td>
+<td>A61</td>
+<td>A73</td>
+<td>4</td>
+<td>A91</td>
+<td>A101</td>
+<td>...</td>
+<td>A122</td>
+<td>40</td>
+<td>A143</td>
+<td>A152</td>
+<td>1</td>
+<td>A174</td>
+<td>1</td>
+<td>A192</td>
+<td>A201</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">997</td>
+<td>A14</td>
+<td>12</td>
+<td>A32</td>
+<td>A43</td>
+<td>804</td>
+<td>A61</td>
+<td>A75</td>
+<td>4</td>
+<td>A93</td>
+<td>A101</td>
+<td>...</td>
+<td>A123</td>
+<td>38</td>
+<td>A143</td>
+<td>A152</td>
+<td>1</td>
+<td>A173</td>
+<td>1</td>
+<td>A191</td>
+<td>A201</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">998</td>
+<td>A11</td>
+<td>45</td>
+<td>A32</td>
+<td>A43</td>
+<td>1845</td>
+<td>A61</td>
+<td>A73</td>
+<td>4</td>
+<td>A93</td>
+<td>A101</td>
+<td>...</td>
+<td>A124</td>
+<td>23</td>
+<td>A143</td>
+<td>A153</td>
+<td>1</td>
+<td>A173</td>
+<td>1</td>
+<td>A192</td>
+<td>A201</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">999</td>
+<td>A12</td>
+<td>45</td>
+<td>A34</td>
+<td>A41</td>
+<td>4576</td>
+<td>A62</td>
+<td>A71</td>
+<td>3</td>
+<td>A93</td>
+<td>A101</td>
+<td>...</td>
+<td>A123</td>
+<td>27</td>
+<td>A143</td>
+<td>A152</td>
+<td>1</td>
+<td>A173</td>
+<td>1</td>
+<td>A191</td>
+<td>A201</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+
+<p>1000 rows × 21 columns</p>
+</div>
+</div>
+</div>
+</section>
+<section id="deskripsi-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="deskripsi-dataset">Deskripsi Dataset</h2>
+<section id="dataset-input" class="level3">
+<h3 class="anchored" data-anchor-id="dataset-input">Dataset Input:</h3>
+<p>Dataset Statlog German Credit berisi 20 atribut yang menggambarkan karakteristik peminjam dan riwayat kredit mereka.</p>
+</section>
+<section id="atribut-pada-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="atribut-pada-dataset">Atribut pada Dataset:</h3>
+<ol type="1">
+<li><p><strong>Status rekening yang ada</strong> (kategorikal: A11, A12, A13, A14)</p>
+<ul>
+<li>A11: &lt; 0 DM</li>
+<li>A12: 0 - 200 DM</li>
+<li>A13: &gt; 200 DM</li>
+<li>A14: tidak ada rekening giro</li>
+</ul></li>
+<li><p><strong>Durasi kredit dalam bulan</strong> (numerik)</p></li>
+<li><p><strong>Riwayat kredit</strong> (kategorikal: A30, A31, A32, A33, A34)</p>
+<ul>
+<li>A30: tidak ada kredit/semua kredit dibayar</li>
+<li>A31: semua kredit di bank ini dibayar</li>
+<li>A32: kredit yang ada dibayar hingga saat ini</li>
+<li>A33: keterlambatan pembayaran di masa lalu</li>
+<li>A34: rekening bermasalah</li>
+</ul></li>
+<li><p><strong>Tujuan</strong> (kategorikal: A40, A41, A42, A43, A44, A45, A46, A47, A48, A49, A410)</p>
+<ul>
+<li>A40: mobil (baru)</li>
+<li>A41: mobil (bekas)</li>
+<li>A42: perabotan/peralatan</li>
+<li>A43: radio/televisi</li>
+<li>A44: peralatan rumah tangga</li>
+<li>A45: perbaikan</li>
+<li>A46: pendidikan</li>
+<li>A47: liburan</li>
+<li>A48: pelatihan</li>
+<li>A49: bisnis</li>
+<li>A410: lainnya</li>
+</ul></li>
+<li><p><strong>Jumlah kredit</strong> (numerik)</p></li>
+<li><p><strong>Rekening tabungan</strong> (kategorikal: A61, A62, A63, A64, A65)</p>
+<ul>
+<li>A61: &lt; 100 DM</li>
+<li>A62: 100 - 500 DM</li>
+<li>A63: 500 - 1000 DM</li>
+<li>A64: &gt; 1000 DM</li>
+<li>A65: tidak diketahui/tidak ada rekening tabungan</li>
+</ul></li>
+<li><p><strong>Status pekerjaan saat ini</strong> (kategorikal: A71, A72, A73, A74, A75)</p>
+<ul>
+<li>A71: pengangguran/tidak terampil - bukan penduduk</li>
+<li>A72: tidak terampil - penduduk</li>
+<li>A73: terampil/pegawai</li>
+<li>A74: manajemen/pekerja mandiri/karyawan/pegawai tingkat tinggi</li>
+<li>A75: …</li>
+</ul></li>
+<li><p><strong>Tingkat cicilan dalam persentase dari pendapatan yang dapat dibelanjakan</strong> (numerik)</p></li>
+<li><p><strong>Status pribadi dan jenis kelamin</strong> (kategorikal: A91, A92, A93, A94, A95)</p>
+<ul>
+<li>A91: laki-laki : bercerai/berpisah</li>
+<li>A92: perempuan : bercerai/berpisah/menikah</li>
+<li>A93: laki-laki : lajang</li>
+<li>A94: laki-laki : menikah/janda</li>
+<li>A95: perempuan : lajang</li>
+</ul></li>
+<li><p><strong>Pihak lain/Penjamin</strong> (kategorikal: A101, A102, A103)</p>
+<ul>
+<li>A101: tidak ada</li>
+<li>A102: penjamin</li>
+<li>A103: co-pemohon</li>
+</ul></li>
+<li><p><strong>Lama tinggal di alamat saat ini</strong> (numerik: tahun)</p></li>
+<li><p><strong>Kepemilikan properti</strong> (kategorikal: A121, A122, A123, A124)</p>
+<ul>
+<li>A121: real estate</li>
+<li>A122: perjanjian tabungan bangunan/asuransi jiwa</li>
+<li>A123: mobil atau properti lain</li>
+<li>A124: tidak diketahui/tidak ada properti</li>
+</ul></li>
+<li><p><strong>Usia</strong> (numerik: tahun)</p></li>
+<li><p><strong>Kredit lain yang ada</strong> (kategorikal: A141, A142, A143)</p>
+<ul>
+<li>A141: bank</li>
+<li>A142: toko</li>
+<li>A143: tidak ada</li>
+</ul></li>
+<li><p><strong>Perumahan</strong> (kategorikal: A151, A152, A153)</p>
+<ul>
+<li>A151: sewa</li>
+<li>A152: milik sendiri</li>
+<li>A153: gratis</li>
+</ul></li>
+<li><p><strong>Jumlah kredit yang ada di bank ini</strong> (numerik)</p></li>
+<li><p><strong>Pekerjaan</strong> (kategorikal: A171, A172, A173, A174)</p>
+<ul>
+<li>A171: pengangguran/tidak terampil - bukan penduduk</li>
+<li>A172: tidak terampil - penduduk</li>
+<li>A173: terampil</li>
+<li>A174: sangat terampil</li>
+</ul></li>
+<li><p><strong>Jumlah tanggungan</strong> (numerik)</p></li>
+<li><p><strong>Telepon</strong> (kategorikal: A191, A192)</p>
+<ul>
+<li>A191: tidak ada</li>
+<li>A192: ya, terdaftar atas nama pemohon</li>
+</ul></li>
+<li><p><strong>Pekerja asing</strong> (kategorikal: A201, A202)</p>
+<ul>
+<li>A201: ya</li>
+<li>A202: tidak</li>
+</ul></li>
+</ol>
+</section>
+<section id="target-variable" class="level3">
+<h3 class="anchored" data-anchor-id="target-variable">Target Variable:</h3>
+<ol start="21" type="1">
+<li><strong>Klasifikasi Risiko Kredit</strong>: 1 - Risiko Baik, 2 - Risiko Buruk</li>
+</ol>
+</section>
+<section id="informasi-tambahan" class="level3">
+<h3 class="anchored" data-anchor-id="informasi-tambahan">Informasi Tambahan:</h3>
+<ul>
+<li>Dataset memiliki 1000 instance (baris data)</li>
+<li>Terdapat 20 atribut (fitur) dan 1 variabel target</li>
+<li>Data disajikan dalam format yang telah dikategorikan dan diberi kode</li>
+<li>Kelas yang tidak seimbang: 700 instance kelas “good” dan 300 instance kelas “bad”</li>
+</ul>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

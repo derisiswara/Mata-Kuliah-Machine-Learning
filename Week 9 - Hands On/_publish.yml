@@ -1,0 +1,4 @@
+- source: code-diatebes-prediction.ipynb
+  quarto-pub:
+    - id: 163ca0d7-4a3f-4e12-95c2-01c5740b9ab9
+      url: https://derisiswara.quarto.pub/logistic-regression-workflow

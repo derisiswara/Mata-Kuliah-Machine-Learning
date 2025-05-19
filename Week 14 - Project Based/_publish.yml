@@ -1,4 +1,5 @@
 - source: index.qmd
+- source: project.ipynb
   quarto-pub:
-    - id: e15b5d7a-048d-4486-9d84-229608f78cb9
-      url: https://derisiswara.quarto.pub/ml_w8
+    - id: ea08f6f5-7e41-445b-b3db-65182e762a9e
+      url: https://derisiswara.quarto.pub/panduan-project-based-learning-(tugas-terstruktur
